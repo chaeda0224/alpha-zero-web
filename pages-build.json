@@ -1,0 +1,40 @@
+{
+  "format": "a0-github-pages-v1",
+  "storage": "browser-local",
+  "audience": "public",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "bed9572417717489e58206da576465a6f92914fb605acd05d13eeb096c311bb0"
+    },
+    {
+      "path": ".nojekyll",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "favicon.svg",
+      "sha256": "a20fd8b5da5c15ced7a8deb63657af5132a2db133fb8fc7c6d14c8f30d231370"
+    },
+    {
+      "path": "assets/KINU_LOGO_KR-EN_H_BK.svg",
+      "sha256": "6f2e2069fa764abb6cf6b714375e266e6409a005439c05ad3cad7e5a9cfc1314"
+    },
+    {
+      "path": "assets/KINU_LOGO_KR-EN_H_White.svg",
+      "sha256": "8e409833952270d01fe15aab48efc9c782dc74fcf21594be36781cede9e95cdb"
+    },
+    {
+      "path": "assets/ProjectC_Logo_BK.svg",
+      "sha256": "2f299924ec51548141dbe9cf1f8b6e9dc311acf26fee1d98c5b15fc854c590c7"
+    },
+    {
+      "path": "assets/ProjectC_Logo_WH.svg",
+      "sha256": "f92b19c90741de7dc62ed9742b5f1d721110476f616ec2a2edcb26588864770f"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bb3a817646d08e43fdcaaaf7b86067bb5755035a80110f0e40a4f72a82e3c086"
+    }
+  ],
+  "privacy_check": "Heuristic text scan, not PCFilter verification."
+}

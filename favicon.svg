@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <style>
+      .a0-logo-text {
+        font-family: 'Proto Mono', ui-monospace, monospace;
+        font-weight: 700;
+        font-size: 32px;
+        letter-spacing: -0.02em;
+        fill: #ffffff;
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+    </style>
+    <linearGradient id="chanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0062ab"/>
+      <stop offset="100%" stop-color="#003366"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle with KINU Brand Gradient -->
+  <rect width="64" height="64" rx="16" fill="url(#chanGrad)"/>
+  <!-- Proto Mono 'A0' Brand Logo -->
+  <text x="32" y="34" class="a0-logo-text">A0</text>
+</svg>
