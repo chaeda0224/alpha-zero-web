@@ -53,7 +53,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpha-Zero (A0) - A0 Core v1.9.43 (v5.9.43)</title>
+    <title>Alpha-Zero (A0) - A0 Core v1.9.44 (v5.9.44)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230062ab'/%3E%3Cstop offset='100%25' stop-color='%23003366'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Proto Mono, monospace' font-weight='700' font-size='30' letter-spacing='-0.02em' fill='%23ffffff' text-anchor='middle'%3EA0%3C/text%3E%3C/svg%3E" />
     <!-- 테마 초기화: localStorage 저장값 우선, 기본값은 라이트(화이트) -->
@@ -8568,6 +8568,33 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
       color: black !important;
     }
   }
+
+  /* V5: card view, view-mode toggle, clause detail panel (opaque surfaces) */
+  .rb-viewmode-btn { color: var(--rb-text-muted); background: transparent; border: none; }
+  .rb-viewmode-btn[aria-pressed="true"] { background: var(--rb-accent-subtle); color: var(--rb-accent); }
+  .rb-catalog-layout { display: block; }
+  .rb-catalog-layout.has-detail { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start; }
+  .rb-clause-detail {
+    background: var(--rb-surface-tier1); border: 1px solid var(--rb-border); border-radius: 16px;
+    padding: 18px; position: sticky; top: 0; max-height: calc(100vh - 140px); overflow-y: auto;
+  }
+  .rb-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .rb-clause-card {
+    background: var(--rb-surface-tier1); border: 1px solid var(--rb-border); border-radius: 14px;
+    padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0;
+  }
+  .rb-clause-card[aria-current="true"] { border-color: var(--rb-accent); box-shadow: 0 0 0 1px var(--rb-accent); }
+  .rb-clause-card .rb-card-title { text-align: left; font-weight: 700; color: var(--rb-text-main); cursor: pointer; background: none; border: none; padding: 0; word-break: keep-all; overflow-wrap: anywhere; }
+  .rb-clause-card .rb-card-title:hover { text-decoration: underline; }
+  .rb-clause-card .rb-card-title:focus-visible, .rb-viewmode-btn:focus-visible { outline: 2px solid var(--rb-accent); outline-offset: 2px; }
+  .rb-norm-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: var(--rb-surface-inset); color: var(--rb-text-muted); }
+  .rb-evidence { font-size: 11px; color: var(--rb-text-muted); border-left: 2px solid var(--rb-accent); padding-left: 8px; word-break: keep-all; overflow-wrap: anywhere; }
+  @media (max-width: 1100px) {
+    .rb-catalog-layout.has-detail { grid-template-columns: minmax(0, 1fr); }
+    .rb-catalog-layout.has-detail #rbCatalogList { display: none; }
+    .rb-clause-detail { position: static; max-height: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .rb-clause-card, .rb-clause-detail { transition: none !important; } }
 </style>
 
 <style>#schedViewOmniPlan > [hidden] { display: none !important; }</style>
@@ -8589,7 +8616,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                             <span id="sidebarAreaHeaderTitle" class="font-black text-sm text-slate-800 dark:text-slate-100 tracking-tight leading-tight truncate">Today</span>
                             <span id="sidebarAreaSubBadge" class="text-[9.5px] font-mono text-slate-400 dark:text-slate-500 font-bold uppercase leading-none">Workspace</span>
                         </div>
-                        <span class="app-version-badge sr-only" title="A0 Core v1.9.43 (v5.9.43)">v1.9.43 (v5.9.43)</span>
+                        <span class="app-version-badge sr-only" title="A0 Core v1.9.44 (v5.9.44)">v1.9.44 (v5.9.44)</span>
                     </div>
                     <div class="flex items-center gap-1">
                         <button type="button" id="sidebarRailCollapseBtn" onclick="toggleSidebarRail(true)" class="hidden md:inline-flex items-center justify-center w-7 h-7 text-slate-400 hover:text-[var(--accent-color)] dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-md transition-colors cursor-pointer" title="사이드바 접기 (Alt+S)">
@@ -8938,7 +8965,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                             <i class="fa-solid fa-circle-info text-xs"></i>
                             <span>Help · Update Log</span>
                         </span>
-                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.43 (v5.9.43)</span>
+                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.44 (v5.9.44)</span>
                     </button>
 
                     <!-- Hidden compatibility anchor -->
@@ -9227,7 +9254,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
             </div>
             <output id="workspaceCoreVersion" aria-label="현재 A0 버전" class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
                 <span class="font-a0-logo font-black text-xs text-[#0062ab] dark:text-sky-400 select-none leading-none" data-a0-logo="true">A0</span>
-                <span>Core v1.9.43 (v5.9.43)</span>
+                <span>Core v1.9.44 (v5.9.44)</span>
             </output>
         </div>
 
@@ -14742,9 +14769,22 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
         </div>
       </div>
 
-      <!-- Catalog List Container -->
-      <div id="rbCatalogList" class="space-y-3">
-        <!-- Rendered by RulebookController -->
+      <!-- Result toolbar: view mode + semantic state -->
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <p id="rbSemanticStatus" class="text-[11px] text-slate-500 dark:text-slate-400 min-h-[16px]" role="status" aria-live="polite"></p>
+        <div class="inline-flex rounded-lg border border-slate-300 dark:border-slate-700 p-0.5 bg-white dark:bg-slate-900" role="group" aria-label="조항 결과 보기 방식">
+          <button type="button" id="rbViewModeList" class="rb-viewmode-btn px-2.5 py-1 rounded text-xs font-semibold cursor-pointer" aria-pressed="true">목록</button>
+          <button type="button" id="rbViewModeCard" class="rb-viewmode-btn px-2.5 py-1 rounded text-xs font-semibold cursor-pointer" aria-pressed="false">카드</button>
+        </div>
+      </div>
+
+      <div id="rbCatalogLayout" class="rb-catalog-layout">
+        <!-- Catalog List Container -->
+        <div id="rbCatalogList" class="space-y-3 min-w-0">
+          <!-- Rendered by RulebookController -->
+        </div>
+        <!-- Clause detail panel (right on wide screens, full width on narrow) -->
+        <aside id="rbClauseDetail" class="rb-clause-detail hidden" role="complementary" aria-label="조항 상세" tabindex="-1"></aside>
       </div>
     </div>
 
@@ -19454,7 +19494,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 <div class="pt-4 border-t border-slate-200/60 dark:border-white/5 space-y-2">
                     <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px]">
                         <span class="text-slate-500 dark:text-neutral-400 font-medium">A0 Core Engine</span>
-                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.43 (v5.9.43)</span>
+                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.44 (v5.9.44)</span>
                     </div>
                 </div>
             </aside>
@@ -20862,7 +20902,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 <span class="text-[11px] text-slate-500 dark:text-neutral-400 block mt-0.5">통일연구원 KINU 오프라인 자립형 연구·행정 워크스페이스</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.43 (v5.9.43)</span>
+                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.44 (v5.9.44)</span>
                 <button type="button" onclick="openA0UpdateLogModal()" class="px-3 py-1 rounded-lg border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 text-xs font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer">
                     릴리즈 노트
                 </button>
@@ -20928,11 +20968,11 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 <span class="text-slate-300 dark:text-slate-700">|</span>
                 <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span>로컬 오프라인 정상</span>
+                    <span id="runtimeStorageLabel">웹 버전 · 브라우저 저장</span>
                 </span>
                 <span class="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
                 <span class="hidden sm:inline text-slate-400 dark:text-slate-500 font-mono">
-                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.43 (v5.9.43)</strong>
+                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.44 (v5.9.44)</strong>
                 </span>
             </div>
 
@@ -20962,7 +21002,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                                 <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1">
                                     <span>Alpha-Zero (<span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>)</span>
                                 </div>
-                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.43 (v5.9.43) · 2026.10.23</div>
+                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.44 (v5.9.44) · 2026.10.23</div>
                             </div>
                             <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">Stable</span>
                         </div>
@@ -21419,7 +21459,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                     <div>
                         <h3 id="updateLogModalTitle" class="font-bold text-base text-slate-900 dark:text-white leading-tight flex items-center gap-2">
                         <span>Alpha-Zero 업데이트 로그</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.43 (v5.9.43)</span></span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.44 (v5.9.44)</span></span>
                     </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">전체 버전 릴리즈 이력 및 변경 사항</p>
                     </div>
@@ -21439,7 +21479,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                     <i class="fa-solid fa-cube text-[10px]"></i> 엔진별 버전:
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 font-medium shrink-0">
-                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.43 (v5.9.43)</span>
+                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.44 (v5.9.44)</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 font-medium shrink-0">
                     <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>UI</strong> <span class="font-mono text-[11px] opacity-80">v1.0.0</span>
@@ -21469,7 +21509,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
             <!-- Version & Engine Filter Pills -->
             <div class="flex items-center gap-1.5 px-5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-[#0f1722] overflow-x-auto custom-scrollbar shrink-0">
                 <button id="btnLogFilterAll" type="button" onclick="filterUpdateLogs('all')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">전체 이력</button>
-                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.43 (v5.9.43)</button>
+                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.44 (v5.9.44)</button>
                 <button id="btnLogFilterV18" type="button" onclick="filterUpdateLogs('v1.8')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.8</button>
                 <button id="btnLogFilterV17" type="button" onclick="filterUpdateLogs('v1.7')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.7</button>
                 <button id="btnLogFilterV16" type="button" onclick="filterUpdateLogs('v1.6')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.6</button>
@@ -25257,10 +25297,10 @@ window.A0_ENGINE_REGISTRY = {
         desc: '4대 인텔리전스 콕핏, 과제 생애주기 G0~G5 마일스톤, 골든 포커스 Top 3 & 연구노트 허브'
     }
 };
-window.A0_CORE_VERSION = 'v1.9.43 (v5.9.43)';
+window.A0_CORE_VERSION = 'v1.9.44 (v5.9.44)';
 
 // === 🔒 GLOBAL CORE APPLICATION & SECURITY STATE ===
-const APP_VERSION = 'A0 Core v1.9.43 (v5.9.43)';
+const APP_VERSION = 'A0 Core v1.9.44 (v5.9.44)';
 const APP_RELEASE_DATE = '2026.10.23';
 const MASTER_OVERRIDE_KEY = 'chaesumin2026!';
 let authCountdownSeconds = 180;
@@ -49568,7 +49608,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.43 (v5.9.43) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.44 (v5.9.44) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -122423,6 +122463,545 @@ ${treeMd}
   }
 })();
 
+// src/modules/rulebook/rulebook_structure.js
+// Canonical Structure Decomposition & Core Clause Card Engine
+// Compliant with Work Order V5 (T02, T03, RB5-003 ~ RB5-016)
+
+(function () {
+  'use strict';
+
+  // In-memory PII sanitization for 11 prohibited categories
+  function sanitizePII(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    let t = text;
+    t = t.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '[EMAIL_REDACTED]');
+    t = t.replace(/\b01[016789]-?\d{3,4}-?\d{4}\b/g, '[TEL_REDACTED]');
+    t = t.replace(/\b0[2-6][1-5]?-?\d{3,4}-?\d{4}\b/g, '[TEL_REDACTED]');
+    t = t.replace(/\b\d{6}-[1-4]\d{6}\b/g, '[ID_REDACTED]');
+    t = t.replace(/\b(?:\d{4}-){3}\d{4}\b/g, '[ID_REDACTED]');
+    return t;
+  }
+
+  // Simple string hash (SHA-256 fallback if crypto unavailable)
+  function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
+    }
+    return 'h' + Math.abs(hash).toString(16);
+  }
+
+  function cleanRevisionNotes(text) {
+    if (!text) return '';
+    return text.replace(/\((?:개정|신설|전문개정|삭제|본조신설)\s*[\d\.\s,·~]+\)/g, '').trim();
+  }
+
+  function detectNormativeType(text) {
+    if (!text) return 'general';
+    if (/하여야\s*한다|해야\s*한다|주어야\s*한다|지급하여야\s*한다|배치하여야\s*한다|명하여야\s*한다|부과한다/.test(text)) {
+      return 'obligation'; // 의무
+    }
+    if (/아니\s*된다|할\s*수\s*없다|금지한다|제한한다|불가하다/.test(text)) {
+      return 'prohibition'; // 금지
+    }
+    if (/승인을\s*받|허가를\s*받|인가를\s*받|제청을\s*받|결재를\s*받/.test(text)) {
+      return 'approval'; // 승인필요
+    }
+    if (/할\s*수\s*있다|신청할\s*수\s*있다|사용할\s*수\s*있다|부여할\s*수\s*있다|위촉할\s*수\s*있다/.test(text)) {
+      return 'permission'; // 허용
+    }
+    return 'general';
+  }
+
+  function extractConditions(text) {
+    if (!text) return [];
+    const conds = [];
+    // 다만, ~
+    const m1 = text.match(/다만,\s*([^.\n]+(?:\.|$))/g);
+    if (m1) m1.forEach(c => conds.push(cleanRevisionNotes(c).trim()));
+    // 단, ~
+    const m2 = text.match(/단,\s*([^.\n]+(?:\.|$))/g);
+    if (m2) m2.forEach(c => conds.push(cleanRevisionNotes(c).trim()));
+    // ~하는 때에는 / ~한 경우
+    const m3 = text.match(/([^.\n]+(?:하는\s*때에는|하는\s*경우에는|에\s*해당하는\s*경우))/g);
+    if (m3) m3.forEach(c => {
+      const trimmed = cleanRevisionNotes(c).trim();
+      if (trimmed.length > 5 && trimmed.length < 80 && !conds.includes(trimmed)) {
+        conds.push(trimmed);
+      }
+    });
+    return conds.slice(0, 3);
+  }
+
+  function extractExceptions(text) {
+    if (!text) return [];
+    const excep = [];
+    const m1 = text.match(/([^.\n]+(?:에도\s*불구하고|을\s*제외하고|에\s*한한다|는\s*그러하지\s*아니하다))/g);
+    if (m1) m1.forEach(c => {
+      const trimmed = cleanRevisionNotes(c).trim();
+      if (trimmed.length > 5 && trimmed.length < 80 && !excep.includes(trimmed)) {
+        excep.push(trimmed);
+      }
+    });
+    return excep.slice(0, 2);
+  }
+
+  function extractKeyFacts(text, title) {
+    const facts = {};
+    const cleaned = cleanRevisionNotes(text);
+
+    // 1. Target Audience
+    const targetMatch = cleaned.match(/(부연구위원급?\s*이상|정규직\s*전원|직원|연구직|행정직|공무직|연구위원|임직원|가족)/);
+    if (targetMatch) {
+      facts.target = targetMatch[1];
+    }
+
+    // 2. Period / Days
+    const periodMatch = cleaned.match(/(\d+년\s*이내|\d+개월\s*이내|\d+일간?|\d+일\s*이내|연간\s*\d+일|총\s*\d+일)/);
+    if (periodMatch) {
+      facts.period = periodMatch[1];
+    }
+
+    // 3. Salary / Payment
+    const salaryMatch = cleaned.match(/(기본급\s*지급|무급\s*원칙|유급휴가|통상임금|기본급\s*\d+%|보수\s*지급)/);
+    if (salaryMatch) {
+      facts.salary = salaryMatch[1];
+    }
+
+    // 4. Deadline / Application
+    const deadlineMatch = cleaned.match(/(종료\s*후\s*\d+개월\s*이내|종료\s*\d+일\s*전|\d+일\s*이내에?\s*신청|\d+일\s*전까지)/);
+    if (deadlineMatch) {
+      facts.deadline = deadlineMatch[1];
+    }
+
+    return facts;
+  }
+
+  function parseParagraphNodes(artText, artId) {
+    if (!artText) return [];
+    const lines = artText.split('\n');
+    const nodes = [];
+    const circleRegex = /^([①-⑳])\s*(.*)$/;
+    const numRegex = /^(\d+)\.\s*(.*)$/;
+    const korRegex = /^\(([가-힣])\)\s*(.*)$/;
+
+    let currentNode = null;
+    let nodeIdx = 1;
+
+    for (const rawLine of lines) {
+      const line = sanitizePII(rawLine.trim());
+      if (!line) continue;
+
+      const circleMatch = line.match(circleRegex);
+      const numMatch = line.match(numRegex);
+      const korMatch = line.match(korRegex);
+
+      if (circleMatch) {
+        if (currentNode) nodes.push(currentNode);
+        currentNode = {
+          nodeId: `${artId}-p${nodeIdx++}`,
+          nodeType: 'paragraph',
+          marker: circleMatch[1],
+          text: circleMatch[2],
+          conditions: extractConditions(circleMatch[2]),
+          exceptions: extractExceptions(circleMatch[2])
+        };
+      } else if (numMatch) {
+        if (currentNode) nodes.push(currentNode);
+        currentNode = {
+          nodeId: `${artId}-i${nodeIdx++}`,
+          nodeType: 'item',
+          marker: `${numMatch[1]}.`,
+          text: numMatch[2],
+          conditions: extractConditions(numMatch[2]),
+          exceptions: extractExceptions(numMatch[2])
+        };
+      } else if (korMatch) {
+        if (currentNode) nodes.push(currentNode);
+        currentNode = {
+          nodeId: `${artId}-sub${nodeIdx++}`,
+          nodeType: 'subitem',
+          marker: `(${korMatch[1]})`,
+          text: korMatch[2],
+          conditions: extractConditions(korMatch[2]),
+          exceptions: extractExceptions(korMatch[2])
+        };
+      } else {
+        if (currentNode) {
+          currentNode.text += ' ' + line;
+        } else {
+          currentNode = {
+            nodeId: `${artId}-body`,
+            nodeType: 'paragraph',
+            marker: '본문',
+            text: line,
+            conditions: extractConditions(line),
+            exceptions: extractExceptions(line)
+          };
+        }
+      }
+    }
+    if (currentNode) nodes.push(currentNode);
+    return nodes;
+  }
+
+  function synthesizeSummary(art, doc, nodes) {
+    const rawSum = art.summary || '';
+    const numTitle = `${art.number || ''} ${art.title || ''}`.trim();
+    const titleOnly = (rawSum.trim() === numTitle || rawSum.trim() === (art.title || '').trim() || rawSum.length <= (numTitle.length + 3));
+
+    // If a meaningful verified summary exists, use it
+    if (!titleOnly && rawSum.length > 15) {
+      return {
+        summary: cleanRevisionNotes(rawSum),
+        summaryState: 'verified'
+      };
+    }
+
+    // Otherwise, generate high-quality summary from first paragraph
+    if (nodes && nodes.length > 0) {
+      const firstText = cleanRevisionNotes(nodes[0].text);
+      if (firstText.length > 10) {
+        // Take first sentence or up to 130 chars
+        const sentenceMatch = firstText.match(/^([^.\n]+(?:\.|$))/);
+        let s = sentenceMatch ? sentenceMatch[1] : firstText.slice(0, 130);
+        if (s.length > 130) s = s.slice(0, 127) + '...';
+        return {
+          summary: s.trim(),
+          summaryState: 'extracted'
+        };
+      }
+    }
+
+    // Fallback to purpose or title explanation
+    return {
+      summary: `${doc?.title || '원내규정'}의 ${art.number || '본 조'}에 따른 ${art.title || '업무 기준'}을 규정합니다.`,
+      summaryState: 'extracted'
+    };
+  }
+
+  const RulebookStructure = {
+    sanitizePII,
+
+    parseArticle(art, doc) {
+      if (!art) return null;
+      const cleanText = sanitizePII(art.text || '');
+      const nodes = parseParagraphNodes(cleanText, art.id);
+      const normativeType = detectNormativeType(cleanText);
+      const conditions = extractConditions(cleanText);
+      const exceptions = extractExceptions(cleanText);
+      const keyFacts = extractKeyFacts(cleanText, art.title);
+      const sumInfo = synthesizeSummary(art, doc, nodes);
+      const sourceHash = simpleHash(cleanText);
+
+      return {
+        articleId: art.id,
+        ruleNumber: art.number,
+        title: art.title,
+        docId: doc?.id || art.docId,
+        docTitle: doc?.title || '원내규정',
+        normativeType,
+        conditions,
+        exceptions,
+        keyFacts,
+        summary: sumInfo.summary,
+        summaryState: sumInfo.summaryState,
+        sourceHash,
+        nodes,
+        cleanText
+      };
+    },
+
+    buildCard(art, doc) {
+      const parsed = this.parseArticle(art, doc);
+      if (!parsed) return null;
+
+      const cardId = `card-${parsed.docId}-${parsed.articleId}`;
+      const legalLocator = `${parsed.docTitle} ${parsed.ruleNumber || ''}`.trim();
+
+      return {
+        cardId,
+        canonicalClauseId: parsed.articleId,
+        docId: parsed.docId,
+        docTitle: parsed.docTitle,
+        ruleNumber: parsed.ruleNumber,
+        title: parsed.title,
+        legalLocator,
+        normativeType: parsed.normativeType,
+        summary: parsed.summary,
+        keyFacts: parsed.keyFacts,
+        materialConditions: parsed.conditions,
+        exceptions: parsed.exceptions,
+        summaryState: parsed.summaryState,
+        sourceHash: parsed.sourceHash,
+        nodes: parsed.nodes,
+        badge: parsed.docTitle,
+        dateLabel: doc?.dateLabel || doc?.revisionDate || '',
+        repealed: doc?.repealed || false,
+        dateMismatch: doc?.dateMismatch || false,
+        sourceFile: doc?.sourceFile || '',
+        rawArticle: art
+      };
+    },
+
+    _cardCache: new Map(),
+
+    getCardForArticle(art, doc) {
+      if (!art) return null;
+      const key = `${doc?.id || art.docId}_${art.id}`;
+      if (this._cardCache.has(key)) {
+        return this._cardCache.get(key);
+      }
+      const card = this.buildCard(art, doc);
+      if (card) {
+        this._cardCache.set(key, card);
+      }
+      return card;
+    },
+
+    getAllCards(documents) {
+      const docs = documents || window.RULEBOOK_DATA?.documents || [];
+      const cards = [];
+      for (const doc of docs) {
+        const articles = doc.articles || [];
+        for (const art of articles) {
+          const card = this.getCardForArticle(art, doc);
+          if (card) cards.push(card);
+        }
+      }
+      return cards;
+    },
+
+    clearCache() {
+      this._cardCache.clear();
+    }
+  };
+
+  // Expose to window
+  if (typeof window !== 'undefined') {
+    window.RULEBOOK_STRUCTURE = RulebookStructure;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RulebookStructure;
+  }
+})();
+
+(function () {
+  'use strict';
+  const MODEL = 'embeddinggemma-2:740m-q8_0';
+  const DIM = 768;
+  const FORMAT = 'embeddinggemma2-retrieval-v1';
+  const validVector = v => Array.isArray(v) && v.length === DIM && v.every(Number.isFinite) && v.some(x => x !== 0);
+  const profileMatches = (m, digest) => !!m && m.model === MODEL && m.dimensions === DIM &&
+    m.inputFormatVersion === FORMAT && /^[a-f0-9]{64}$/.test(m.digest || '') && (!digest || m.digest === digest);
+
+  function cleanText(value) {
+    return String(value || '').normalize('NFC').replace(/\r\n?/g, '\n')
+      .replace(/[A-Za-z0-9._%+-]+\u0040[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL_REDACTED]')
+      .replace(/(?<!\d)(?:01[016789]|0[2-6][1-5]?)[ -]?\d{3,4}[ -]?\d{4}(?!\d)/g, '[TEL_REDACTED]')
+      .replace(/(?<!\d)\d{6}-[1-8]\d{6}(?!\d)/g, '[ID_REDACTED]')
+      .replace(/(?<!\d)(?:\d{4}[- ]){3}\d{4}(?!\d)/g, '[ID_REDACTED]').trim();
+  }
+
+  function splitText(text, limit = 1200) {
+    const parts = [];
+    let rest = text;
+    while (rest.length > limit) {
+      let end = Math.max(rest.lastIndexOf('\n', limit), rest.lastIndexOf(' ', limit));
+      if (end < limit / 2) end = limit;
+      if (/[\uD800-\uDBFF]/.test(rest[end - 1])) end--;
+      parts.push(rest.slice(0, end));
+      rest = rest.slice(end);
+    }
+    if (rest) parts.push(rest);
+    return parts;
+  }
+
+  const RulebookVectors = {
+    model: MODEL, displayName: 'EmbeddingGemma 2', dimensions: DIM, inputFormatVersion: FORMAT,
+    _entries: [], _manifest: null, _isReady: false, _db: null, _initPromise: null,
+    _bridgeStatus: { checked: false, online: false, modelAvailable: false, model: MODEL },
+
+    async init() {
+      if (this._initPromise) return this._initPromise;
+      this._initPromise = (async () => {
+        const cache = window.RULEBOOK_VECTOR_CACHE;
+        this._entries = [];
+        this._manifest = cache && cache.manifest || null;
+        if (cache && profileMatches(cache.manifest) && Array.isArray(cache.entries) &&
+            cache.manifest.chunkCount === cache.entries.length && cache.entries.every(e => validVector(e.vector))) {
+          this._entries = cache.entries.slice();
+        }
+        await this.checkBridgeStatus();
+        await this._initDB();
+        this._isReady = this.isIndexCompatible();
+        return this._isReady;
+      })();
+      return this._initPromise;
+    },
+
+    _initDB() {
+      return new Promise(resolve => {
+        if (typeof indexedDB === 'undefined') return resolve(false);
+        try {
+          // Separate namespace keeps older models available for recovery without mixing vectors.
+          const req = indexedDB.open('a0_rulebook_vectors_gemma2_v1', 1);
+          req.onupgradeneeded = () => req.result.createObjectStore('vectors', { keyPath: 'chunkId' });
+          req.onerror = () => resolve(false);
+          req.onblocked = () => resolve(false);
+          req.onsuccess = () => {
+            this._db = req.result;
+            this._db.onversionchange = () => { this._db.close(); this._db = null; };
+            const read = this._db.transaction('vectors', 'readonly').objectStore('vectors').getAll();
+            read.onerror = () => resolve(false);
+            read.onsuccess = () => {
+              const ids = new Set(this._entries.map(e => e.chunkId));
+              (read.result || []).forEach(e => {
+                if (profileMatches(e, this._bridgeStatus.digest) && validVector(e.vector) && !ids.has(e.chunkId)) {
+                  this._entries.push(e); ids.add(e.chunkId);
+                }
+              });
+              resolve(true);
+            };
+          };
+        } catch (_) { resolve(false); }
+      });
+    },
+
+    async checkBridgeStatus() {
+      try {
+        const resp = await fetch('/api/rulebook/embed-status', { signal: AbortSignal.timeout(10000) });
+        const data = await resp.json();
+        this._bridgeStatus = {
+          checked: true, online: resp.ok && data.ollamaOnline === true,
+          modelAvailable: data.modelAvailable === true && profileMatches(data),
+          model: data.model, dimensions: data.dimensions, digest: data.digest,
+          inputFormatVersion: data.inputFormatVersion, checkedAt: Date.now()
+        };
+      } catch (_) {
+        this._bridgeStatus = { checked: true, online: false, modelAvailable: false, model: MODEL, checkedAt: Date.now() };
+      }
+      return this._bridgeStatus;
+    },
+
+    isBridgeOnline() { return this._bridgeStatus.online && this._bridgeStatus.modelAvailable; },
+    isIndexCompatible() {
+      return this.isBridgeOnline() && profileMatches(this._manifest, this._bridgeStatus.digest) && this._entries.length > 0;
+    },
+
+    async embedTexts(texts, options = {}) {
+      if (!Array.isArray(texts) || !texts.length) return null;
+      const formatted = texts.map(t => {
+        const safe = cleanText(t);
+        if (!safe) return '';
+        return options.kind === 'query' ? 'task: search result | query: ' + safe :
+          'title: ' + (cleanText(options.title) || 'none') + ' | text: ' + safe;
+      });
+      if (formatted.some(t => !t)) return null;
+      const result = [];
+      try {
+        for (let i = 0; i < formatted.length; i += 32) {
+          const batch = formatted.slice(i, i + 32);
+          const response = await fetch('/api/rulebook/embed', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texts: batch, model: MODEL, inputFormatVersion: FORMAT }),
+            signal: AbortSignal.timeout(65000)
+          });
+          const data = await response.json();
+          if (!response.ok || !data.ok || !profileMatches(data, this._bridgeStatus.digest) ||
+              !Array.isArray(data.embeddings) || data.embeddings.length !== batch.length ||
+              !data.embeddings.every(validVector)) return null;
+          result.push(...data.embeddings);
+        }
+      } catch (_) { return null; }
+      return result;
+    },
+
+    async embedQuery(query) {
+      const vectors = await this.embedTexts([query], { kind: 'query' });
+      return vectors && vectors[0] || null;
+    },
+
+    async syncCustomDocuments(documents) {
+      if (this._customSync) return this._customSync;
+      this._customSync = (async () => {
+        let complete = true;
+        for (const doc of documents.filter(d => d.originType === 'imported')) {
+          const bytes = new TextEncoder().encode(JSON.stringify([cleanText(doc.title), (doc.articles || [])
+            .map(a => [a.id, cleanText(a.number), cleanText(a.title), cleanText(a.text)])]));
+          const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+          const existing = this._entries.filter(e => e.docId === doc.id);
+          if (existing.length && existing.every(e => e.sourceHash === hash)) continue;
+          this._entries = this._entries.filter(e => e.docId !== doc.id);
+          if (!await this.addCustomDocumentVectors(doc, doc.articles || [], hash)) complete = false;
+        }
+        return complete;
+      })().catch(() => false);
+      try { return await this._customSync; } finally { this._customSync = null; }
+    },
+
+    searchDense(queryVector, topK = 50, filterFn) {
+      if (!this.isIndexCompatible() || !validVector(queryVector)) return [];
+      const qNorm = Math.sqrt(queryVector.reduce((n, x) => n + x * x, 0));
+      const hits = [];
+      this._entries.forEach(e => {
+        if (e.model && !profileMatches(e, this._bridgeStatus.digest)) return;
+        if (filterFn && !filterFn(e)) return;
+        let dot = 0, norm = 0;
+        for (let i = 0; i < DIM; i++) { dot += queryVector[i] * e.vector[i]; norm += e.vector[i] * e.vector[i]; }
+        const score = dot / (qNorm * Math.sqrt(norm));
+        if (score < 0.25) return;
+        const { vector, ...metadata } = e;
+        hits.push({ ...metadata, score });
+      });
+      return hits.sort((a, b) => b.score - a.score).slice(0, Math.max(1, Math.min(200, topK)));
+    },
+
+    async addCustomDocumentVectors(doc, articles, sourceHash) {
+      if (!this._initPromise) await this.init();
+      await this.checkBridgeStatus();
+      if (!this.isIndexCompatible() || !this._db) return false;
+      const entries = [];
+      for (const art of articles || []) {
+        const parts = splitText(cleanText(art.text));
+        const title = cleanText([doc.title, art.number, art.title].filter(Boolean).join(' > '));
+        const vectors = parts.length ? await this.embedTexts(parts, { kind: 'document', title }) : [];
+        if (!vectors) return false;
+        parts.forEach((part, i) => entries.push({
+          chunkId: 'custom-' + doc.id + '-' + art.id + '-' + i, docId: doc.id,
+          docTitle: cleanText(doc.title), clauseId: art.id, ruleNumber: cleanText(art.number),
+          title: cleanText(art.title), snippet: part.trim().slice(0, 180), vector: vectors[i],
+          model: MODEL, digest: this._bridgeStatus.digest, dimensions: DIM, inputFormatVersion: FORMAT, sourceHash
+        }));
+      }
+      if (!entries.length) return false;
+      const committed = await new Promise(resolve => {
+        try {
+          const tx = this._db.transaction('vectors', 'readwrite');
+          const store = tx.objectStore('vectors');
+          const cursor = store.openCursor();
+          cursor.onsuccess = () => {
+            const row = cursor.result;
+            if (row) { if (row.value.docId === doc.id) row.delete(); row.continue(); }
+            else entries.forEach(e => store.put(e));
+          };
+          tx.oncomplete = () => resolve(true);
+          tx.onabort = tx.onerror = () => resolve(false);
+        } catch (_) { resolve(false); }
+      });
+      if (!committed) return false;
+      this._entries = this._entries.filter(e => e.docId !== doc.id).concat(entries);
+      return true;
+    }
+  };
+
+  window.RULEBOOK_VECTORS = RulebookVectors;
+  if (typeof module !== 'undefined' && module.exports) module.exports = RulebookVectors;
+})();
+
 // src/modules/rulebook/rulebook_search.js
 // Rulebook Unified Search Engine across Policies, Articles, Clauses, Forms and Synonyms.
 // Fully compliant with A0-RB-REVIEW-FIX-20261022 & Work Order V3 (ALIO-05, ALIO-06, V3-03, V3-04)
@@ -122701,6 +123280,150 @@ ${treeMd}
         totalCount: results.length,
         results
       };
+    }
+    ,
+
+    // Lazy-load pre-computed dense vectors (served as separate asset; not bundled)
+    _vectorLoad: null,
+    loadVectorCache() {
+      if (window.RULEBOOK_VECTOR_CACHE) return Promise.resolve(true);
+      if (this._vectorLoad) return this._vectorLoad;
+      this._vectorLoad = new Promise((resolve) => {
+        try {
+          const s = document.createElement('script');
+          s.src = 'src/modules/rulebook/rulebook_vector_cache.js';
+          s.onload = () => {
+            if (window.RULEBOOK_VECTORS) window.RULEBOOK_VECTORS.init().then(() => resolve(true));
+            else resolve(true);
+          };
+          s.onerror = () => resolve(false);
+          document.head.appendChild(s);
+        } catch (e) { resolve(false); }
+      });
+      return this._vectorLoad;
+    },
+
+    containsSensitive(text) {
+      return /[A-Za-z0-9._%+-]+\u0040[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b01[016789]-?\d{3,4}-?\d{4}\b|\b\d{6}-?[1-4]\d{6}\b/.test(text || '');
+    },
+
+    // Async hybrid search (keyword + dense, RRF k=60). Sync search() stays unchanged for compatibility.
+    async searchHybrid(request) {
+      const req = request || {};
+      const requestId = req.requestId || 0;
+      const query = (req.query || '').trim();
+      const scope = req.scope || 'all';
+      const category = (req.filters && req.filters.category) || 'cat-all';
+      const topK = req.topK || 50;
+
+      const base = this.search(query, scope, category);
+      const resp = {
+        requestId,
+        query: base.query,
+        modeUsed: 'keyword',
+        semanticState: 'not-requested',
+        indexGeneration: null,
+        completed: true,
+        totalCount: base.totalCount,
+        results: base.results
+      };
+
+      if (window.A0_HOSTING?.mode === 'github-pages') {
+        resp.semanticState = 'static-hosting';
+        return resp;
+      }
+      if (query.length < 2 || (scope !== 'all' && scope !== 'article')) return resp;
+      if (this.containsSensitive(query)) {
+        resp.semanticState = 'skipped-sensitive-query';
+        return resp;
+      }
+
+      const V = window.RULEBOOK_VECTORS;
+      if (!V) { resp.semanticState = 'unavailable'; return resp; }
+      await this.loadVectorCache();
+      const st = V._bridgeStatus && Date.now() - (V._bridgeStatus.checkedAt || 0) < 5000 ? V._bridgeStatus : await V.checkBridgeStatus();
+      if (!st.online) { resp.semanticState = 'bridge-offline'; return resp; }
+      if (!st.modelAvailable) { resp.semanticState = 'model-missing'; return resp; }
+      if (!V._manifest) { resp.semanticState = 'index-not-ready'; return resp; }
+      if (!V.isIndexCompatible()) { resp.semanticState = 'index-incompatible'; return resp; }
+
+      const customReady = await V.syncCustomDocuments(window.RULEBOOK_DATA.documents || []);
+
+      const qVec = await V.embedQuery(query);
+      if (!qVec) { resp.semanticState = 'embed-failed'; return resp; }
+
+      const docs = window.RULEBOOK_DATA.documents || [];
+      const docMap = new Map(docs.map(d => [d.id, d]));
+      const allowed = (entry) => {
+        const d = docMap.get(entry.docId);
+        if (!d) return false;
+        const repealed = d.repealed === true || d.status === 'repealed' || d.isRepealed === true;
+        if (category === 'cat-repealed') return repealed;
+        if (repealed) return false;
+        if (category === 'cat-all') return true;
+        const domain = { 'cat-vacation': '휴가', 'cat-maternity': '출산', 'cat-health': '병가',
+          'cat-career': '연수', 'cat-research': '연구' }[category];
+        const article = (d.articles || []).find(a => a.id === entry.clauseId);
+        return d.category === category || (article && article.category === category) ||
+          !!(domain && d.proposedDomain && d.proposedDomain.includes(domain)) ||
+          (category === 'cat-research' && d.id === 'operating-guideline-2026');
+      };
+      const dense = V.searchDense(qVec, topK, allowed);
+
+      // Group dense hits by clause (best chunk wins)
+      const byClause = new Map();
+      dense.forEach(h => {
+        const key = h.docId + '::' + h.clauseId;
+        if (!byClause.has(key)) byClause.set(key, h);
+      });
+      const denseList = [...byClause.values()];
+
+      const K = 60;
+      const fused = new Map();
+      const keywordArticles = base.results.filter(r => r.type === 'article').slice(0, topK);
+      keywordArticles.forEach((r, i) => {
+        const key = r.docId + '::' + r.clauseId;
+        fused.set(key, { score: 1 / (K + i + 1), item: r, kw: true, dn: false });
+      });
+      denseList.forEach((h, i) => {
+        const key = h.docId + '::' + h.clauseId;
+        const add = 1 / (K + i + 1);
+        if (fused.has(key)) {
+          const f = fused.get(key); f.score += add; f.dn = true; f.snippet = h.snippet;
+        } else {
+          const d = docMap.get(h.docId);
+          const art = d && (d.articles || []).find(a => a.id === h.clauseId);
+          if (!art) return;
+          fused.set(key, {
+            score: add, kw: false, dn: true, snippet: h.snippet,
+            item: {
+              type: 'article', id: art.id, title: `${art.number} (${art.title})`,
+              subtitle: `${d.title} ${art.number}`, badge: d.title, docId: d.id, clauseId: art.id,
+              data: art, matchReason: '의미 유사 조항'
+            }
+          });
+        }
+      });
+
+      const exact = base.results.filter(r => r.type !== 'article' || r.score >= 100);
+      const exactKeys = new Set(exact.filter(r => r.type === 'article').map(r => r.docId + '::' + r.clauseId));
+      const ranked = [...fused.entries()]
+        .filter(([k]) => !exactKeys.has(k))
+        .sort((a, b) => b[1].score - a[1].score)
+        .map(([, f]) => Object.assign({}, f.item, {
+          matchType: f.kw && f.dn ? 'hybrid' : (f.dn ? 'semantic' : 'keyword'),
+          evidenceSnippet: f.snippet || null
+        }));
+
+      const nonArticle = base.results.filter(r => r.type !== 'article');
+      const exactArticles = base.results.filter(r => r.type === 'article' && r.score >= 100)
+        .map(r => Object.assign({}, r, { matchType: 'exact' }));
+      resp.results = [...nonArticle, ...exactArticles, ...ranked];
+      resp.totalCount = resp.results.length;
+      resp.modeUsed = 'hybrid';
+      resp.semanticState = customReady ? 'ready' : 'ready-partial';
+      resp.indexGeneration = V._manifest.generation;
+      return resp;
     }
   };
 
@@ -125350,9 +126073,29 @@ ${citationText}
 
       // Search Inputs
       const searchInput = document.getElementById('rbSearchInput');
+      searchInput?.addEventListener('compositionstart', () => { this._composing = true; });
+      searchInput?.addEventListener('compositionend', (e) => {
+        this._composing = false;
+        this.currentQuery = e.target.value;
+        this.scheduleSearch();
+      });
       searchInput?.addEventListener('input', (e) => {
         this.currentQuery = e.target.value;
-        this.handleSearch();
+        if (e.isComposing || this._composing) return;
+        this.scheduleSearch();
+      });
+      searchInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.isComposing) {
+          e.preventDefault();
+          this.currentQuery = e.target.value;
+          this.handleSearch();
+        }
+      });
+
+      document.getElementById('rbViewModeList')?.addEventListener('click', () => this.setViewMode('list'));
+      document.getElementById('rbViewModeCard')?.addEventListener('click', () => this.setViewMode('card'));
+      document.getElementById('rbClauseDetail')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { e.stopPropagation(); this.closeClauseDetail(); }
       });
 
       // Category Pipeline Rail
@@ -125803,17 +126546,24 @@ ${citationText}
 
     // --- RB-01: Catalog Rendering ---
 
-    renderCatalog() {
+    renderCatalog(hybridResp) {
       const container = document.getElementById('rbCatalogList');
       if (!container) return;
 
-      const searchRes = window.RULEBOOK_SEARCH?.search(this.currentQuery, this.currentSearchScope, this.currentCategory);
-      const results = searchRes?.results || [];
+      const searchRes = hybridResp || window.RULEBOOK_SEARCH?.search(this.currentQuery, this.currentSearchScope, this.currentCategory);
+      const allResults = searchRes?.results || [];
+      const limit = this._renderLimit || 30;
+      const results = allResults.slice(0, limit);
+      const hasMore = allResults.length > limit;
+      const cardMode = this.getViewMode() === 'card';
+      this.updateViewModeButtons();
+      this.updateSemanticStatus(window.A0_HOSTING?.mode === 'github-pages' ? 'static-hosting' :
+        (hybridResp ? hybridResp.semanticState : (this._pendingSemantic ? 'pending' : '')));
 
       // Announce result count to screen readers
       const liveRegion = document.getElementById('rbSearchLiveRegion');
       if (liveRegion) {
-        liveRegion.textContent = `검색 결과 ${results.length}건`;
+        liveRegion.textContent = `검색 결과 ${allResults.length}건`;
       }
 
       if (results.length === 0) {
@@ -125831,7 +126581,9 @@ ${citationText}
       }
 
       let html = '';
+      let cardOpen = false;
       results.forEach(item => {
+        if (item.type !== 'article' && cardOpen) { html += '</div>'; cardOpen = false; }
         if (item.type === 'policy') {
           const pol = item.data;
           const steps = pol.procedure?.steps || [];
@@ -125933,26 +126685,55 @@ ${citationText}
           `;
         } else if (item.type === 'article') {
           const art = item.data;
-          const doc = item.document || window.RULEBOOK_DATA?.documents?.find(d => d.id === art.docId);
-          html += `
-            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between mb-2.5 shadow-2xs hover:border-[#0062ab] transition">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-[#0062ab] dark:text-sky-400 flex items-center justify-center font-bold text-sm">
-                  📜
+          const doc = item.document || window.RULEBOOK_DATA?.documents?.find(d => d.id === (item.docId || art.docId));
+          const docId = item.docId || art.docId || doc?.id;
+          const card = window.RULEBOOK_STRUCTURE?.getCardForArticle(art, doc);
+          const esc = (s) => this.escapeText(s);
+          const summary = card?.summary || art.summary || '';
+          const sel = this._selectedClauseKey === `${docId}::${art.id}`;
+          const normLabel = { obligation: '의무', prohibition: '금지', approval: '승인 필요', permission: '허용' }[card?.normativeType] || '';
+          const flags = [
+            doc?.repealed ? '폐지 표기' : '',
+            doc?.dateMismatch ? '공시일/본문일 불일치' : ''
+          ].filter(Boolean);
+          const stateLabel = card && card.summaryState !== 'verified' ? '본문 발췌 요약(검토 전)' : '';
+          const evidence = item.evidenceSnippet ? `<div class="rb-evidence">${esc(String(item.evidenceSnippet).replace(/^\[[^\]]*\]\s*/, '').slice(0, 140))}</div>` : '';
+          const open = `window.RulebookController.openClauseDetail('${esc(docId)}','${esc(art.id)}', this)`;
+          if (cardMode) {
+            if (!cardOpen) { html += '<div class="rb-card-grid">'; cardOpen = true; }
+            html += `
+              <article class="rb-clause-card" ${sel ? 'aria-current="true"' : ''}>
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px]">
+                  <span class="px-1.5 py-0.5 rounded font-bold bg-sky-100 dark:bg-sky-950 text-[#0062ab] dark:text-sky-300">${esc(doc?.title || '원내규정')}</span>
+                  ${normLabel ? `<span class="rb-norm-tag">${normLabel}</span>` : ''}
+                  ${flags.map(f => `<span class="rb-norm-tag">${esc(f)}</span>`).join('')}
                 </div>
-                <div>
-                  <div class="flex items-center gap-2 mb-0.5">
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-[#0062ab] dark:text-sky-300">${doc?.title || '원내규정'}</span>
-                    <span class="text-xs font-bold text-slate-900 dark:text-white">${art.number || ''} ${art.title || ''}</span>
+                <button type="button" class="rb-card-title text-sm" onclick="${open}">${esc(art.number || '')} ${esc(art.title || '')}</button>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${esc(summary)}</p>
+                ${card?.materialConditions?.length ? `<p class="text-[11px] text-slate-500 dark:text-slate-400"><strong>조건</strong> ${esc(card.materialConditions[0])}</p>` : ''}
+                ${card?.exceptions?.length ? `<p class="text-[11px] text-slate-500 dark:text-slate-400"><strong>예외</strong> ${esc(card.exceptions[0])}</p>` : ''}
+                ${evidence}
+                ${stateLabel ? `<span class="text-[10px] text-slate-400">${stateLabel}</span>` : ''}
+              </article>
+            `;
+          } else {
+            if (cardOpen) { html += '</div>'; cardOpen = false; }
+            html += `
+              <div class="py-2.5 px-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-3" ${sel ? 'aria-current="true"' : ''}>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5 flex-wrap">
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-[#0062ab] dark:text-sky-300">${esc(doc?.title || '원내규정')}</span>
+                    <button type="button" class="rb-card-title text-xs" onclick="${open}">${esc(art.number || '')} ${esc(art.title || '')}</button>
+                    ${normLabel ? `<span class="rb-norm-tag">${normLabel}</span>` : ''}
+                    ${flags.map(f => `<span class="rb-norm-tag">${esc(f)}</span>`).join('')}
                   </div>
-                  <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">${art.summary || (art.text ? art.text.slice(0, 100) + '...' : '')}</p>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">${esc(summary)}</p>
+                  ${evidence}
                 </div>
+                <button type="button" onclick="window.RulebookController.switchView('reader', { docId: '${esc(docId)}', clauseId: '${esc(art.id)}' })" class="shrink-0 px-3 py-1.5 text-xs font-semibold border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">원문 보기</button>
               </div>
-              <button type="button" onclick="window.RulebookController.switchView('reader', { docId: '${art.docId || doc?.id}', clauseId: '${art.id}' })" class="px-3 py-1.5 text-xs font-semibold border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer transition">
-                조문 원문 보기
-              </button>
-            </div>
-          `;
+            `;
+          }
         } else if (item.type === 'form') {
           const form = item.data;
           html += `
@@ -125977,11 +126758,147 @@ ${citationText}
         }
       });
 
+      if (cardOpen) html += '</div>';
+      if (hasMore) {
+        html += `<div class="text-center py-3"><button type="button" onclick="window.RulebookController.showMoreResults()" class="px-4 py-2 text-xs font-semibold border border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">결과 더 보기 (${results.length} / ${allResults.length})</button></div>`;
+      }
       container.innerHTML = html;
     }
 
+    // ---- V5: async hybrid search, view mode, clause detail ----
+    escapeText(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    getViewMode() {
+      if (this._viewMode) return this._viewMode;
+      let m = 'list';
+      try { m = sessionStorage.getItem('rb_view_mode') || 'list'; } catch (e) { /* ignore */ }
+      this._viewMode = m === 'card' ? 'card' : 'list';
+      return this._viewMode;
+    }
+
+    setViewMode(mode) {
+      this._viewMode = mode === 'card' ? 'card' : 'list';
+      try { sessionStorage.setItem('rb_view_mode', this._viewMode); } catch (e) { /* ignore */ }
+      this.renderCatalog(this._lastHybrid || undefined);
+    }
+
+    updateViewModeButtons() {
+      const card = this.getViewMode() === 'card';
+      document.getElementById('rbViewModeCard')?.setAttribute('aria-pressed', String(card));
+      document.getElementById('rbViewModeList')?.setAttribute('aria-pressed', String(!card));
+    }
+
+    updateSemanticStatus(state) {
+      const el = document.getElementById('rbSemanticStatus');
+      if (!el) return;
+      const map = {
+        'static-hosting': '웹 버전에서는 키워드 검색을 제공합니다. 의미검색은 로컬 A0에서 사용할 수 있습니다.',
+        pending: '의미검색 중… 키워드 결과를 먼저 표시합니다.',
+        ready: '키워드 + 의미검색(EmbeddingGemma 2) 결합 결과입니다. 점수는 정확도나 승인 가능성을 뜻하지 않습니다.',
+        'ready-partial': '등록한 문서 일부의 의미검색 색인을 만들지 못했습니다. 해당 문서는 키워드 검색 결과만 표시합니다.',
+        'bridge-offline': '의미검색 사용 불가: 로컬 서버 또는 Ollama에 연결되지 않아 키워드 검색만 표시합니다.',
+        'model-missing': '의미검색 사용 불가: EmbeddingGemma 2 모델을 사용할 수 없습니다. 키워드 검색만 표시합니다.',
+        'index-not-ready': '의미검색 색인이 준비되지 않았습니다. 키워드 검색만 표시합니다.',
+        'index-incompatible': '의미검색 모델과 색인이 일치하지 않습니다. 색인을 다시 생성해야 합니다. 키워드 검색만 표시합니다.',
+        'embed-failed': '의미검색 요청에 실패했습니다. 키워드 검색만 표시합니다.',
+        'skipped-sensitive-query': '개인정보 형식이 감지되어 의미검색을 건너뛰었습니다.',
+        unavailable: '의미검색 모듈을 사용할 수 없습니다.'
+      };
+      el.textContent = map[state] || '';
+    }
+
+    scheduleSearch() {
+      clearTimeout(this._searchTimer);
+      this._searchTimer = setTimeout(() => this.handleSearch(), 300);
+    }
+
+    showMoreResults() {
+      this._renderLimit = (this._renderLimit || 30) + 30;
+      this.renderCatalog(this._lastHybrid || undefined);
+    }
+
     handleSearch() {
+      clearTimeout(this._searchTimer);
+      this._renderLimit = 30;
+      this._lastHybrid = null;
+      const seq = (this._searchSeq = (this._searchSeq || 0) + 1);
+      const q = (this.currentQuery || '').trim();
+      const wantsSemantic = q.length >= 2 && this.currentSearchScope !== 'form' && window.RULEBOOK_SEARCH?.searchHybrid;
+      this._pendingSemantic = !!wantsSemantic;
       this.renderCatalog();
+      if (!wantsSemantic) return;
+      window.RULEBOOK_SEARCH.searchHybrid({
+        requestId: seq, query: q, scope: this.currentSearchScope,
+        filters: { category: this.currentCategory }, topK: 50
+      }).then(resp => {
+        if (seq !== this._searchSeq) return; // stale response
+        this._pendingSemantic = false;
+        this._lastHybrid = resp;
+        const active = document.activeElement;
+        const keepFocus = active && active.id === 'rbSearchInput';
+        this.renderCatalog(resp);
+        if (keepFocus) active.focus({ preventScroll: true });
+      }).catch(() => {
+        if (seq !== this._searchSeq) return;
+        this._pendingSemantic = false;
+        this.updateSemanticStatus('embed-failed');
+      });
+    }
+
+    openClauseDetail(docId, clauseId, trigger) {
+      const panel = document.getElementById('rbClauseDetail');
+      const layout = document.getElementById('rbCatalogLayout');
+      if (!panel || !layout) return;
+      const canonical = window.RULEBOOK_DATA?.getCanonicalDocId ? window.RULEBOOK_DATA.getCanonicalDocId(docId) : docId;
+      const doc = window.RULEBOOK_DATA?.documents?.find(d => d.id === canonical || d.id === docId);
+      const art = doc?.articles?.find(a => a.id === clauseId);
+      if (!doc || !art) return;
+      if (trigger) this._detailReturnEl = trigger;
+      this._selectedClauseKey = `${doc.id}::${art.id}`;
+      const card = window.RULEBOOK_STRUCTURE?.getCardForArticle(art, doc);
+      const esc = (s) => this.escapeText(s);
+      const nodes = card?.nodes || [];
+      const related = (window.RULEBOOK_GLOSSARY?.linkifyLegalReferences ? window.RULEBOOK_GLOSSARY.linkifyLegalReferences(esc(card?.cleanText || art.text || '')) : esc(card?.cleanText || art.text || ''));
+      panel.innerHTML = `
+        <div class="flex items-start justify-between gap-2 mb-3">
+          <div class="min-w-0">
+            <div class="text-[11px] font-bold text-[#0062ab] dark:text-sky-300">${esc(doc.title)}</div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">${esc(art.number || '')} ${esc(art.title || '')}</h3>
+          </div>
+          <button type="button" id="rbClauseDetailClose" class="shrink-0 px-2 py-1 text-xs rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer" onclick="window.RulebookController.closeClauseDetail()" aria-label="상세 닫기">닫기</button>
+        </div>
+        ${card?.summary ? `<p class="text-xs text-slate-700 dark:text-slate-200 mb-2"><strong>핵심</strong> ${esc(card.summary)} ${card.summaryState !== 'verified' ? '<span class="text-[10px] text-slate-400">(본문 발췌 요약, 검토 전)</span>' : ''}</p>` : ''}
+        ${card?.materialConditions?.length ? `<p class="text-xs text-slate-600 dark:text-slate-300 mb-1"><strong>조건</strong> ${card.materialConditions.map(esc).join(' / ')}</p>` : ''}
+        ${card?.exceptions?.length ? `<p class="text-xs text-slate-600 dark:text-slate-300 mb-2"><strong>예외</strong> ${card.exceptions.map(esc).join(' / ')}</p>` : ''}
+        <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-2">${nodes.length}개 항·호 · ${doc.dateLabel ? esc(doc.dateLabel) : '판본일 미확인'}${doc.repealed ? ' · 폐지 표기 자료' : ''}${doc.dateMismatch ? ' · 공시일/본문일 불일치 확인 필요' : ''}</div>
+        <div class="text-xs leading-relaxed text-slate-800 dark:text-slate-100 whitespace-pre-line border-t border-slate-200 dark:border-slate-800 pt-2">${related}</div>
+        <p class="text-[10px] text-slate-400 mt-3">정제된 추출 텍스트입니다. 표·서식은 원본 파일을 확인하세요.</p>
+        <button type="button" class="mt-3 px-3 py-1.5 text-xs font-semibold border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer" onclick="window.RulebookController.switchView('reader', { docId: '${esc(doc.id)}', clauseId: '${esc(art.id)}' })">규정 원문에서 열기</button>
+      `;
+      panel.classList.remove('hidden');
+      layout.classList.add('has-detail');
+      panel.focus({ preventScroll: true });
+      this.renderCatalog(this._lastHybrid || undefined);
+    }
+
+    closeClauseDetail() {
+      const panel = document.getElementById('rbClauseDetail');
+      const layout = document.getElementById('rbCatalogLayout');
+      if (!panel) return;
+      panel.classList.add('hidden');
+      panel.innerHTML = '';
+      layout?.classList.remove('has-detail');
+      const key = this._selectedClauseKey;
+      this._selectedClauseKey = null;
+      this.renderCatalog(this._lastHybrid || undefined);
+      // restore focus to the card title that opened the panel (element was re-rendered)
+      if (key) {
+        const [d, a] = key.split('::');
+        const btn = [...document.querySelectorAll('#rbCatalogList .rb-card-title')].find(b => (b.getAttribute('onclick') || '').includes(`'${a}'`));
+        if (btn) btn.focus({ preventScroll: true });
+      }
     }
 
     resetSearch() {
@@ -137718,6 +138635,36 @@ function renderDocumentBody(doc) {
     window.A0_REGULATIONS_VERSION = 'v1.1.0';
 
     window.STUDIO_UPDATE_LOGS = [
+    {
+    "version": "v1.9.44 (v5.9.44)",
+    "coreVersion": "A0 Core v1.9.44 (v5.9.44)",
+    "date": "2026-10-23",
+    "tag": "규정집 의미검색",
+    "title": "EmbeddingGemma 2 규정 검색 연결",
+    "summary": "규정집의 의미검색을 로컬 EmbeddingGemma 2로 전환하고 모델과 색인의 일치 여부를 검사합니다. 데스크톱 실행기도 동일한 API 서버를 사용하도록 연결을 수정했습니다.",
+    "items": [
+        {
+            "category": "Pages",
+            "engine": "Hosting",
+            "text": "공개 웹은 키워드 검색을 제공하며 로컬 의미검색 API와 벡터 캐시를 호출하지 않습니다. 하단에는 웹 버전의 브라우저 저장 상태를 표시합니다."
+        },
+        {
+            "category": "Rulebook",
+            "engine": "Search",
+            "text": "ALIO 규정 109개와 기본 규정집 4개, 총 113개 문서를 768차원 벡터로 다시 생성하고 긴 조문 전체를 검색 대상에 포함했습니다."
+        },
+        {
+            "category": "Rulebook",
+            "engine": "Storage",
+            "text": "가져온 Markdown 문서는 첫 의미검색 때 색인을 생성합니다. 모델 변경·저장 실패 시 기존 키워드 검색으로 안내합니다."
+        },
+        {
+            "category": "Rulebook",
+            "engine": "Validation",
+            "text": "모델 해시·차원·입력 형식을 검사하고 잘못된 벡터 응답을 거부합니다. 이전 모델의 사용자 색인은 별도 저장소에 보존합니다."
+        }
+    ]
+},
     {
         "version": "v1.9.43 (v5.9.43)",
         "coreVersion": "A0 Core v1.9.43 (v5.9.43)",

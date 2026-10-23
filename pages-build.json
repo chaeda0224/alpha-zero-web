@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "928afa7c0268e58480dfe7ef3826e465f5418c4f2201bb1150f556faeb69676a"
+      "sha256": "5503c1c4da124630061d0c0ae172ed00360a12d35d92ac30d5da070e81e3e072"
     },
     {
       "path": ".nojekyll",
@@ -33,7 +33,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "bb3a817646d08e43fdcaaaf7b86067bb5755035a80110f0e40a4f72a82e3c086"
+      "sha256": "1cd0296348e74c505e209448bb9d99844402c051564baba02e9505f6ea4ed664"
     }
   ],
   "privacy_check": "Heuristic text scan, not PCFilter verification."
