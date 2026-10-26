@@ -8699,23 +8699,59 @@ function getKinuReportUrlFor(idx, navCode, category) {
 
 function getCurrentReportUrl() {
     const idx = document.getElementById('reportIdx')?.value?.trim() || '';
-    const customUrl = document.getElementById('reportFullUrl')?.value?.trim();
-    if (/^\d+$/.test(idx)) {
-        const validated = typeof validateOnlineSeriesDetailUrl === 'function' ? validateOnlineSeriesDetailUrl(customUrl) : null;
-        const expectedEn = currentWebzineSeries === 'online-en' || currentLang === 'en';
-        if (validated && !validated.error && validated.idx === idx && validated.isEn === expectedEn) return validated.url;
-        return getReportUrl(idx);
+    const customUrl = document.getElementById('reportFullUrl')?.value?.trim() || '';
+    const series = (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries)
+        || (typeof window !== 'undefined' && window.currentWebzineSeries) || '';
+    const expectedEn = series === 'online-en' || (typeof currentLang !== 'undefined' && currentLang === 'en');
+    if (customUrl) {
+        let parsedUrl = null;
+        try { parsedUrl = new URL(customUrl); } catch (_) {}
+        const validated = typeof validateOnlineSeriesDetailUrl === 'function'
+            ? validateOnlineSeriesDetailUrl(customUrl) : null;
+        if (validated && !validated.error) {
+            return validated.isEn === expectedEn ? validated.url : getReportUrl(idx);
+        }
+        const isKinuHost = parsedUrl && ['www.kinu.or.kr', 'kinu.or.kr'].includes(parsedUrl.hostname.toLowerCase());
+        if (parsedUrl && ['http:', 'https:'].includes(parsedUrl.protocol) && !parsedUrl.username && !parsedUrl.password && !isKinuHost) {
+            return customUrl;
+        }
     }
-    if (customUrl && (customUrl.startsWith('http://') || customUrl.startsWith('https://'))) {
-        return customUrl;
-    }
+    if (/^\d+$/.test(idx)) return getReportUrl(idx);
     return getReportUrl('');
 }
 
 function onCustomReportUrlInput(val) {
-    if (typeof renderAll === 'function') {
-        renderAll();
+    const urlInput = document.getElementById('reportFullUrl');
+    const idxInput = document.getElementById('reportIdx');
+    const candidate = String(val || '').trim();
+    if (!candidate) return;
+
+    let parsed;
+    try { parsed = new URL(candidate); } catch (_) { return; }
+    if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) return;
+
+    const validated = typeof validateOnlineSeriesDetailUrl === 'function'
+        ? validateOnlineSeriesDetailUrl(candidate) : null;
+    if (validated && !validated.error) {
+        const series = (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries)
+            || (typeof window !== 'undefined' && window.currentWebzineSeries) || '';
+        const expectedEn = series === 'online-en' || (typeof currentLang !== 'undefined' && currentLang === 'en');
+        if (validated.isEn !== expectedEn) {
+            if (urlInput) urlInput.value = getReportUrl(idxInput?.value?.trim() || '');
+            const status = document.getElementById('reportIntegrationStatus');
+            if (status) status.textContent = '현재 웹진 언어와 같은 국문·영문 공식 상세 링크를 사용해 주세요.';
+            return;
+        }
+        if (idxInput) idxInput.value = validated.idx;
+        if (urlInput) urlInput.value = validated.url;
+        if (typeof renderAll === 'function') renderAll(true);
+        return;
     }
+
+    if (['www.kinu.or.kr', 'kinu.or.kr'].includes(parsed.hostname.toLowerCase())) return;
+    if (idxInput) idxInput.value = '';
+    if (urlInput) urlInput.value = candidate;
+    if (typeof renderAll === 'function') renderAll(true);
 }
 if (typeof window !== 'undefined') {
     window.onCustomReportUrlInput = onCustomReportUrlInput;
@@ -9693,88 +9729,77 @@ function parseKinuReportListFromHtml(sourceHtml, navCode, category = '', limit =
     return cards;
 }
 
+function getWebzineReportFormState() {
+    const fields = document.querySelectorAll(
+        '#issueCategory,#issueNoInput,#publishDate,#mainTitle,#subTitle,#chkHasColon,#summaryText,#subRatio,' +
+        '#authorListContainer input.author-name-input,#authorListContainer input.author-title-input'
+    );
+    return JSON.stringify([...fields].map(el => [el.id || el.className || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+}
+
 async function parseKinuReportDetailFromHtml(sourceHtml, idx, navCode, category = '') {
     const isEn = navCode ? navCode.startsWith('eng') : false;
     const defaultUrl = getKinuReportUrlFor(idx, navCode, category);
-
-    const result = {
-        idx: String(idx),
-        title: '',
-        date: '',
-        authors: [],
-        summary: '',
-        url: defaultUrl,
-        pdfUrl: '',
-        navCode: navCode,
-        category: category,
-        issueNo: '',
-        issueCategory: ''
-    };
-
+    const result = { idx: String(idx), title: '', date: '', authors: [], summary: '', url: defaultUrl,
+        pdfUrl: '', navCode, category, issueNo: '', issueCategory: '' };
     if (!sourceHtml) return result;
 
     const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
-    const canonicalNode = parsed.querySelector('link[rel~="canonical"]') || parsed.querySelector('meta[property="og:url"]');
-    const canonicalValue = canonicalNode?.href || canonicalNode?.content || '';
-    if (canonicalValue) {
-        try { result.url = new URL(canonicalValue, defaultUrl).href; } catch (_) { result.url = canonicalValue; }
-    }
-    const subject = parsed.querySelector('.subject');
-    const dateLabel = [...parsed.querySelectorAll('dt')].find(node => /^(발행일|date)$/i.test(node.textContent.trim()));
-    const authorLabel = [...parsed.querySelectorAll('dt')].find(node => /^(저자|authors?)$/i.test(node.textContent.trim()));
-    const hasDetailFields = Boolean(parsed.querySelector('.cont_abstract, [onclick*="fileDown"]')
-        || (dateLabel?.nextElementSibling && !dateLabel.closest('li.bx'))
-        || (authorLabel?.nextElementSibling && !authorLabel.closest('li.bx')));
-    if (!subject || subject.tagName === 'A' || subject.closest('li.bx') || !hasDetailFields) return result;
-    const hiddenIdx = parsed.querySelector('input[name="idx"],#idx,input[name="report_idx"],#report_idx')?.value;
-    const hiddenNav = parsed.querySelector('input[name="nav_code"],#nav_code')?.value;
-    const hiddenCategory = parsed.querySelector('input[name="category"],#category')?.value;
-    if ((hiddenIdx && String(hiddenIdx) !== String(idx)) || (hiddenNav && hiddenNav !== navCode)
-        || (hiddenCategory && String(hiddenCategory) !== String(category))) return result;
-    if (canonicalValue) {
-        const canonical = validateOnlineSeriesDetailUrl(result.url);
-        if (!canonical || canonical.error || canonical.idx !== String(idx) || canonical.navCode !== navCode
-            || canonical.category !== String(category || (isEn ? '72' : '53'))) return result;
-    }
-    if (subject) result.title = cleanKinuHtmlText(subject.textContent);
-    const metaValue = labels => {
-        const label = [...parsed.querySelectorAll('dt')].find(node => labels.test(node.textContent.trim()));
+    const reportForm = parsed.querySelector('form#report');
+    const article = reportForm?.querySelector('article.db-board-view');
+    if (!reportForm || !article) return result;
+
+    const formValues = selector => [...reportForm.querySelectorAll(selector)].map(field => String(field.value || '').trim());
+    const navValues = formValues('input[name="nav_code"],#nav_code');
+    const categoryValues = formValues('input[name="category"],#category');
+    const expectedCategory = String(category || (isEn ? '72' : '53'));
+    if (!navValues.length || navValues.some(value => value !== navCode)
+        || !categoryValues.length || categoryValues.some(value => value !== expectedCategory)) return result;
+
+    const optionalIdxFields = [...reportForm.querySelectorAll('input[name="idx"],#idx,input[name="report_idx"],#report_idx')];
+    if (optionalIdxFields.some(field => String(field.value || '').trim() !== String(idx))) return result;
+
+    const subject = article.querySelector('.subject');
+    if (!subject || subject.tagName === 'A') return result;
+    const labels = [...article.querySelectorAll('dt')];
+    const labelValue = matcher => {
+        const label = labels.find(node => matcher.test(node.textContent.trim()));
         return label?.nextElementSibling?.textContent || '';
     };
-    result.date = cleanKinuHtmlText(metaValue(/^(발행일|date)$/i));
-    result.authors = parseKinuAuthorsFromHtml(metaValue(/^(저자|authors?)$/i));
-    const abstract = parsed.querySelector('.cont_abstract');
+    const abstract = article.querySelector('.cont_abstract');
+    const hasDetailContent = Boolean(abstract || article.querySelector('[onclick*="fileDown"]')
+        || labelValue(/^(발행일|date)$/i) || labelValue(/^(저자|authors?)$/i));
+    if (!hasDetailContent) return result;
+
+    result.title = cleanKinuHtmlText(subject.textContent);
+    result.date = cleanKinuHtmlText(labelValue(/^(발행일|date)$/i));
+    result.authors = parseKinuAuthorsFromHtml(labelValue(/^(저자|authors?)$/i));
     if (abstract) {
         result.summary = cleanKinuAbstractText(abstract.innerHTML);
         result.summaryIncomplete = /(?:\.{3}|…)$/.test(result.summary.trim());
     }
-
-    const isInsight = (String(category) === '54' || navCode === 'mai1674786608');
-
-    // Check title for explicit issue number
-    if (result.title) {
-        const titleIssueMatch = result.title.match(/(?:온라인\s*시리즈|Online\s*Series|CO|현안분석|KINU\s*Insight)\s*(\d{2}\s*-\s*\d{1,3})\s*(?:\(?\s*([eE])\s*\)?)?/i);
-        if (titleIssueMatch) {
-            const num = titleIssueMatch[1].replace(/\s+/g, '');
-            const hasE = Boolean(titleIssueMatch[2]) || isEn;
-            result.issueNo = isInsight ? `20${num}` : `CO${num}${hasE ? 'e' : ''}`;
-            result.issueCategory = isInsight ? `KINU Insight / ${result.issueNo}` : `Online Series / ${result.issueNo}`;
-        }
+    const canonicalNode = parsed.head?.querySelector('link[rel~="canonical"]');
+    const canonicalValue = canonicalNode?.href || '';
+    if (canonicalValue) {
+        const canonical = validateOnlineSeriesDetailUrl(canonicalValue);
+        if (!canonical || canonical.error || canonical.idx !== String(idx) || canonical.navCode !== navCode
+            || canonical.category !== expectedCategory) return { ...result, title: '', date: '', authors: [], summary: '' };
+        result.url = canonical.url;
     }
 
-    // If not in title, check fileDown2
-    const fileDownCode = [...parsed.querySelectorAll('script')].map(node => node.textContent || '').join('\n');
+    const isInsight = String(category) === '54' || navCode === 'mai1674786608';
+    const titleIssueMatch = result.title.match(/(?:온라인\s*시리즈|Online\s*Series|CO|현안분석|KINU\s*Insight)\s*(\d{2}\s*-\s*\d{1,3})\s*(?:\(?\s*([eE])\s*\)?)?/i);
+    if (titleIssueMatch) {
+        const num = titleIssueMatch[1].replace(/\s+/g, '');
+        const hasE = Boolean(titleIssueMatch[2]) || isEn;
+        result.issueNo = isInsight ? `20${num}` : `CO${num}${hasE ? 'e' : ''}`;
+        result.issueCategory = isInsight ? `KINU Insight / ${result.issueNo}` : `Online Series / ${result.issueNo}`;
+    }
+    const fileDownCode = [...reportForm.querySelectorAll('script')].map(node => node.textContent || '').join('\n');
     const fileDownMatch = fileDownCode.match(/fileDown2\s*\(\s*["']([^"']+)["']/i);
-    if (fileDownMatch) {
-        const token = fileDownMatch[1];
-        if (token.startsWith('/')) {
-            result.pdfUrl = `https://www.kinu.or.kr${token}`;
-        }
-    }
-
+    if (fileDownMatch && fileDownMatch[1].startsWith('/')) result.pdfUrl = `https://www.kinu.or.kr${fileDownMatch[1]}`;
     return result;
 }
-
 function validateOnlineSeriesDetailUrl(rawUrl) {
     let parsed;
     try { parsed = new URL(String(rawUrl || '').trim()); } catch (_) { return { error: '주소를 확인해 주세요.' }; }
@@ -9853,8 +9878,7 @@ async function analyzeOnlineSeriesUrl() {
         return false;
     }
     const requestVersion = ++reportDetailRequestVersion;
-    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+    const formStateAtRequest = getWebzineReportFormState();
     const oldButtonText = button?.textContent || '';
     if (button) { button.disabled = true; button.textContent = '분석 중…'; }
     if (status) status.textContent = `[상세 조회 중] 공식 ${target.isEn ? '영문' : '국문'} 온라인시리즈 페이지를 확인합니다…`;
@@ -9869,8 +9893,7 @@ async function analyzeOnlineSeriesUrl() {
             return false;
         }
         report.summaryIncomplete = /(?:\.{3}|…)$/.test(String(report.summary || '').trim());
-        const currentFormState = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+        const currentFormState = getWebzineReportFormState();
         if (currentFormState !== formStateAtRequest) {
             if (status) status.textContent = '조회 중 폼 내용이 바뀌어 적용을 건너뛰었습니다. 현재 작성 내용을 유지했습니다.';
             return false;
@@ -9891,7 +9914,7 @@ async function analyzeOnlineSeriesUrl() {
         const reportUrlInput = document.getElementById('reportFullUrl');
         if (reportUrlInput) reportUrlInput.value = target.url;
         updateIngestionSourceIndicator(1, '공식 상세 링크');
-        renderAll();
+        renderAll(true);
         const preservedCopyNote = preservedLanguageFields.length ? ` 사용자 지정 ${preservedLanguageFields.join('·')}는 유지했습니다.` : '';
         if (!report.summary && status) status.textContent = `[상세 적용 완료] 메타정보를 적용했습니다. 공식 페이지에 초록이 없습니다.${preservedCopyNote}`;
         else if (status) status.textContent = `[상세 적용 완료] 공식 메타정보와 원문 초록을 적용했습니다.${report.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝나 전문이 아닙니다.' : ''} 번역·요약은 생성하지 않았습니다.${preservedCopyNote}`;
@@ -9910,8 +9933,7 @@ async function onSelectLiveReport(idx) {
     const requestVersion = ++reportDetailRequestVersion;
     const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
     if (analyzeButton) { analyzeButton.disabled = false; analyzeButton.textContent = '링크 분석'; }
-    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+    const formStateAtRequest = getWebzineReportFormState();
     const selected = fetchedReports.find(report => String(report.idx) === String(idx));
     if (!selected) return;
     const status = document.getElementById('reportIntegrationStatus');
@@ -9929,8 +9951,7 @@ async function onSelectLiveReport(idx) {
             if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 확인하지 못했습니다. 이전 글의 초록과 저자는 적용하지 않았습니다.`;
             return;
         }
-        const currentFormState = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+        const currentFormState = getWebzineReportFormState();
         if (currentFormState !== formStateAtRequest) {
             if (status) status.textContent = '조회 중 입력 내용이 바뀌어 공식 상세 적용을 건너뛰었습니다. 현재 내용을 유지했습니다.';
             return;
@@ -9969,7 +9990,7 @@ async function onSelectLiveReport(idx) {
                 if (fullCat) syncIssueCategoryUI(fullCat, '공식 보고서');
                 else syncIssueCategoryUI('');
             }
-            renderAll();
+            renderAll(true);
         }
         updateIngestionSourceIndicator(1, `idx=${idx}`);
         if (status) status.textContent = report.summary
@@ -9987,15 +10008,16 @@ async function onSelectLiveReport(idx) {
 async function fetchLatestKinuReports(silent = false) {
     const listRequest = ++reportListRequestVersion;
     ++reportDetailRequestVersion;
+    const detailRequestAtListStart = reportDetailRequestVersion;
     const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
     if (analyzeButton) {
         analyzeButton.disabled = false;
         analyzeButton.textContent = '링크 분석';
     }
-    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+    const formStateAtRequest = getWebzineReportFormState();
     const button = document.getElementById('btnFetchKinu');
     const select = document.getElementById('selLiveReport');
+    const selectionAtListStart = select?.value || '';
     const status = document.getElementById('reportIntegrationStatus');
     if (!select) return [];
 
@@ -10034,6 +10056,11 @@ async function fetchLatestKinuReports(silent = false) {
         if (listRequest !== reportListRequestVersion) return [];
         if (!reports.length) throw new Error('공식 목록에서 해당 언어의 자료를 찾지 못했습니다.');
 
+        const selectionAtListCompletion = select.value || '';
+        const selectedOptionAtListCompletion = select.selectedOptions?.[0]?.cloneNode(true) || null;
+        const selectionChangedDuringRequest = detailRequestAtListStart !== reportDetailRequestVersion
+            || selectionAtListCompletion !== selectionAtListStart;
+        const preserveSelectionIntent = selectionChangedDuringRequest || Boolean(selectionAtListStart);
         fetchedReports = reports;
         select.replaceChildren(new Option(`-- 공식 사이트 최근 자료 ${reports.length}건 중 선택 --`, ''));
         reports.forEach(report => {
@@ -10041,14 +10068,22 @@ async function fetchLatestKinuReports(silent = false) {
             option.dataset.navCode = navCode;
             select.add(option);
         });
-        const formChanged = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
-            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null])) !== formStateAtRequest;
+        const selectionToRestore = selectionChangedDuringRequest ? selectionAtListCompletion : selectionAtListStart;
+        if (selectionToRestore) {
+            if (reports.some(report => String(report.idx) === String(selectionToRestore))) {
+                select.value = String(selectionToRestore);
+            } else if (selectedOptionAtListCompletion && String(selectedOptionAtListCompletion.value) === String(selectionToRestore)) {
+                select.add(selectedOptionAtListCompletion);
+                select.value = String(selectionToRestore);
+            }
+        }
+        const formChanged = getWebzineReportFormState() !== formStateAtRequest;
         if (status) status.textContent = `공식 사이트 최근 자료 ${reports.length}건을 확인했습니다. Jina Reader의 캐시 갱신 요청은 영구적인 최신성을 보장하지 않습니다.${isWebzineDraftDirty || formChanged ? ' 작성 중인 초안은 유지했습니다.' : ''}`;
 
-        if (!isWebzineDraftDirty && !formChanged && !silent && reports.length) {
+        if (!preserveSelectionIntent && !isWebzineDraftDirty && !formChanged && !silent && reports.length) {
             select.value = reports[0].idx;
             await onSelectLiveReport(reports[0].idx);
-        } else if (!isWebzineDraftDirty && !formChanged && silent) {
+        } else if (!preserveSelectionIntent && !isWebzineDraftDirty && !formChanged && silent) {
             const currentIdx = document.getElementById('reportIdx')?.value?.trim();
             if (currentIdx && reports.some(report => String(report.idx) === currentIdx)) select.value = currentIdx;
         }
@@ -10929,11 +10964,12 @@ function switchTab(tabId) {
         }
     });
     if ((tabId === 'preview' || tabId === 'homepage-preview') && currentMasterSuite === 'webzine') {
-        renderAll();
+        renderAll(true);
     }
 }
 
 function copyCurrentCode() {
+    if (typeof renderAll === 'function') renderAll(true);
     const output = getActiveCodeOutput();
     if (output && output.value) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -10953,6 +10989,7 @@ function copyCurrentCode() {
 }
 
 function downloadCurrentCode() {
+    if (typeof renderAll === 'function') renderAll(true);
     const output = getActiveCodeOutput();
     if (!output || !output.value) return;
     const isMarkdown = currentTab === 'md';
@@ -10969,6 +11006,7 @@ function downloadCurrentCode() {
 }
 
 function downloadWebzineTxt(options = {}) {
+    if (typeof renderAll === 'function') renderAll(true);
     try {
         let output = document.getElementById('outputHtmlCode');
         if (!output || !output.value) {
