@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "5503c1c4da124630061d0c0ae172ed00360a12d35d92ac30d5da070e81e3e072"
+      "sha256": "39b7aef022724b27ad6e00d751c79e75aa1f5bcf636ef518e1acc52089d9e507"
     },
     {
       "path": ".nojekyll",
@@ -36,5 +36,7 @@
       "sha256": "1cd0296348e74c505e209448bb9d99844402c051564baba02e9505f6ea4ed664"
     }
   ],
-  "privacy_check": "Heuristic text scan, not PCFilter verification."
+  "privacy_check": "Heuristic text scan, not PCFilter verification.",
+  "version": "v1.9.46",
+  "core_version": "A0 Core v1.9.46 (v5.9.46)"
 }
