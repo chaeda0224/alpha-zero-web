@@ -41,7 +41,10 @@
             label.textContent = '웹 버전 · 브라우저 저장';
             label.title = '현재 브라우저에 저장됩니다. 다른 기기와 자동으로 동기화되지 않습니다.';
         }
-        global.openWebzineStandalone = event => openTool('webzine', event);
+        global.openWebzineStandalone = event => {
+            if (event && event.stopPropagation) event.stopPropagation();
+            global.open(new URL('webzine_builder.html', global.location.href).href, '_blank', 'noopener,noreferrer');
+        };
         global.openNameplateStandalone = event => openTool('nameplate', event);
         global.openRulebookStandalone = event => openTool('rulebook', event);
     }
@@ -53,7 +56,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpha-Zero (A0) - A0 Core v1.9.46 (v5.9.46)</title>
+    <title>Alpha-Zero (A0) - A0 Core v1.9.47 (v5.9.47)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230062ab'/%3E%3Cstop offset='100%25' stop-color='%23003366'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Proto Mono, monospace' font-weight='700' font-size='30' letter-spacing='-0.02em' fill='%23ffffff' text-anchor='middle'%3EA0%3C/text%3E%3C/svg%3E" />
     <!-- 테마 초기화: localStorage 저장값 우선, 기본값은 라이트(화이트) -->
@@ -8565,7 +8568,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                             <span id="sidebarAreaHeaderTitle" class="font-black text-sm text-slate-800 dark:text-slate-100 tracking-tight leading-tight truncate">Today</span>
                             <span id="sidebarAreaSubBadge" class="text-[9.5px] font-mono text-slate-400 dark:text-slate-500 font-bold uppercase leading-none">Workspace</span>
                         </div>
-                        <span class="app-version-badge sr-only" title="A0 Core v1.9.46 (v5.9.46)">v1.9.46 (v5.9.46)</span>
+                        <span class="app-version-badge sr-only" title="A0 Core v1.9.47 (v5.9.47)">v1.9.47 (v5.9.47)</span>
                     </div>
                     <div class="flex items-center gap-1">
                         <button type="button" id="sidebarRailCollapseBtn" onclick="toggleSidebarRail(true)" class="hidden md:inline-flex items-center justify-center w-7 h-7 text-slate-400 hover:text-[var(--accent-color)] dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-md transition-colors cursor-pointer" title="사이드바 접기 (Alt+S)">
@@ -8914,7 +8917,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                             <i class="fa-solid fa-circle-info text-xs"></i>
                             <span>Help · Update Log</span>
                         </span>
-                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.46 (v5.9.46)</span>
+                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.47 (v5.9.47)</span>
                     </button>
 
                     <!-- Hidden compatibility anchor -->
@@ -9203,7 +9206,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
             </div>
             <output id="workspaceCoreVersion" aria-label="현재 A0 버전" class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
                 <span class="font-a0-logo font-black text-xs text-[#0062ab] dark:text-sky-400 select-none leading-none" data-a0-logo="true">A0</span>
-                <span>Core v1.9.46 (v5.9.46)</span>
+                <span>Core v1.9.47 (v5.9.47)</span>
             </output>
         </div>
 
@@ -10355,7 +10358,12 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                                 <select id="selLiveReport" onchange="onSelectLiveReport(this.value)" data-report-action="select" class="w-full text-xs px-2.5 py-1.5 border border-sky-300/80 dark:border-sky-700 bg-white dark:bg-[#172232] font-semibold outline-none focus:border-[#0062ab] rounded truncate">
                                     <option value="">-- [1순위] 공식 사이트 최신 보고서를 선택하세요 --</option>
                                 </select>
+                                <div class="flex gap-1.5">
+                                    <input id="onlineSeriesUrl" type="url" inputmode="url" autocomplete="url" class="min-w-0 flex-1 text-xs px-2.5 py-2 border border-sky-300/80 dark:border-sky-700 bg-white dark:bg-[#172232] outline-none focus:border-[#0062ab] rounded" placeholder="국문·영문 온라인시리즈 상세 링크" aria-label="온라인시리즈 공식 상세 링크">
+                                    <button type="button" id="btnAnalyzeOnlineSeriesUrl" onclick="analyzeOnlineSeriesUrl()" class="shrink-0 px-3 py-2 bg-white dark:bg-[#172232] border border-sky-300/80 dark:border-sky-700 text-[#004f8a] dark:text-sky-300 text-[10.5px] font-bold rounded hover:bg-sky-100 dark:hover:bg-sky-900/40">링크 분석</button>
+                                </div>
                                 <p id="reportIntegrationStatus" class="text-[10.5px] text-[#64748b] dark:text-slate-400" aria-live="polite">[1순위 대기] 공식 사이트 최신 목록을 수집할 준비가 되었습니다.</p>
+                                <p class="text-[9.5px] leading-relaxed text-slate-500 dark:text-slate-400">자동 수집은 공식 링크를 Jina Reader에 요청합니다. 작성 내용과 업로드 파일은 전송하지 않습니다. 캐시 갱신 요청이 매번 최신 자료를 보장하지는 않습니다.</p>
                             </div>
                         </div>
 
@@ -11140,9 +11148,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
         <!-- 📧 END VIEW 1: KINU Webzine Builder -->
 
         <!-- 🏷️ VIEW 2: Nameplate Maker (명패 딸깍) -->
-
-        <!-- 🏷️ VIEW 2: Nameplate Maker (A0 Master Nameplate Builder) -->
-        <div id="suiteViewNameplate" data-np-mobile-tab="config" class="hidden flex-1 flex flex-col min-w-0 h-full overflow-hidden relative font-['Pretendard',sans-serif] bg-slate-50 dark:bg-[#080d1a]">
+<div id="suiteViewNameplate" data-np-mobile-tab="config" class="hidden flex-1 flex flex-col min-w-0 h-full overflow-hidden relative font-['Pretendard',sans-serif] bg-slate-50 dark:bg-[#080d1a]">
             
             <style>
                 /* Scoped responsive rules for Nameplate workbench */
@@ -19449,7 +19455,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 <div class="pt-4 border-t border-slate-200/60 dark:border-white/5 space-y-2">
                     <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px]">
                         <span class="text-slate-500 dark:text-neutral-400 font-medium">A0 Core Engine</span>
-                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.46 (v5.9.46)</span>
+                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.47 (v5.9.47)</span>
                     </div>
                 </div>
             </aside>
@@ -20857,7 +20863,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 <span class="text-[11px] text-slate-500 dark:text-neutral-400 block mt-0.5">통일연구원 KINU 오프라인 자립형 연구·행정 워크스페이스</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.46 (v5.9.46)</span>
+                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.47 (v5.9.47)</span>
                 <button type="button" onclick="openA0UpdateLogModal()" class="px-3 py-1 rounded-lg border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 text-xs font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer">
                     릴리즈 노트
                 </button>
@@ -20927,7 +20933,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                 </span>
                 <span class="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
                 <span class="hidden sm:inline text-slate-400 dark:text-slate-500 font-mono">
-                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.46 (v5.9.46)</strong>
+                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.47 (v5.9.47)</strong>
                 </span>
             </div>
 
@@ -20957,7 +20963,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                                 <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1">
                                     <span>Alpha-Zero (<span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>)</span>
                                 </div>
-                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.46 (v5.9.46) · 2026.10.26</div>
+                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.47 (v5.9.47) · 2026.10.26</div>
                             </div>
                             <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">Stable</span>
                         </div>
@@ -21414,7 +21420,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                     <div>
                         <h3 id="updateLogModalTitle" class="font-bold text-base text-slate-900 dark:text-white leading-tight flex items-center gap-2">
                         <span>Alpha-Zero 업데이트 로그</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.46 (v5.9.46)</span></span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.47 (v5.9.47)</span></span>
                     </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">전체 버전 릴리즈 이력 및 변경 사항</p>
                     </div>
@@ -21434,7 +21440,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
                     <i class="fa-solid fa-cube text-[10px]"></i> 엔진별 버전:
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 font-medium shrink-0">
-                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.46 (v5.9.46)</span>
+                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.47 (v5.9.47)</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 font-medium shrink-0">
                     <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>UI</strong> <span class="font-mono text-[11px] opacity-80">v1.0.0</span>
@@ -21464,7 +21470,7 @@ html.dark #studio-planner-root .apple-day-modal-row:hover {
             <!-- Version & Engine Filter Pills -->
             <div class="flex items-center gap-1.5 px-5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-[#0f1722] overflow-x-auto custom-scrollbar shrink-0">
                 <button id="btnLogFilterAll" type="button" onclick="filterUpdateLogs('all')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">전체 이력</button>
-                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.46 (v5.9.46)</button>
+                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.47 (v5.9.47)</button>
                 <button id="btnLogFilterV18" type="button" onclick="filterUpdateLogs('v1.8')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.8</button>
                 <button id="btnLogFilterV17" type="button" onclick="filterUpdateLogs('v1.7')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.7</button>
                 <button id="btnLogFilterV16" type="button" onclick="filterUpdateLogs('v1.6')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.6</button>
@@ -25252,10 +25258,10 @@ window.A0_ENGINE_REGISTRY = {
         desc: '4대 인텔리전스 콕핏, 과제 생애주기 G0~G5 마일스톤, 골든 포커스 Top 3 & 연구노트 허브'
     }
 };
-window.A0_CORE_VERSION = 'v1.9.46 (v5.9.46)';
+window.A0_CORE_VERSION = 'v1.9.47 (v5.9.47)';
 
 // === 🔒 GLOBAL CORE APPLICATION & SECURITY STATE ===
-const APP_VERSION = 'A0 Core v1.9.46 (v5.9.46)';
+const APP_VERSION = 'A0 Core v1.9.47 (v5.9.47)';
 const APP_RELEASE_DATE = '2026.10.26';
 const MASTER_OVERRIDE_KEY = 'chaesumin2026!';
 let authCountdownSeconds = 180;
@@ -46170,6 +46176,7 @@ if (typeof window !== 'undefined') {
 
 var isWebzineDraftDirty = false;
 var reportDetailRequestVersion = (typeof window !== 'undefined' && typeof window.reportDetailRequestVersion !== 'undefined') ? window.reportDetailRequestVersion : 0;
+var reportListRequestVersion = 0;
 var fetchedReports = (typeof window !== 'undefined' && Array.isArray(window.fetchedReports)) ? window.fetchedReports : [];
 
 function setWebzineDraftDirty(dirty = true) {
@@ -49566,7 +49573,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.46 (v5.9.46) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.47 (v5.9.47) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -53211,13 +53218,15 @@ function getReportUrl(idx) {
 
 function getCurrentReportUrl() {
     const idx = document.getElementById('reportIdx')?.value?.trim() || '';
-    if (/^\d+$/.test(idx)) {
-        return getReportUrl(idx);
+    const customUrl = document.getElementById('reportFullUrl')?.value?.trim() || '';
+    if (customUrl) {
+        const validated = typeof validateOnlineSeriesDetailUrl === 'function'
+            ? validateOnlineSeriesDetailUrl(customUrl)
+            : null;
+        if (validated && !validated.error && (!idx || validated.idx === idx)) return validated.url;
     }
-    const customUrl = document.getElementById('reportFullUrl')?.value?.trim();
-    if (customUrl && (customUrl.startsWith('http://') || customUrl.startsWith('https://'))) {
-        return customUrl;
-    }
+    if (/^\d+$/.test(idx)) return getReportUrl(idx);
+    if (customUrl && /^https?:\/\//i.test(customUrl)) return customUrl;
     return getReportUrl('');
 }
 
@@ -53490,8 +53499,17 @@ function setReportFormFromData(report, preferOfficialUrl = false) {
         if (issueInput) issueInput.value = '';
         syncIssueCategoryUI('');
     }
-    if (summaryInput && report.summary) summaryInput.value = report.summary;
-    if (urlInput) urlInput.value = preferOfficialUrl && report.url ? report.url : getReportUrl(report.idx || '');
+    if (summaryInput && Object.prototype.hasOwnProperty.call(report, 'summary')) {
+        summaryInput.value = report.summary == null ? '' : report.summary;
+    }
+    if (urlInput) {
+        const validatedReportUrl = preferOfficialUrl && report.url && typeof validateOnlineSeriesDetailUrl === 'function'
+            ? validateOnlineSeriesDetailUrl(report.url)
+            : null;
+        urlInput.value = validatedReportUrl && !validatedReportUrl.error
+            ? validatedReportUrl.url
+            : (preferOfficialUrl && report.url ? report.url : getReportUrl(report.idx || ''));
+    }
     authorList = resolveAuthorList(report.authors || report.author, isEn ? 'en' : 'ko');
     renderAuthorRows(authorList);
     renderAll();
@@ -54179,6 +54197,58 @@ async function fetchKinuHtmlViaCorsProxy(targetUrl) {
     return null;
 }
 
+async function fetchKinuHtmlViaReader(targetUrl, timeoutMs = 20000) {
+    const input = new URL(targetUrl);
+    if (input.protocol !== 'https:' || input.hostname !== 'www.kinu.or.kr'
+        || !/^\/(?:main|eng)\/module\/report\/(?:index|view)\.do$/.test(input.pathname)) {
+        throw new Error('허용된 공식 KINU 목록·상세 주소가 아닙니다.');
+    }
+    const isEnglish = input.pathname.startsWith('/eng/');
+    const navCode = isEnglish ? 'eng1674805982' : 'mai1674786581';
+    let canonical;
+    if (input.pathname.endsWith('/view.do')) {
+        const detail = validateOnlineSeriesDetailUrl(input.href);
+        if (detail.error || detail.isEn !== isEnglish) throw new Error('공식 상세 주소의 게시물 정보를 확인하지 못했습니다.');
+        canonical = new URL(detail.url);
+        if (canonical.origin !== 'https://www.kinu.or.kr'
+            || [...canonical.searchParams.keys()].some(key => !['idx', 'nav_code', 'category'].includes(key))) {
+            throw new Error('상세 주소를 공식 허용 항목으로 재구성하지 못했습니다.');
+        }
+    } else {
+        if ([...input.searchParams.keys()].some(key => !['nav_code', 'viewPage', 'category'].includes(key))
+            || input.searchParams.getAll('nav_code').length !== 1
+            || input.searchParams.getAll('category').length !== 1
+            || input.searchParams.get('nav_code') !== navCode
+            || input.searchParams.get('category') !== (isEnglish ? '72' : '53')) {
+            throw new Error('공식 목록의 언어·게시판을 확인하지 못했습니다.');
+        }
+        canonical = new URL(input.pathname, 'https://www.kinu.or.kr');
+        canonical.searchParams.set('nav_code', navCode);
+        canonical.searchParams.set('category', isEnglish ? '72' : '53');
+    }
+    const readerUrl = `https://r.jina.ai/${canonical.href}`;
+    const response = await fetchWithTimeout(readerUrl, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-store',
+        headers: { 'X-Respond-With': 'html', 'X-No-Cache': 'true' }
+    }, timeoutMs);
+    if (!response.ok) throw new Error(`자료 중계 응답 ${response.status}`);
+    const html = await response.text();
+    if (!isValidKinuHtmlResponse(html, 80)) throw new Error('공식 페이지 HTML 응답을 확인하지 못했습니다.');
+    return html;
+}
+function isValidKinuHtmlResponse(text, minLen = 150) {
+    if (!text || typeof text !== 'string') return false;
+    const trimmed = text.trim();
+    if (trimmed.length < minLen) return false;
+    // Reject official error pages instead of parsing them as report data
+    if (/<p\s+class=["']tit["']>\s*Error\s+[45]\d\d\s*<\/p>/i.test(trimmed)) return false;
+    if (/<h2>\s*[45]\d\d\s*오류/i.test(trimmed)) return false;
+    return true;
+}
+
 function unescapeHtmlEntities(str) {
     if (!str) return '';
     if (typeof document !== 'undefined' && document.createElement) {
@@ -54258,48 +54328,55 @@ function parseKinuReportListFromHtml(sourceHtml, navCode, category = '', limit =
     const kinuOrigin = 'https://www.kinu.or.kr';
     const isEn = navCode ? navCode.startsWith('eng') : false;
     const baseSubpath = isEn ? '/eng/module/report/' : '/main/module/report/';
-
-    const bxRegex = /<li\s+class=["']bx["'][^>]*>([\s\S]*?)<\/li>/gi;
-    let match;
-    while ((match = bxRegex.exec(sourceHtml)) !== null && cards.length < limit) {
-        const cardHtml = match[1];
-        const linkMatch = cardHtml.match(/<a\s+[^>]*href=["']([^"']*idx=(\d+)[^"']*)["'][^>]*class=["'][^"']*subject[^"']*["'][^>]*>([\s\S]*?)<\/a>/i) ||
-                          cardHtml.match(/<a\s+[^>]*class=["'][^"']*subject[^"']*["'][^>]*href=["']([^"']*idx=(\d+)[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i);
-        if (!linkMatch) continue;
-        const relativeUrl = linkMatch[1];
-        const idx = linkMatch[2];
-        const rawTitle = linkMatch[3];
-
-        const dateMatch = cardHtml.match(/<dt>\s*(?:발행일|Date)\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i);
-        const authorMatch = cardHtml.match(/<dt>\s*(?:저자|Authors?)\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i);
-
-        let fullUrl = '';
-        if (relativeUrl.startsWith('http')) {
-            fullUrl = relativeUrl;
-        } else if (relativeUrl.startsWith('/')) {
-            fullUrl = `${kinuOrigin}${relativeUrl}`;
-        } else {
-            fullUrl = `${kinuOrigin}${baseSubpath}${relativeUrl}`;
-        }
-
+    const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
+    for (const card of parsed.querySelectorAll('li.bx')) {
+        if (cards.length >= limit) break;
+        const link = card.querySelector('a.subject[href*="idx="]');
+        if (!link) continue;
+        let detailUrl;
+        try { detailUrl = new URL(link.getAttribute('href'), `${kinuOrigin}${baseSubpath}`); } catch (_) { continue; }
+        if (!['http:', 'https:'].includes(detailUrl.protocol) || detailUrl.hostname !== 'www.kinu.or.kr'
+            || detailUrl.pathname !== `${baseSubpath}view.do`) continue;
+        const idxValues = detailUrl.searchParams.getAll('idx');
+        const navValues = detailUrl.searchParams.getAll('nav_code');
+        const categoryValues = detailUrl.searchParams.getAll('category');
+        if (idxValues.length !== 1 || navValues.length > 1 || categoryValues.length > 1
+            || (navValues.length && navValues[0] !== navCode)
+            || (categoryValues.length && categoryValues[0] !== String(category))) continue;
+        const idx = idxValues[0];
+        if (!/^\d+$/.test(idx || '')) continue;
+        const dateNode = [...card.querySelectorAll('dt')].find(node => /^(발행일|date)$/i.test(node.textContent.trim()))?.nextElementSibling;
+        const authorNode = [...card.querySelectorAll('dt')].find(node => /^(저자|authors?)$/i.test(node.textContent.trim()))?.nextElementSibling;
+        const actualPath = isEn ? '/eng/module/report/view.do' : '/main/module/report/view.do';
+        const urlParams = new URLSearchParams({ idx, nav_code: navCode });
+        if (category) urlParams.set('category', category);
         cards.push({
-            idx: String(idx),
-            title: cleanKinuHtmlText(rawTitle),
-            date: dateMatch ? cleanKinuHtmlText(dateMatch[1]) : '',
-            authors: authorMatch ? parseKinuAuthorsFromHtml(authorMatch[1]) : [],
-            url: fullUrl,
-            navCode: navCode,
-            category: category
+            idx,
+            title: cleanKinuHtmlText(link.textContent),
+            date: dateNode ? cleanKinuHtmlText(dateNode.textContent) : '',
+            authors: authorNode ? parseKinuAuthorsFromHtml(authorNode.textContent) : [],
+            url: `${kinuOrigin}${actualPath}?${urlParams.toString()}`,
+            navCode,
+            category
         });
     }
     return cards;
 }
 
+function getKinuReportUrlFor(idx, navCode, category = '') {
+    const isEnglish = String(navCode || '').startsWith('eng');
+    const cleanIdx = String(idx || '').trim();
+    if (!/^\d+$/.test(cleanIdx)) return '';
+    const url = new URL(`https://www.kinu.or.kr/${isEnglish ? 'eng' : 'main'}/module/report/view.do`);
+    url.searchParams.set('idx', cleanIdx);
+    url.searchParams.set('nav_code', isEnglish ? 'eng1674805982' : 'mai1674786581');
+    url.searchParams.set('category', isEnglish ? '72' : (String(category || '53') === '54' ? '54' : '53'));
+    return url.href;
+}
+
 async function parseKinuReportDetailFromHtml(sourceHtml, idx, navCode, category = '') {
     const isEn = navCode ? navCode.startsWith('eng') : false;
-    const defaultUrl = isEn
-        ? `https://www.kinu.or.kr/eng/module/report/view.do?idx=${idx}&nav_code=${navCode}`
-        : `https://www.kinu.or.kr/main/module/report/view.do?idx=${idx}&nav_code=${navCode}${category ? '&category=' + category : ''}`;
+    const defaultUrl = getKinuReportUrlFor(idx, navCode, category);
 
     const result = {
         idx: String(idx),
@@ -54317,24 +54394,40 @@ async function parseKinuReportDetailFromHtml(sourceHtml, idx, navCode, category 
 
     if (!sourceHtml) return result;
 
-    const subjectMatch = sourceHtml.match(/<(?:p|div|h[1-6])\s+class=["']subject["'][^>]*>([\s\S]*?)<\/(?:p|div|h[1-6])>/i);
-    if (subjectMatch) {
-        result.title = cleanKinuHtmlText(subjectMatch[1]);
+    const parsed = new DOMParser().parseFromString(sourceHtml, 'text/html');
+    const canonicalNode = parsed.querySelector('link[rel~="canonical"]') || parsed.querySelector('meta[property="og:url"]');
+    const canonicalValue = canonicalNode?.href || canonicalNode?.content || '';
+    if (canonicalValue) {
+        try { result.url = new URL(canonicalValue, defaultUrl).href; } catch (_) { result.url = canonicalValue; }
     }
-
-    const dateMatch = sourceHtml.match(/<dt>\s*(?:발행일|Date)\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i);
-    if (dateMatch) {
-        result.date = cleanKinuHtmlText(dateMatch[1]);
+    const subject = parsed.querySelector('.subject');
+    const dateLabel = [...parsed.querySelectorAll('dt')].find(node => /^(발행일|date)$/i.test(node.textContent.trim()));
+    const authorLabel = [...parsed.querySelectorAll('dt')].find(node => /^(저자|authors?)$/i.test(node.textContent.trim()));
+    const hasDetailFields = Boolean(parsed.querySelector('.cont_abstract, [onclick*="fileDown"]')
+        || (dateLabel?.nextElementSibling && !dateLabel.closest('li.bx'))
+        || (authorLabel?.nextElementSibling && !authorLabel.closest('li.bx')));
+    if (!subject || subject.tagName === 'A' || subject.closest('li.bx') || !hasDetailFields) return result;
+    const hiddenIdx = parsed.querySelector('input[name="idx"],#idx,input[name="report_idx"],#report_idx')?.value;
+    const hiddenNav = parsed.querySelector('input[name="nav_code"],#nav_code')?.value;
+    const hiddenCategory = parsed.querySelector('input[name="category"],#category')?.value;
+    if ((hiddenIdx && String(hiddenIdx) !== String(idx)) || (hiddenNav && hiddenNav !== navCode)
+        || (hiddenCategory && String(hiddenCategory) !== String(category))) return result;
+    if (canonicalValue) {
+        const canonical = validateOnlineSeriesDetailUrl(result.url);
+        if (!canonical || canonical.error || canonical.idx !== String(idx) || canonical.navCode !== navCode
+            || canonical.category !== String(category || (isEn ? '72' : '53'))) return result;
     }
-
-    const authorMatch = sourceHtml.match(/<dt>\s*(?:저자|Authors?)\s*<\/dt>\s*<dd>([\s\S]*?)<\/dd>/i);
-    if (authorMatch) {
-        result.authors = parseKinuAuthorsFromHtml(authorMatch[1]);
-    }
-
-    const abstractMatch = sourceHtml.match(/<div\s+class=["']cont_abstract["'][^>]*>([\s\S]*?)<\/div>/i);
-    if (abstractMatch) {
-        result.summary = cleanKinuAbstractText(abstractMatch[1]);
+    if (subject) result.title = cleanKinuHtmlText(subject.textContent);
+    const metaValue = labels => {
+        const label = [...parsed.querySelectorAll('dt')].find(node => labels.test(node.textContent.trim()));
+        return label?.nextElementSibling?.textContent || '';
+    };
+    result.date = cleanKinuHtmlText(metaValue(/^(발행일|date)$/i));
+    result.authors = parseKinuAuthorsFromHtml(metaValue(/^(저자|authors?)$/i));
+    const abstract = parsed.querySelector('.cont_abstract');
+    if (abstract) {
+        result.summary = cleanKinuAbstractText(abstract.innerHTML);
+        result.summaryIncomplete = /(?:\.{3}|…)$/.test(result.summary.trim());
     }
 
     const isInsight = (String(category) === '54' || navCode === 'mai1674786608');
@@ -54351,90 +54444,175 @@ async function parseKinuReportDetailFromHtml(sourceHtml, idx, navCode, category 
     }
 
     // If not in title, check fileDown2
-    const fileDownMatch = sourceHtml.match(/fileDown2\s*\(\s*["']([^"']+)["']/i);
+    const fileDownCode = [...parsed.querySelectorAll('script')].map(node => node.textContent || '').join('\n');
+    const fileDownMatch = fileDownCode.match(/fileDown2\s*\(\s*["']([^"']+)["']/i);
     if (fileDownMatch) {
         const token = fileDownMatch[1];
         if (token.startsWith('/')) {
             result.pdfUrl = `https://www.kinu.or.kr${token}`;
-            if (!result.issueNo) {
-                try {
-                    const mediaResHtml = await fetchKinuHtmlViaCorsProxy(`https://www.kinu.or.kr${token}`);
-                    if (mediaResHtml) {
-                        let decoded = mediaResHtml;
-                        try { decoded = decodeURIComponent(decodeURIComponent(decoded)); } catch (_) {}
-                        const issueMatch = decoded.match(/(?:온라인\s*시리즈|Online\s*Series|CO|현안분석|KINU\s*Insight)[\s_+\-%20]*(\d{2}\s*-\s*\d{1,3})\s*(?:%28|\()?\s*([eE])?\s*(?:%29|\))?/i);
-                        if (issueMatch) {
-                            const num = issueMatch[1].replace(/\s+/g, '');
-                            const hasE = Boolean(issueMatch[2]) || isEn;
-                            result.issueNo = isInsight ? `20${num}` : `CO${num}${hasE ? 'e' : ''}`;
-                            result.issueCategory = isInsight ? `KINU Insight / ${result.issueNo}` : `Online Series / ${result.issueNo}`;
-                        }
-                    }
-                } catch (_) {}
-            }
         }
     }
 
     return result;
 }
 
+function validateOnlineSeriesDetailUrl(rawUrl) {
+    let parsed;
+    try { parsed = new URL(String(rawUrl || '').trim()); } catch (_) { return { error: '주소를 확인해 주세요.' }; }
+    if (!['http:', 'https:'].includes(parsed.protocol)) return { error: 'HTTP 또는 HTTPS 공식 링크를 입력해 주세요.' };
+    if (!['www.kinu.or.kr', 'kinu.or.kr'].includes(parsed.hostname.toLowerCase()) || parsed.username || parsed.password
+        || (parsed.port && !((parsed.protocol === 'https:' && parsed.port === '443') || (parsed.protocol === 'http:' && parsed.port === '80')))) return { error: '통일연구원 공식 홈페이지 링크만 분석할 수 있습니다.' };
+    const isEn = parsed.pathname === '/eng/module/report/view.do';
+    const isKo = parsed.pathname === '/main/module/report/view.do';
+    if (!isEn && !isKo) return { error: '국문 또는 영문 온라인시리즈 상세 페이지 링크를 입력해 주세요.' };
+    const idxValues = parsed.searchParams.getAll('idx');
+    const navValues = parsed.searchParams.getAll('nav_code');
+    const categoryValues = parsed.searchParams.getAll('category');
+    if (idxValues.length !== 1 || !/^\d+$/.test(idxValues[0]) || navValues.length > 1 || categoryValues.length > 1) {
+        return { error: '상세 링크의 게시물 정보가 올바르지 않습니다.' };
+    }
+    const navCode = navValues[0] || (isEn ? 'eng1674805982' : 'mai1674786581');
+    const category = categoryValues[0] || (isEn ? '72' : '53');
+    if ((isEn && (!navCode.startsWith('eng') || !['', '72'].includes(category)))
+        || (isKo && (navCode !== 'mai1674786581' || !['', '53'].includes(category)))) {
+        return { error: '온라인시리즈 게시판과 언어가 링크 경로와 일치하지 않습니다.' };
+    }
+    const normalized = new URL(`https://www.kinu.or.kr/${isEn ? 'eng' : 'main'}/module/report/view.do`);
+    normalized.searchParams.set('idx', idxValues[0]);
+    normalized.searchParams.set('nav_code', navCode);
+    normalized.searchParams.set('category', category);
+    return { idx: idxValues[0], navCode, category, isEn, url: normalized.href };
+}
+function applyOnlineSeriesLanguageDefaults(lang) {
+    const previousLang = (currentWebzineSeries === 'online-en' || currentLang === 'en') ? 'en' : 'ko';
+    if (previousLang === lang) return [];
+    const defaults = {
+        ko: {
+            button: '전문 읽기',
+            disclaimer: '이 글의 내용은 집필진의 개인적 견해이며, 통일연구원의 공식적 견해가 아님을 밝힙니다.'
+        },
+        en: {
+            button: 'Read More',
+            disclaimer: 'The views expressed in this article are those of the authors and do not necessarily reflect the official position of the Korea Institute for National Unification.'
+        }
+    };
+    const previous = defaults[previousLang];
+    const next = defaults[lang];
+    const button = document.getElementById('btnLabel');
+    const disclaimer = document.getElementById('disclaimerText');
+    const preserved = [];
+    if (button) {
+        if (!button.value.trim() || button.value.trim() === previous.button) button.value = next.button;
+        else preserved.push('버튼 문구');
+    }
+    if (disclaimer) {
+        if (!disclaimer.value.trim() || disclaimer.value.trim() === previous.disclaimer) disclaimer.value = next.disclaimer;
+        else preserved.push('면책 문구');
+    }
+    return preserved;
+}
+function syncOnlineSeriesLanguageUI(lang) {
+    currentWebzineSeries = lang === 'en' ? 'online-en' : 'online-kr';
+    currentLang = lang === 'en' ? 'en' : 'ko';
+    window.currentWebzineSeries = currentWebzineSeries;
+    window.currentLang = currentLang;
+    updateSeriesButtonStyles(currentWebzineSeries);
+    const badge = document.getElementById('wzCurrentEditionBadge');
+    if (badge) badge.textContent = lang === 'en' ? 'Online Series 영문 (English)' : '온라인시리즈 국문 (Korean)';
+}
+
+async function analyzeOnlineSeriesUrl() {
+    const input = document.getElementById('onlineSeriesUrl');
+    const status = document.getElementById('reportIntegrationStatus');
+    const button = document.getElementById('btnAnalyzeOnlineSeriesUrl');
+    const target = validateOnlineSeriesDetailUrl(input?.value);
+    if (target.error) {
+        if (status) status.textContent = `[링크 확인] ${target.error}`;
+        input?.focus();
+        return false;
+    }
+    const requestVersion = ++reportDetailRequestVersion;
+    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+    if (button) { button.disabled = true; button.textContent = '분석 중…'; }
+    if (status) status.textContent = `[상세 조회 중] 공식 ${target.isEn ? '영문' : '국문'} 온라인시리즈 페이지를 확인합니다…`;
+    try {
+        const detailHtml = await fetchKinuHtmlViaReader(target.url, 32000);
+        const report = await parseKinuReportDetailFromHtml(detailHtml, target.idx, target.navCode, target.category);
+        if (requestVersion !== reportDetailRequestVersion) return false;
+        const returned = validateOnlineSeriesDetailUrl(report?.url);
+        if (!report || String(report.idx) !== target.idx || report.navCode !== target.navCode
+            || !report.title || !returned || returned.error || returned.idx !== target.idx || returned.isEn !== target.isEn) {
+            if (status) status.textContent = '공식 상세 정보를 확인하지 못했습니다. 입력 내용을 유지했습니다.';
+            return false;
+        }
+        report.summaryIncomplete = /(?:\.{3}|…)$/.test(String(report.summary || '').trim());
+        const currentFormState = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+        if (currentFormState !== formStateAtRequest) {
+            if (status) status.textContent = '조회 중 폼 내용이 바뀌어 적용을 건너뛰었습니다. 현재 작성 내용을 유지했습니다.';
+            return false;
+        }
+        const preservedLanguageFields = applyOnlineSeriesLanguageDefaults(target.isEn ? 'en' : 'ko');
+        syncOnlineSeriesLanguageUI(target.isEn ? 'en' : 'ko');
+        fetchedReports = [report];
+        const select = document.getElementById('selLiveReport');
+        if (select) {
+            select.innerHTML = '';
+            const option = document.createElement('option');
+            option.value = report.idx;
+            option.textContent = `${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`;
+            select.appendChild(option);
+            select.value = report.idx;
+        }
+            setReportFormFromData({ ...report, mainTitle: report.title, subTitle: '', hasColon: false }, true);
+        const reportUrlInput = document.getElementById('reportFullUrl');
+        if (reportUrlInput) reportUrlInput.value = target.url;
+        updateIngestionSourceIndicator(1, '공식 상세 링크');
+        renderAll();
+        const preservedCopyNote = preservedLanguageFields.length ? ` 사용자 지정 ${preservedLanguageFields.join('·')}는 유지했습니다.` : '';
+        if (!report.summary && status) status.textContent = `[상세 적용 완료] 메타정보를 적용했습니다. 공식 페이지에 초록이 없습니다.${preservedCopyNote}`;
+        else if (status) status.textContent = `[상세 적용 완료] 공식 메타정보와 원문 초록을 적용했습니다.${report.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝나 전문이 아닙니다.' : ''} 번역·요약은 생성하지 않았습니다.${preservedCopyNote}`;
+        return true;
+    } catch (_) {
+        if (requestVersion === reportDetailRequestVersion && status) status.textContent = '공식 상세 페이지에 연결하지 못했습니다. 작성 중인 내용은 유지했습니다.';
+        return false;
+    } finally {
+        if (button && requestVersion === reportDetailRequestVersion) { button.disabled = false; button.textContent = '링크 분석'; }
+    }
+}
+
 async function onSelectLiveReport(idx) {
     if (!idx) return;
     const requestVersion = ++reportDetailRequestVersion;
+    const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
+    if (analyzeButton) { analyzeButton.disabled = false; analyzeButton.textContent = '링크 분석'; }
+    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
     const selected = fetchedReports.find(report => String(report.idx) === String(idx));
-    if (selected) {
-        setReportFormFromData(selected, true);
-        updateIngestionSourceIndicator(1, `idx=${idx}`);
-    }
+    if (!selected) return;
     const status = document.getElementById('reportIntegrationStatus');
     if (status) status.textContent = `[1순위] 공식 보고서(idx ${idx})의 상세 정보를 불러오는 중입니다...`;
     try {
-        const detailParams = new URLSearchParams({ idx: String(idx) });
-        if (selected?.navCode) detailParams.set('nav_code', selected.navCode);
-        if (selected?.category) detailParams.set('category', selected.category);
-
-        let reportData = null;
-        const apiEndpoints = (typeof window !== 'undefined' && window.location?.protocol === 'file:')
-            ? [`http://127.0.0.1:8000/api/kinu-report?${detailParams.toString()}`]
-            : [`/api/kinu-report?${detailParams.toString()}`, `http://127.0.0.1:8000/api/kinu-report?${detailParams.toString()}`];
-
-        // Step 1: Local server
-        for (const endpoint of apiEndpoints) {
-            try {
-                const response = await fetchWithTimeout(endpoint, { cache: 'no-store' }, 6000);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.ok && data.report) {
-                        reportData = data.report;
-                        break;
-                    }
-                }
-            } catch (_) {
-                if (endpoint.startsWith('http://127.0.0.1:8000')) {
-                    try {
-                        const jsonpData = await fetchLocalServerJsonp(endpoint, 5000);
-                        if (jsonpData && jsonpData.ok && jsonpData.report) {
-                            reportData = jsonpData.report;
-                            break;
-                        }
-                    } catch (_) {}
-                }
-            }
-        }
-
-        // Step 2: Fallback to CORS proxy if local server failed
-        if (!reportData) {
-            const reportTargetUrl = selected?.url || getReportUrl(idx);
-            try {
-                const detailHtml = await fetchKinuHtmlViaCorsProxy(reportTargetUrl);
-                if (detailHtml) {
-                    reportData = await parseKinuReportDetailFromHtml(detailHtml, idx, selected?.navCode || 'mai1674786581', selected?.category || '53');
-                }
-            } catch (_) {}
-        }
+        const reportTargetUrl = getKinuReportUrlFor(idx, selected.navCode, selected.category);
+        const detailHtml = await fetchKinuHtmlViaReader(reportTargetUrl, 32000);
+        const reportData = await parseKinuReportDetailFromHtml(detailHtml, idx, selected.navCode, selected.category || '');
 
         if (requestVersion !== reportDetailRequestVersion) return;
-        const report = reportData || selected;
+        const returnedDetail = validateOnlineSeriesDetailUrl(reportData?.url);
+        if (!reportData || String(reportData.idx) !== String(idx) || !reportData.title
+            || reportData.navCode !== selected.navCode || !returnedDetail || returnedDetail.error
+            || returnedDetail.idx !== String(idx) || returnedDetail.isEn !== String(selected.navCode || '').startsWith('eng')) {
+            if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 확인하지 못했습니다. 이전 글의 초록과 저자는 적용하지 않았습니다.`;
+            return;
+        }
+        const currentFormState = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
+        if (currentFormState !== formStateAtRequest) {
+            if (status) status.textContent = '조회 중 입력 내용이 바뀌어 공식 상세 적용을 건너뛰었습니다. 현재 내용을 유지했습니다.';
+            return;
+        }
+        const report = reportData;
         if (report) {
             // Guard against the old CO17-32e S3 UUID bug
             if (report.issueNo === 'CO17-32e' && Number(idx) > 130000) {
@@ -54446,17 +54624,15 @@ async function onSelectLiveReport(idx) {
             if (selected) {
                 report.issueNo = report.issueNo || selected.issueNo;
                 report.issueCategory = report.issueCategory || selected.issueCategory;
-                report.summary = report.summary || selected.summary;
+                report.summary = report.summary || '';
                 report.mainTitle = report.mainTitle || selected.mainTitle;
                 if (report.subTitle === undefined) report.subTitle = selected.subTitle;
                 if (report.hasColon === undefined) report.hasColon = selected.hasColon;
                 report.authorTitle = report.authorTitle || selected.authorTitle;
             }
-            setReportFormFromData(report, true);
-            if (report.summary) {
-                const summary = document.getElementById('summaryText');
-                if (summary) summary.value = report.summary;
-            }
+            setReportFormFromData({ ...report, mainTitle: report.title, subTitle: '', hasColon: false }, true);
+            const summary = document.getElementById('summaryText');
+            if (summary) summary.value = report.summary || '';
             if (report.issueNo || report.issueCategory) {
                 let fullCat = report.issueCategory || `Online Series / ${report.issueNo}`;
                 if (fullCat === 'Online Series / 53' || fullCat === 'Online Series / 54') {
@@ -54473,9 +54649,9 @@ async function onSelectLiveReport(idx) {
             renderAll();
         }
         updateIngestionSourceIndicator(1, `idx=${idx}`);
-        if (status) status.textContent = report?.summary
-            ? `[1순위 적용 완료] 공식 보고서(idx ${idx}) 메타정보 및 공식 초록이 최우선 반영되었습니다.`
-            : `[1순위 적용 완료] 공식 보고서(idx ${idx}) 메타정보 연동 완료`;
+        if (status) status.textContent = report.summary
+            ? `[상세 적용 완료] 공식 보고서(idx ${idx})의 메타정보와 공식 초록을 적용했습니다.${report.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝나 전문이 아닙니다.' : ''}`
+            : `[상세 적용 완료] 공식 보고서(idx ${idx}) 메타정보를 적용했습니다. 공식 페이지에 초록이 없습니다.`;
         if (typeof showToast === 'function') {
             showToast(`🎉 [1순위] 공식 보고서(idx ${idx}) 메타정보가 반영되었습니다.`);
         }
@@ -54486,306 +54662,124 @@ async function onSelectLiveReport(idx) {
 }
 
 async function fetchLatestKinuReports(silent = false) {
+    const listRequest = ++reportListRequestVersion;
+    ++reportDetailRequestVersion;
+    const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
+    if (analyzeButton) {
+        analyzeButton.disabled = false;
+        analyzeButton.textContent = '링크 분석';
+    }
+    const formStateAtRequest = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+        .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null]));
     const button = document.getElementById('btnFetchKinu');
     const select = document.getElementById('selLiveReport');
     const status = document.getElementById('reportIntegrationStatus');
     if (!select) return [];
 
-    const activeSeries = (typeof currentWebzineSeries !== 'undefined' ? currentWebzineSeries : '') || (typeof window !== 'undefined' ? window.currentWebzineSeries : '') || 'online-kr';
-    const OFFICIAL_INGESTION_SERIES = ['online-kr', 'online-en', 'insight', 'co26-76', 'co26-75', 'co26-74', 'co26-73', 'co26-72', 'co26-70', 'co26-69', 'co26-68', 'co26-67', 'brief'];
-
-    if (!OFFICIAL_INGESTION_SERIES.includes(activeSeries)) {
-        if (!silent && typeof showToast === 'function') {
-            showToast('ℹ️ 해당 서식은 공식 사이트 발행자료 대상이 아닙니다.');
-        }
+    const activeSeries = currentWebzineSeries || window.currentWebzineSeries || 'online-kr';
+    if (!['online-kr', 'online-en'].includes(activeSeries)) {
+        if (status) status.textContent = '국문·영문 온라인시리즈에서만 공식 최신 목록을 불러옵니다.';
         return [];
     }
 
-    const originalBtnHtml = button ? button.innerHTML : '';
+    const isEn = activeSeries === 'online-en';
+    const navCode = isEn ? 'eng1674805982' : 'mai1674786581';
+    const category = isEn ? '72' : '53';
+    const listPath = isEn ? '/eng/module/report/index.do' : '/main/module/report/index.do';
+    const listUrl = new URL(`https://www.kinu.or.kr${listPath}`);
+    listUrl.searchParams.set('nav_code', navCode);
+    listUrl.searchParams.set('viewPage', '1');
+    listUrl.searchParams.set('category', category);
+
+    const idleBtnHtml = '<i class="fa-solid fa-cloud-arrow-down text-[9.5px]"></i> <span>공식 목록 확인</span>';
     if (button) {
         button.disabled = true;
         button.classList.add('opacity-60', 'cursor-wait');
-        if (!silent) {
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[9px]"></i> <span>최신화 중...</span>';
+        if (!silent) button.innerHTML = '<span>공식 목록 확인 중…</span>';
+    }
+    if (status) status.textContent = `공식 ${isEn ? '영문' : '국문'} 목록을 확인하고 있습니다. 인터넷과 Jina Reader 연결이 필요합니다.`;
+
+    try {
+        const html = await fetchKinuHtmlViaReader(listUrl.href, 32000);
+        const parsed = parseKinuReportListFromHtml(html, navCode, category, 10);
+        const reports = parsed.filter(report => {
+            const detail = validateOnlineSeriesDetailUrl(report.url);
+            return detail && !detail.error && detail.isEn === isEn
+                && detail.idx === String(report.idx) && detail.navCode === navCode
+                && detail.category === category && Boolean(report.title);
+        });
+        if (listRequest !== reportListRequestVersion) return [];
+        if (!reports.length) throw new Error('공식 목록에서 해당 언어의 자료를 찾지 못했습니다.');
+
+        fetchedReports = reports;
+        select.replaceChildren(new Option(`-- 공식 사이트 최근 자료 ${reports.length}건 중 선택 --`, ''));
+        reports.forEach(report => {
+            const option = new Option(`${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`, report.idx);
+            option.dataset.navCode = navCode;
+            select.add(option);
+        });
+        const formChanged = JSON.stringify([...document.querySelectorAll('input:not([type="file"]),textarea,select,[contenteditable="true"]')]
+            .map(el => [el.id || '', el.value ?? el.textContent ?? '', el.checked ?? null])) !== formStateAtRequest;
+        if (status) status.textContent = `공식 사이트 최근 자료 ${reports.length}건을 확인했습니다. Jina Reader의 캐시 갱신 요청은 영구적인 최신성을 보장하지 않습니다.${isWebzineDraftDirty || formChanged ? ' 작성 중인 초안은 유지했습니다.' : ''}`;
+
+        if (!isWebzineDraftDirty && !formChanged && !silent && reports.length) {
+            select.value = reports[0].idx;
+            await onSelectLiveReport(reports[0].idx);
+        } else if (!isWebzineDraftDirty && !formChanged && silent) {
+            const currentIdx = document.getElementById('reportIdx')?.value?.trim();
+            if (currentIdx && reports.some(report => String(report.idx) === currentIdx)) select.value = currentIdx;
         }
-    }
-
-    let cat = '53';
-    let navCode = 'mai1674786581';
-    let seriesKey = 'online-kr';
-
-    if (activeSeries === 'online-en' || (typeof currentLang !== 'undefined' && currentLang === 'en')) {
-        cat = '';
-        navCode = 'eng1674805982';
-        seriesKey = 'online-en';
-    } else if (activeSeries === 'insight' || activeSeries === 'brief') {
-        cat = '54';
-        navCode = 'mai1674786608';
-        seriesKey = 'insight';
-    }
-
-    if (status) status.textContent = `[1순위] 공식 KINU 보고서 목록(${seriesKey})을 불러오는 중입니다...`;
-
-    let reports = null;
-    let fetchSource = null;
-
-    // Step 1: Local server (127.0.0.1:8000/api/kinu-reports?...) with 6s timeout
-    const catQuery = cat ? `category=${cat}&` : '';
-    const apiEndpoints = (typeof window !== 'undefined' && window.location?.protocol === 'file:')
-        ? [`http://127.0.0.1:8000/api/kinu-reports?${catQuery}nav_code=${navCode}&series=${seriesKey}&limit=20`]
-        : [`/api/kinu-reports?${catQuery}nav_code=${navCode}&series=${seriesKey}&limit=20`, `http://127.0.0.1:8000/api/kinu-reports?${catQuery}nav_code=${navCode}&series=${seriesKey}&limit=20`];
-
-    for (const endpoint of apiEndpoints) {
-        try {
-            const response = await fetchWithTimeout(endpoint, { cache: 'no-store' }, 6000);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.ok && Array.isArray(data.reports) && data.reports.length > 0) {
-                    reports = data.reports;
-                    fetchSource = 'local-server';
-                    break;
-                }
-            }
-        } catch (_) {
-            if (endpoint.startsWith('http://127.0.0.1:8000')) {
-                try {
-                    const jsonpData = await fetchLocalServerJsonp(endpoint, 5000);
-                    if (jsonpData && jsonpData.ok && Array.isArray(jsonpData.reports) && jsonpData.reports.length > 0) {
-                        reports = jsonpData.reports;
-                        fetchSource = 'local-server';
-                        break;
-                    }
-                } catch (_) {}
-            }
-        }
-    }
-
-    // Step 2: Browser CORS proxy fallback if local server fails
-    if (!reports || !reports.length) {
-        try {
-            const kinuListUrl = (seriesKey === 'online-en')
-                ? `https://www.kinu.or.kr/eng/module/report/index.do?nav_code=${navCode}`
-                : `https://www.kinu.or.kr/main/module/report/index.do?nav_code=${navCode}${cat ? '&category=' + cat : ''}`;
-            const html = await fetchKinuHtmlViaCorsProxy(kinuListUrl);
-            if (html) {
-                const parsed = parseKinuReportListFromHtml(html, navCode, cat, 20);
-                if (parsed && parsed.length > 0) {
-                    reports = parsed;
-                    fetchSource = 'cors-proxy';
-                }
-            }
-        } catch (_) {}
-    }
-
-    // Step 3: Fall back to EMBEDDED_KINU_CATALOG if both failed
-    if (!reports || !reports.length) {
-        if (typeof EMBEDDED_KINU_CATALOG !== 'undefined' && Array.isArray(EMBEDDED_KINU_CATALOG[seriesKey]) && EMBEDDED_KINU_CATALOG[seriesKey].length > 0) {
-            reports = EMBEDDED_KINU_CATALOG[seriesKey];
-            fetchSource = 'offline-catalog';
-        }
-    }
-
-    if (!reports || !reports.length) {
-        if (status) status.textContent = '공식 목록 연동 실패 · 2순위 수동 파일 업로드 또는 인터넷 연결을 확인해 주세요.';
-        if (!silent && typeof showToast === 'function') {
-            showToast('⚠️ 공식 목록을 불러오지 못했습니다. 2순위 수동 파일 업로드를 이용해 주세요.');
-        }
-        if (button) {
-            button.disabled = false;
-            button.classList.remove('opacity-60', 'cursor-wait');
-            if (originalBtnHtml) button.innerHTML = originalBtnHtml;
+        if (!silent && typeof showToast === 'function') showToast(`공식 사이트 자료 ${reports.length}건을 확인했습니다.`);
+        return reports;
+    } catch (error) {
+        if (listRequest === reportListRequestVersion) {
+            fetchedReports = [];
+            select.replaceChildren(new Option('-- 공식 목록을 불러오지 못했습니다 --', ''));
+            if (status) status.textContent = `공식 최신 목록을 확인하지 못했습니다. ${error?.name === 'AbortError' ? '요청 시간이 초과되었습니다.' : '인터넷 연결 또는 응답을 확인해 주세요.'} 내장된 과거 자료는 최신 목록으로 표시하지 않았습니다.`;
+            if (!silent && typeof showToast === 'function') showToast('공식 최신 목록을 확인하지 못했습니다. 작성 내용은 유지했습니다.');
         }
         return [];
-    }
-
-    fetchedReports = reports.map(report => {
-        if (typeof EMBEDDED_KINU_CATALOG !== 'undefined') {
-            const cached = (EMBEDDED_KINU_CATALOG[seriesKey] || []).find(c => String(c.idx) === String(report.idx));
-            if (cached) {
-                return {
-                    ...cached,
-                    ...report,
-                    summary: report.summary || cached.summary || '',
-                    issueNo: report.issueNo || cached.issueNo || '',
-                    issueCategory: report.issueCategory || cached.issueCategory || ''
-                };
-            }
-        }
-        return report;
-    });
-
-    select.innerHTML = `<option value="">-- [1순위] 공식 사이트 최신 ${fetchedReports.length}건 중 선택 --</option>`;
-    fetchedReports.forEach(report => {
-        if (typeof document !== 'undefined' && typeof document.createElement === 'function' && typeof select.appendChild === 'function') {
-            const option = document.createElement('option');
-            option.value = report.idx;
-            if (option.dataset) option.dataset.navCode = report.navCode || navCode;
-            option.textContent = `${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`;
-            select.appendChild(option);
-        } else {
-            select.innerHTML += `<option value="${escapeHtmlAttr(report.idx)}" data-nav-code="${escapeHtmlAttr(report.navCode || navCode)}">${escapeHtml(`${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`)}</option>`;
-        }
-    });
-
-    if (isWebzineDraftDirty) {
-        if (status) status.textContent = `[1순위 목록 수집 완료] 공식 최신 ${fetchedReports.length}건 수집됨 · 작성 중인 사용자 초안이 유지되고 있습니다 (수동 편집 모드)`;
-    } else if (silent) {
-        const currentIdx = document.getElementById('reportIdx')?.value?.trim();
-        if (currentIdx && fetchedReports.some(r => String(r.idx) === String(currentIdx))) {
-            select.value = currentIdx;
-        } else {
-            const mainVal = document.getElementById('mainTitle')?.value?.trim();
-            if (!mainVal && fetchedReports.length > 0) {
-                select.value = fetchedReports[0].idx;
-                await onSelectLiveReport(fetchedReports[0].idx);
-            }
-        }
-        if (fetchSource === 'offline-catalog') {
-            if (status) status.textContent = `[1순위 연동 완료] 공식 최신 보고서 목록(${fetchedReports.length}건)이 준비되었습니다.`;
-        } else {
-            if (status) status.textContent = `[1순위 적용 완료] 공식 최신 ${fetchedReports.length}건 수집 완료`;
-        }
-    } else {
-        setWebzineDraftDirty(false);
-        if (fetchedReports.length > 0) {
-            select.value = fetchedReports[0].idx;
-            await onSelectLiveReport(fetchedReports[0].idx);
-        }
-
-        if (fetchSource === 'offline-catalog') {
-            if (status) status.textContent = `[1순위 연동 완료] 공식 최신 보고서 목록(${fetchedReports.length}건)이 준비되었습니다.`;
-            if (typeof showToast === 'function') {
-                const topId = fetchedReports[0]?.issueNo || fetchedReports[0]?.title?.slice(0, 18) || fetchedReports[0]?.idx || '';
-                showToast(`✨ [최신화 완료] 공식 최신 보고서(${topId})가 반영되었습니다.`);
-            }
-        } else {
-            if (status) status.textContent = `[1순위 적용 완료] 공식 최신 ${fetchedReports.length}건 수집 완료 · 최신 발간 보고서가 자동 반영되었습니다.`;
-            if (typeof showToast === 'function') {
-                const topReport = fetchedReports[0];
-                const titleSnippet = topReport?.title ? ` (${topReport.title.slice(0, 20)}...)` : '';
-                showToast(`✨ [최신화 완료] 최신 1순위 보고서${titleSnippet}가 자동 반영되었습니다.`);
-            }
+    } finally {
+        if (button && listRequest === reportListRequestVersion) {
+            button.disabled = false;
+            button.classList.remove('opacity-60', 'cursor-wait');
+            button.innerHTML = idleBtnHtml;
         }
     }
-
-    if (button) {
-        button.disabled = false;
-        button.classList.remove('opacity-60', 'cursor-wait');
-        if (originalBtnHtml) button.innerHTML = originalBtnHtml;
-    }
-    return fetchedReports;
 }
 
 async function searchIdxForCurrentTitle() {
     const mainEl = document.getElementById('mainTitle');
     const rawTitle = mainEl ? (mainEl.value || mainEl.innerText || '') : '';
     const query = typeof stripHtmlTags === 'function' ? stripHtmlTags(rawTitle).trim() : rawTitle.replace(/<[^>]+>/g, '').trim();
-    if (!query) {
-        if (typeof showToast === 'function') {
-            showToast('⚠️ [입력 필요] 보고서 검색을 위해 본문 메인 제목을 먼저 입력해 주세요.');
-        }
-        return;
-    }
-
     const status = document.getElementById('reportIntegrationStatus');
-    if (status) status.textContent = `[검색 중] '${query}'에 해당하는 공식 보고서를 검색하고 있습니다...`;
-    if (typeof showToast === 'function') {
-        showToast(`🔍 '${query.slice(0, 20)}...' 제목으로 공식 보고서를 검색합니다.`);
-    }
-
-    let results = [];
-
-    // Step 1: Local server search
-    const endpoints = (typeof window !== 'undefined' && window.location?.protocol === 'file:')
-        ? [`http://127.0.0.1:8000/api/kinu-search?query=${encodeURIComponent(query)}`]
-        : [`/api/kinu-search?query=${encodeURIComponent(query)}`, `http://127.0.0.1:8000/api/kinu-search?query=${encodeURIComponent(query)}`];
-
-    for (const ep of endpoints) {
-        try {
-            const resp = await fetchWithTimeout(ep, { cache: 'no-store' }, 6000);
-            if (resp.ok) {
-                const data = await resp.json();
-                if (data.ok && Array.isArray(data.reports) && data.reports.length > 0) {
-                    results = data.reports;
-                    break;
-                }
-            }
-        } catch (_) {
-            if (ep.startsWith('http://127.0.0.1:8000')) {
-                try {
-                    const jsonpData = await fetchLocalServerJsonp(ep, 5000);
-                    if (jsonpData && jsonpData.ok && Array.isArray(jsonpData.reports) && jsonpData.reports.length > 0) {
-                        results = jsonpData.reports;
-                        break;
-                    }
-                } catch (_) {}
-            }
-        }
-    }
-
-    // Step 2: Fallback to CORS proxy search on KINU index.do
-    if (!results || results.length === 0) {
-        const searchUrl = `https://www.kinu.or.kr/main/module/report/index.do?nav_code=mai1674786581&category=53&viewPage=1&search_text=${encodeURIComponent(query)}`;
-        try {
-            const html = await fetchKinuHtmlViaCorsProxy(searchUrl);
-            if (html) {
-                const parsed = parseKinuReportListFromHtml(html, 'mai1674786581', '53', 20);
-                if (parsed && parsed.length > 0) {
-                    results = parsed;
-                }
-            }
-        } catch (_) {}
-    }
-
-    // Step 3: Fallback to EMBEDDED_KINU_CATALOG search
-    if (!results || results.length === 0) {
-        if (typeof EMBEDDED_KINU_CATALOG !== 'undefined') {
-            const allEmbedded = [
-                ...(EMBEDDED_KINU_CATALOG['online-kr'] || []),
-                ...(EMBEDDED_KINU_CATALOG['online-en'] || []),
-                ...(EMBEDDED_KINU_CATALOG['insight'] || [])
-            ];
-            const lowerQuery = query.toLowerCase();
-            results = allEmbedded.filter(item => (item.title && item.title.toLowerCase().includes(lowerQuery)) || (item.idx && String(item.idx) === query));
-        }
-    }
-
     const select = document.getElementById('selLiveReport');
-    if (!results || results.length === 0) {
-        if (status) status.textContent = `[검색 결과 없음] '${query}'에 일치하는 공식 보고서를 찾지 못했습니다.`;
-        if (typeof showToast === 'function') {
-            showToast(`⚠️ [검색 결과 없음] '${query}'에 일치하는 공식 보고서를 찾지 못했습니다.`);
-        }
-        return;
+    const reports = Array.isArray(fetchedReports) ? fetchedReports : [];
+    if (!query) {
+        if (typeof showToast === 'function') showToast('⚠️ [입력 필요] 보고서 검색을 위해 본문 메인 제목을 먼저 입력해 주세요.');
+        return [];
     }
-
-    // Update fetchedReports and selLiveReport
-    fetchedReports = results;
+    if (!reports.length) {
+        if (status) status.textContent = '먼저 공식 최신 목록을 확인해야 제목 검색을 할 수 있습니다.';
+        return [];
+    }
+    const normalizedQuery = query.toLocaleLowerCase();
+    const results = reports.filter(report => String(report.title || '').toLocaleLowerCase().includes(normalizedQuery)
+        || String(report.idx || '') === query);
     if (select) {
-        select.innerHTML = `<option value="">-- [검색 결과] ${results.length}건 중 선택 --</option>`;
+        select.replaceChildren(new Option(`-- 현재 공식 목록 ${results.length}건 일치 --`, ''));
         results.forEach(report => {
-            const opt = document.createElement('option');
-            opt.value = report.idx;
-            opt.dataset.navCode = report.navCode || 'mai1674786581';
-            opt.textContent = `${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`;
-            select.appendChild(opt);
+            const option = new Option(`${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`, String(report.idx));
+            option.dataset.navCode = report.navCode || '';
+            select.add(option);
         });
-        select.value = results[0].idx;
+        select.value = '';
     }
-
-    setWebzineDraftDirty(false);
-    await onSelectLiveReport(results[0].idx);
-    if (status) status.textContent = `[검색 완료] '${results[0].title}'(idx ${results[0].idx})가 자동 선택 및 반영되었습니다.`;
-    if (typeof showToast === 'function') {
-        showToast(`🎉 [검색 성공] idx ${results[0].idx} 보고서가 반영되었습니다.`);
-    }
+    if (status) status.textContent = results.length
+        ? `현재 확인된 공식 목록 ${reports.length}건에서 ${results.length}건을 찾았습니다. 전체 게시물 검색이 아니라 현재 목록에 한정됩니다.`
+        : `현재 확인된 공식 목록 ${reports.length}건에서 일치 항목이 없습니다. 전체 게시물 검색은 수행하지 않았습니다.`;
+    return results;
 }
-
-if (typeof window !== 'undefined') {
-    window.searchIdxForCurrentTitle = searchIdxForCurrentTitle;
-}
-
-
 function normalizeHancomPuaText(text) {
     if (!text) return '';
     let out = '';
@@ -55105,8 +55099,10 @@ async function readUploadedReportFile(file) {
 
     // AGENTS.md Rule 1 (Kordoc Priority): Attempt server-side Kordoc extraction first for HWP, HWPX, PDF
     if (extension === 'hwp' || extension === 'hwpx' || extension === 'pdf') {
-        const kordocRes = await tryKordocParseDoc(file, extension);
-        if (kordocRes) return kordocRes;
+        if (!(typeof window !== 'undefined' && window.A0_HOSTING?.mode === 'github-pages')) {
+            const kordocRes = await tryKordocParseDoc(file, extension);
+            if (kordocRes) return kordocRes;
+        }
     }
 
     const buffer = await file.arrayBuffer();
@@ -56365,7 +56361,6 @@ function focusWebzineField(field) {
     }
 }
 if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
-
 // src/modules/ttalkkak/nameplate/nameplate_fonts.js
 // A0 Nameplate Builder — Font Registry, Manifest, Weight Normalizer & Readiness Manager
 
@@ -138593,6 +138588,19 @@ function renderDocumentBody(doc) {
     window.A0_REGULATIONS_VERSION = 'v1.1.0';
 
     window.STUDIO_UPDATE_LOGS = [
+    {
+        version: "v1.9.47 (v5.9.47)",
+        coreVersion: "A0 Core v1.9.47 (v5.9.47)",
+        date: "2026-10-26",
+        tag: "웹진 온라인시리즈 수집",
+        title: "국문·영문 온라인시리즈 링크 분석",
+        summary: "공식 온라인시리즈 상세 링크를 분석해 해당 언어의 웹진 입력란을 채우고 HTML/TXT 결과를 생성합니다.",
+        items: [
+            { category: "웹진", engine: "Webzine", text: "국문·영문 온라인시리즈 링크 분석과 폼 적용을 추가했습니다." },
+            { category: "수집", engine: "Webzine", text: "최신 자료 조회와 상세 분석의 상태·실패 안내를 보완했습니다." },
+            { category: "보안", engine: "Webzine", text: "공식 출처 링크만 전달 서비스에 요청하고 폼·문서 내용을 요청에 포함하지 않습니다." }
+        ]
+    },
     {
         version: "v1.9.46 (v5.9.46)",
         coreVersion: "A0 Core v1.9.46 (v5.9.46)",

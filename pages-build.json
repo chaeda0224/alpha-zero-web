@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "39b7aef022724b27ad6e00d751c79e75aa1f5bcf636ef518e1acc52089d9e507"
+      "sha256": "f4019dfe161344e584ac76adaa5e6e021d323c30c356709ecf21f1afbe2c8594"
     },
     {
       "path": ".nojekyll",
@@ -13,30 +13,34 @@
     },
     {
       "path": "favicon.svg",
-      "sha256": "a20fd8b5da5c15ced7a8deb63657af5132a2db133fb8fc7c6d14c8f30d231370"
+      "sha256": "1e24b13390b759cb0e810908879a557566fa65c0443a889696a6fbb016fb956b"
     },
     {
       "path": "assets/KINU_LOGO_KR-EN_H_BK.svg",
-      "sha256": "6f2e2069fa764abb6cf6b714375e266e6409a005439c05ad3cad7e5a9cfc1314"
+      "sha256": "a385faf3a2b1568d48b49a80730d183d8d08a5a288dc8a3e77d0fddd41d37ce6"
     },
     {
       "path": "assets/KINU_LOGO_KR-EN_H_White.svg",
-      "sha256": "8e409833952270d01fe15aab48efc9c782dc74fcf21594be36781cede9e95cdb"
+      "sha256": "30201692445419e2d28eff4e7ec2b2e3f88325a23fa07721a01e99cdbc3ff8bc"
     },
     {
       "path": "assets/ProjectC_Logo_BK.svg",
-      "sha256": "2f299924ec51548141dbe9cf1f8b6e9dc311acf26fee1d98c5b15fc854c590c7"
+      "sha256": "5cc0d196d862ec71f48ded9bf66c4f749458f908ecdfeae93119e558f8c86c7d"
     },
     {
       "path": "assets/ProjectC_Logo_WH.svg",
-      "sha256": "f92b19c90741de7dc62ed9742b5f1d721110476f616ec2a2edcb26588864770f"
+      "sha256": "9f6fc2b41bfb37f36ff0c819ae43acb5313a9f76cd92b9d25677a58c5bf7b110"
     },
     {
       "path": "README.md",
-      "sha256": "1cd0296348e74c505e209448bb9d99844402c051564baba02e9505f6ea4ed664"
+      "sha256": "78b4033584c30a13cb4b43c8ff684bc9b4c08ba819af08ffa26372234754efed"
+    },
+    {
+      "path": "webzine_builder.html",
+      "sha256": "193bf36f329f49b63af1bff08cb44cd9b76a47f754be9414edf9c9b477e7ca0f"
     }
   ],
   "privacy_check": "Heuristic text scan, not PCFilter verification.",
-  "version": "v1.9.46",
-  "core_version": "A0 Core v1.9.46 (v5.9.46)"
+  "version": "v1.9.47",
+  "core_version": "A0 Core v1.9.47 (v5.9.47)"
 }
