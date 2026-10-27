@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "a648431d282d3697c13761f5289889f46a5c3c0d8890ab5b57edee602189545f"
+      "sha256": "38d35597f24dd90944ac983cc5c407fa91cb4db17ea78fa0f4909e797692762a"
     },
     {
       "path": ".nojekyll",
@@ -41,6 +41,6 @@
     }
   ],
   "privacy_check": "Heuristic text scan, not PCFilter verification.",
-  "version": "v1.9.48",
-  "core_version": "A0 Core v1.9.48 (v5.9.48)"
+  "version": "v1.9.49",
+  "core_version": "A0 Core v1.9.49 (v5.9.49)"
 }

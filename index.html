@@ -56,7 +56,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpha-Zero (A0) - A0 Core v1.9.48 (v5.9.48)</title>
+    <title>Alpha-Zero (A0) - A0 Core v1.9.49 (v5.9.49)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230062ab'/%3E%3Cstop offset='100%25' stop-color='%23003366'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Proto Mono, monospace' font-weight='700' font-size='30' letter-spacing='-0.02em' fill='%23ffffff' text-anchor='middle'%3EA0%3C/text%3E%3C/svg%3E" />
     <!-- 런타임 저장소와 동일한 우선순위로 첫 화면의 모드를 결정한다. -->
@@ -74,7 +74,7 @@
             var mode = [design.mode, stored['appearance.theme'], read('appearance.theme'),
                 read('kinu_theme'), (legacy.appearance || {}).theme].find(function(value) {
                     return ['light', 'dark', 'system'].indexOf(value) !== -1;
-                }) || 'system';
+                }) || 'light';
             var isDark = mode === 'dark' || (mode === 'system' && window.matchMedia &&
                 window.matchMedia('(prefers-color-scheme: dark)').matches);
             var root = document.documentElement;
@@ -8617,7 +8617,7 @@ html.dark .ui-alc__card {
             <!-- 1. EXPANDED VIEW (Default Normal Width) -->
             <div id="sidebarExpandedView" class="flex flex-col h-full min-h-0 space-y-2">
 
-                        <span class="app-version-badge sr-only" title="A0 Core v1.9.48 (v5.9.48)">v1.9.48 (v5.9.48)</span>
+                        <span class="app-version-badge sr-only" title="A0 Core v1.9.49 (v5.9.49)">v1.9.49 (v5.9.49)</span>
 
                 <!-- 📂 Contextual Left Rail Body (Only features belonging to the active area) -->
                 <div id="contextExplorerContainer" class="flex-1 min-h-0 overflow-y-auto space-y-2 pr-0.5 text-xs pb-10">
@@ -8927,7 +8927,7 @@ html.dark .ui-alc__card {
                             <i class="fa-solid fa-circle-info text-xs"></i>
                             <span>Help · Update Log</span>
                         </span>
-                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.48 (v5.9.48)</span>
+                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.49 (v5.9.49)</span>
                     </button>
 
                     <!-- Hidden compatibility anchor -->
@@ -9360,7 +9360,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <span id="workspaceSectionLabel" class="text-slate-600 dark:text-slate-400">대시보드</span>
             </div>
             <output id="workspaceCoreVersion" aria-label="현재 A0 버전" class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
-                <span>Core v1.9.48 (v5.9.48)</span>
+                <span>Core v1.9.49 (v5.9.49)</span>
             </output>
         </div>
 
@@ -19643,7 +19643,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <div class="pt-4 border-t border-slate-200/60 dark:border-white/5 space-y-2">
                     <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px]">
                         <span class="text-slate-500 dark:text-neutral-400 font-medium">A0 Core Engine</span>
-                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.48 (v5.9.48)</span>
+                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.49 (v5.9.49)</span>
                     </div>
                 </div>
             </aside>
@@ -21051,7 +21051,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <span class="text-[11px] text-slate-500 dark:text-neutral-400 block mt-0.5">통일연구원 KINU 오프라인 자립형 연구·행정 워크스페이스</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.48 (v5.9.48)</span>
+                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.49 (v5.9.49)</span>
                 <button type="button" onclick="openA0UpdateLogModal()" class="px-3 py-1 rounded-lg border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 text-xs font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer">
                     릴리즈 노트
                 </button>
@@ -21120,7 +21120,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 </span>
                 <span class="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
                 <span class="hidden sm:inline text-slate-400 dark:text-slate-500 font-mono">
-                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.48 (v5.9.48)</strong>
+                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.49 (v5.9.49)</strong>
                 </span>
             </div>
 
@@ -21150,7 +21150,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                 <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1">
                                     <span>Alpha-Zero (<span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>)</span>
                                 </div>
-                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.48 (v5.9.48) · 2026.10.27</div>
+                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.49 (v5.9.49) · 2026.10.27</div>
                             </div>
                             <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">Stable</span>
                         </div>
@@ -21607,7 +21607,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                     <div>
                         <h3 id="updateLogModalTitle" class="font-bold text-base text-slate-900 dark:text-white leading-tight flex items-center gap-2">
                         <span>Alpha-Zero 업데이트 로그</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.48 (v5.9.48)</span></span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.49 (v5.9.49)</span></span>
                     </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">전체 버전 릴리즈 이력 및 변경 사항</p>
                     </div>
@@ -21627,7 +21627,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                     <i class="fa-solid fa-cube text-[10px]"></i> 엔진별 버전:
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 font-medium shrink-0">
-                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.48 (v5.9.48)</span>
+                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.49 (v5.9.49)</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 font-medium shrink-0">
                     <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>UI</strong> <span class="font-mono text-[11px] opacity-80">v1.0.0</span>
@@ -21657,7 +21657,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
             <!-- Version & Engine Filter Pills -->
             <div class="flex items-center gap-1.5 px-5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-[#0f1722] overflow-x-auto custom-scrollbar shrink-0">
                 <button id="btnLogFilterAll" type="button" onclick="filterUpdateLogs('all')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">전체 이력</button>
-                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.48 (v5.9.48)</button>
+                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.49 (v5.9.49)</button>
                 <button id="btnLogFilterV18" type="button" onclick="filterUpdateLogs('v1.8')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.8</button>
                 <button id="btnLogFilterV17" type="button" onclick="filterUpdateLogs('v1.7')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.7</button>
                 <button id="btnLogFilterV16" type="button" onclick="filterUpdateLogs('v1.6')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.6</button>
@@ -24170,7 +24170,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
     // =========================================================================
     const DEFAULT_CONFIG = {
         schemaVersion: 1,
-        mode: 'system',
+        mode: 'light',
         material: 'frost',
         palette: 'G01',
         grain: 'off',
@@ -25563,10 +25563,10 @@ window.A0_ENGINE_REGISTRY = {
         desc: '4대 인텔리전스 콕핏, 과제 생애주기 G0~G5 마일스톤, 골든 포커스 Top 3 & 연구노트 허브'
     }
 };
-window.A0_CORE_VERSION = 'v1.9.48 (v5.9.48)';
+window.A0_CORE_VERSION = 'v1.9.49 (v5.9.49)';
 
 // === 🔒 GLOBAL CORE APPLICATION & SECURITY STATE ===
-const APP_VERSION = 'A0 Core v1.9.48 (v5.9.48)';
+const APP_VERSION = 'A0 Core v1.9.49 (v5.9.49)';
 const APP_RELEASE_DATE = '2026.10.27';
 const MASTER_OVERRIDE_KEY = 'chaesumin2026!';
 let authCountdownSeconds = 180;
@@ -50015,7 +50015,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.48 (v5.9.48) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.49 (v5.9.49) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -139050,6 +139050,19 @@ function renderDocumentBody(doc) {
 
     window.STUDIO_UPDATE_LOGS = [
     {
+        version: "v1.9.49 (v5.9.49)",
+        coreVersion: "A0 Core v1.9.49 (v5.9.49)",
+        date: "2026-10-27",
+        tag: "기본 화이트모드 전환",
+        title: "기본 화면 테마 화이트(라이트) 모드 전환",
+        summary: "시스템 환경 및 저장소 기본값을 다크/시스템 종속에서 화이트(라이트) 모드로 변경하여 첫 접속 및 기본 설정 환경에서 일관된 라이트 테마를 제공합니다.",
+        items: [
+            { category: "테마", engine: "Core/Theme", text: "A0 부트스트랩, 디자인 시스템 및 레거시 설정의 기본 모드를 light로 전면 전환" },
+            { category: "접속 환경", engine: "Core/Bootstrap", text: "OS 다크 모드 환경에서도 명시적 다크 선택이 없는 한 기본 화이트 모드로 일관 렌더링" },
+            { category: "호환성", engine: "Settings/Store", text: "기존 다크/시스템 명시 설정 및 헤더 테마 전환 버튼(Ctrl+Shift+D 등) 기능 100% 보존" }
+        ]
+    },
+    {
         version: "v1.9.48 (v5.9.48)",
         coreVersion: "A0 Core v1.9.48 (v5.9.48)",
         date: "2026-10-27",
@@ -147555,7 +147568,7 @@ const DEFAULT_SYSTEM_SETTINGS = {
         defaultFont: 'Paperlogy'
     },
     appearance: {
-        theme: 'dark',
+        theme: 'light',
         designSystem: 'apple',
         accentColor: 'kinu-blue',
         cardStyle: 'restrained',
@@ -148626,7 +148639,7 @@ function getEffectiveSavedAppearance() {
         return window.A0AppearanceResolver.readStoredConfig();
     }
     return {
-        schemaVersion: 1, mode: 'system', material: 'frost', palette: 'G01',
+        schemaVersion: 1, mode: 'light', material: 'frost', palette: 'G01',
         grain: 'off', fontScale: 'normal', density: 'comfortable',
         motion: 'system', transparency: 'auto', actionColor: { mode: 'palette', customKey: '' }
     };
@@ -149415,7 +149428,7 @@ if (typeof window !== 'undefined') {
             type: 'object',
             default: {
                 schemaVersion: 1,
-                mode: 'system',
+                mode: 'light',
                 material: 'frost',
                 palette: 'G01',
                 grain: 'off',
@@ -149430,9 +149443,9 @@ if (typeof window !== 'undefined') {
         'appearance.theme': {
             category: 'appearance',
             name: '화면 테마 모드 (Theme Mode)',
-            desc: '다크, 라이트 또는 운영체제 설정을 추종하는 시스템 모드를 선택합니다.',
+            desc: '라이트, 다크 또는 운영체제 설정을 추종하는 시스템 모드를 선택합니다.',
             type: 'select',
-            default: 'system',
+            default: 'light',
             options: ['dark', 'light', 'system'],
             labels: {
                 'dark': '다크 모드 (Jet Black, 권장)',
@@ -149807,7 +149820,7 @@ if (typeof window !== 'undefined') {
             const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY_V1);
             const legacy = legacyRaw ? JSON.parse(legacyRaw) : {};
             legacy.appearance = legacy.appearance || {};
-            const mode = v2['appearance.designV1']?.mode || v2['appearance.theme'] || 'system';
+            const mode = v2['appearance.designV1']?.mode || v2['appearance.theme'] || 'light';
             legacy.appearance.theme = mode;
             legacy.appearance.designSystem = v2['appearance.palette'] || legacy.appearance.designSystem || 'apple';
             legacy.appearance.accentColor = v2['appearance.accentColor'] || legacy.appearance.accentColor || 'kinu-blue';
