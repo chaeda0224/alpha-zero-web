@@ -9879,6 +9879,11 @@ async function analyzeOnlineSeriesUrl() {
     }
     const requestVersion = ++reportDetailRequestVersion;
     const formStateAtRequest = getWebzineReportFormState();
+    const restoreSelectionToAppliedReport = () => {
+        const select = document.getElementById('selLiveReport');
+        const appliedIdx = document.getElementById('reportIdx')?.value?.trim() || '';
+        if (select) select.value = fetchedReports.some(report => String(report.idx) === appliedIdx) ? appliedIdx : '';
+    };
     const oldButtonText = button?.textContent || '';
     if (button) { button.disabled = true; button.textContent = '분석 중…'; }
     if (status) status.textContent = `[상세 조회 중] 공식 ${target.isEn ? '영문' : '국문'} 온라인시리즈 페이지를 확인합니다…`;
@@ -9889,12 +9894,14 @@ async function analyzeOnlineSeriesUrl() {
         const returned = validateOnlineSeriesDetailUrl(report?.url);
         if (!report || String(report.idx) !== target.idx || report.navCode !== target.navCode
             || !report.title || !returned || returned.error || returned.idx !== target.idx || returned.isEn !== target.isEn) {
+            restoreSelectionToAppliedReport();
             if (status) status.textContent = '공식 상세 정보를 확인하지 못했습니다. 입력 내용을 유지했습니다.';
             return false;
         }
         report.summaryIncomplete = /(?:\.{3}|…)$/.test(String(report.summary || '').trim());
         const currentFormState = getWebzineReportFormState();
         if (currentFormState !== formStateAtRequest) {
+            restoreSelectionToAppliedReport();
             if (status) status.textContent = '조회 중 폼 내용이 바뀌어 적용을 건너뛰었습니다. 현재 작성 내용을 유지했습니다.';
             return false;
         }
@@ -9921,7 +9928,10 @@ async function analyzeOnlineSeriesUrl() {
         downloadWebzineTxt({ sourceOnly: true });
         return true;
     } catch (_) {
-        if (requestVersion === reportDetailRequestVersion && status) status.textContent = '공식 상세 페이지에 연결하지 못했습니다. 작성 중인 내용은 유지했습니다.';
+        if (requestVersion === reportDetailRequestVersion) {
+            restoreSelectionToAppliedReport();
+            if (status) status.textContent = '공식 상세 페이지에 연결하지 못했습니다. 작성 중인 내용은 유지했습니다.';
+        }
         return false;
     } finally {
         if (button && requestVersion === reportDetailRequestVersion) { button.disabled = false; button.textContent = oldButtonText; }
@@ -9934,6 +9944,11 @@ async function onSelectLiveReport(idx) {
     const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
     if (analyzeButton) { analyzeButton.disabled = false; analyzeButton.textContent = '링크 분석'; }
     const formStateAtRequest = getWebzineReportFormState();
+    const restoreSelectionToAppliedReport = () => {
+        const select = document.getElementById('selLiveReport');
+        const appliedIdx = document.getElementById('reportIdx')?.value?.trim() || '';
+        if (select) select.value = fetchedReports.some(report => String(report.idx) === appliedIdx) ? appliedIdx : '';
+    };
     const selected = fetchedReports.find(report => String(report.idx) === String(idx));
     if (!selected) return;
     const status = document.getElementById('reportIntegrationStatus');
@@ -9948,11 +9963,13 @@ async function onSelectLiveReport(idx) {
         if (!reportData || String(reportData.idx) !== String(idx) || !reportData.title
             || reportData.navCode !== selected.navCode || !returnedDetail || returnedDetail.error
             || returnedDetail.idx !== String(idx) || returnedDetail.isEn !== String(selected.navCode || '').startsWith('eng')) {
+            restoreSelectionToAppliedReport();
             if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 확인하지 못했습니다. 이전 글의 초록과 저자는 적용하지 않았습니다.`;
             return;
         }
         const currentFormState = getWebzineReportFormState();
         if (currentFormState !== formStateAtRequest) {
+            restoreSelectionToAppliedReport();
             if (status) status.textContent = '조회 중 입력 내용이 바뀌어 공식 상세 적용을 건너뛰었습니다. 현재 내용을 유지했습니다.';
             return;
         }
@@ -10001,6 +10018,7 @@ async function onSelectLiveReport(idx) {
         }
     } catch (error) {
         if (requestVersion !== reportDetailRequestVersion) return;
+        restoreSelectionToAppliedReport();
         if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 불러오지 못했습니다. 기존 작성 중인 초안이 안전하게 보존되었습니다.`;
     }
 }
