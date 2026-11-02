@@ -8400,41 +8400,111 @@ const KNOWN_AUTHORS_MAP = {
     '통일정책연구실': '통일연구원',
     '국제전략연구실': '통일연구원',
 
-    // 영문 KINU 필진 공식 직함
+    // KINU 공식 byline 확인(2026-11-02): /eng/module/report/view.do?idx={132922,132921,132919,132918,132917,132907,132908,132902,132901,132896}&nav_code=eng1674805982&category=72.
+    // 현재 확인된 대표 직함의 fallback이며, 명시적 report.authorTitle이 있으면 이를 우선한다.
     'Lee Sang Sin': 'Director of Unification Policy Research Division',
-    'Jeong EunIee': 'Director of North Korean Research Division',
-    'Joung EunIee': 'Director of North Korean Research Division',
-    'Hong Min': 'Senior Research Fellow, KINU',
-    'Oh Gyeong-Seob': 'Senior Research Fellow, KINU',
-    'Min Taeeun': 'Senior Research Fellow, KINU',
+    'Jeong EunIee': 'Director, North Korean Research Division',
+    'Joung EunIee': 'Director, North Korean Research Division',
+    'Jung EunIee': 'Director, North Korean Research Division',
+    'Seung Joon Paik': 'Deputy Director of Research and Planning, Planning and Coordination Division',
+    'Hong Min': 'Senior Research Fellow, North Korean Research Division',
+    'Oh Gyeong-Seob': 'Senior Research Fellow, North Korean Research Division',
+    'Oh Gyeongsub': 'Senior Research Fellow, North Korean Research Division',
+    'Min Taeeun': 'Senior Research Fellow, Unification Policy Research Division',
     'Jeong Eun Mee': 'Director of Human Rights Research Division',
     'Kyu-Chang Lee': 'Senior Research Fellow, KINU',
     'Kim Tae-won': 'Research Fellow, KINU',
     'Cho Hyun-jung': 'Research Fellow, KINU',
     'Baek Seung-joo': 'Research Fellow, KINU',
-    'Park Eun-joo': 'Research Fellow, KINU',
+    'Park Eun-joo': 'Research Fellow, North Korean Research Division',
     'Suh Bo-hyuk': 'Senior Research Fellow, KINU'
 };
 
+function normalizeAuthorNameForLookup(authorName) {
+    return String(authorName || '')
+        .normalize('NFKC')
+        .toLocaleLowerCase('en')
+        .replace(/[\s.,'’‘\-‐‑‒–—_]+/g, '');
+}
+
+function splitKinuAuthorString(rawAuthors, lang) {
+    if (!rawAuthors) return [];
+    const rawText = String(rawAuthors).replace(/<br\s*\/?>/gi, ';');
+    const cleaned = cleanKinuHtmlText(rawText);
+    if (!cleaned) return [];
+
+    const explicitParts = [];
+    let currentPart = '';
+    let depth = 0;
+    for (const character of cleaned) {
+        if (/[（(\[{]/.test(character)) depth++;
+        else if (/[）)\]}]/.test(character)) depth = Math.max(0, depth - 1);
+        if (depth === 0 && /[;·|]/.test(character)) {
+            if (currentPart.trim()) explicitParts.push(currentPart.trim());
+            currentPart = '';
+        } else {
+            currentPart += character;
+        }
+    }
+    if (currentPart.trim()) explicitParts.push(currentPart.trim());
+    if (explicitParts.length > 1) return explicitParts.flatMap(part => splitKinuAuthorString(part, lang));
+
+    const parenthetical = cleaned.match(/^(.*?)(\s*[（(][^()（）]*[)）])$/);
+    if (parenthetical) {
+        const parsedNames = splitKinuAuthorString(parenthetical[1].trim(), lang);
+        return parsedNames.length === 1 ? [`${parsedNames[0]}${parenthetical[2]}`] : parsedNames;
+    }
+
+    if (/[가-힣]/.test(cleaned)) {
+        const koreanParts = cleaned.split(/[,，;；·|]+/).map(part => part.trim()).filter(Boolean);
+        if (koreanParts.length > 1) return koreanParts;
+        const tokens = cleaned.split(/\s+/).filter(Boolean);
+        if (tokens.length > 1 && tokens.every(token => /^[가-힣]{2,5}$/.test(token))
+            && tokens.every(token => KNOWN_AUTHORS_MAP[token] || lookupKinuStaff(token))) return tokens;
+        return [cleaned];
+    }
+
+    if (!cleaned.includes(',')) return [cleaned];
+    const englishPairs = cleaned.match(/^([A-Z][A-Za-z.'’\-]+),\s*([A-Z][A-Za-z.'’\-]+)\s+([A-Z][A-Za-z.'’\-]+),\s*([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+)*)$/);
+    if (englishPairs) return [`${englishPairs[1]}, ${englishPairs[2]}`, `${englishPairs[3]}, ${englishPairs[4]}`];
+
+    const chunks = cleaned.split(/[,，]+/).map(part => part.trim()).filter(Boolean);
+    const knownNames = Object.keys(KNOWN_AUTHORS_MAP).map(normalizeAuthorNameForLookup);
+    const matchesKnownName = value => knownNames.includes(normalizeAuthorNameForLookup(value));
+    const authors = [];
+    for (let index = 0; index < chunks.length;) {
+        let matchEnd = index;
+        for (let end = chunks.length - 1; end > index; end--) {
+            if (matchesKnownName(chunks.slice(index, end + 1).join(' '))) {
+                matchEnd = end;
+                break;
+            }
+        }
+        if (matchEnd > index) {
+            authors.push(chunks.slice(index, matchEnd + 1).join(', '));
+            index = matchEnd + 1;
+        } else {
+            authors.push(chunks[index]);
+            index++;
+        }
+    }
+    if (authors.every(matchesKnownName)) return authors;
+    return [cleaned];
+}
+
 function lookupKinuStaff(authorName) {
     if (!authorName) return null;
-    const normName = String(authorName).replace(/\s+/g, '').trim();
+    const normName = normalizeAuthorNameForLookup(authorName);
     if (!normName) return null;
 
     if (typeof KINU_ORGANIZATION_ROSTER === 'undefined' || !Array.isArray(KINU_ORGANIZATION_ROSTER)) {
         return null;
     }
 
-    // 1. Direct exact name match
-    const exact = KINU_ORGANIZATION_ROSTER.find(s => s.name === normName || s.displayName === normName);
-    if (exact) return exact;
-
-    // 2. Partial match (excluding very short generic tokens)
-    if (normName.length >= 2) {
-        const partial = KINU_ORGANIZATION_ROSTER.find(s => normName.includes(s.name) || (s.name && s.name.includes(normName)));
-        if (partial) return partial;
-    }
-    return null;
+    return KINU_ORGANIZATION_ROSTER.find(s =>
+        normalizeAuthorNameForLookup(s.name) === normName
+        || normalizeAuthorNameForLookup(s.displayName) === normName
+    ) || null;
 }
 
 /**
@@ -8473,11 +8543,16 @@ function resolveAuthorAndTitle(rawAuthor, lang) {
     // 3. title이 없거나 비어있는 경우, KINU 연구진 조직도 및 필진 테이블에서 자동 보충
     if (!title && name) {
         // 3-1. KNOWN_AUTHORS_MAP 매핑 확인
-        if (KNOWN_AUTHORS_MAP[name]) {
-            title = KNOWN_AUTHORS_MAP[name];
+        const normalizedName = normalizeAuthorNameForLookup(name);
+        const knownAuthorEntry = Object.entries(KNOWN_AUTHORS_MAP).find(([knownName]) =>
+            normalizeAuthorNameForLookup(knownName) === normalizedName
+        );
+        const isEn = activeLang === 'en' || (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries === 'online-en');
+        if (knownAuthorEntry && (!isEn || !/[가-힣]/.test(knownAuthorEntry[1]))) {
+            title = knownAuthorEntry[1];
         } else {
             // 3-2. KINU_ORGANIZATION_ROSTER 조회
-            const staff = lookupKinuStaff(name);
+            const staff = isEn ? null : lookupKinuStaff(name);
             if (staff) {
                 const isEn = (activeLang === 'en') || (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries === 'online-en');
                 if (isEn) {
@@ -8517,24 +8592,33 @@ function resolveAuthorList(rawAuthors, lang) {
     if (Array.isArray(rawAuthors)) {
         list = rawAuthors;
     } else if (typeof rawAuthors === 'string') {
-        const str = rawAuthors.trim();
-        if (str.includes(',') || str.includes(';') || str.includes('·') || str.includes('|')) {
-            list = str.split(/[,;·|]+/).map(s => s.trim()).filter(Boolean);
-        } else {
-            // 공백으로 구분된 복수 한국어 이름 확인 (예: '서보혁 서은성')
-            const tokens = str.split(/\s+/);
-            if (tokens.length > 1 && tokens.every(t => /^[가-힣]{2,4}$/.test(t) && (KNOWN_AUTHORS_MAP[t] || lookupKinuStaff(t)))) {
-                list = tokens;
-            } else {
-                list = [str];
-            }
-        }
+        list = splitKinuAuthorString(rawAuthors, activeLang);
     } else if (typeof rawAuthors === 'object') {
         list = [rawAuthors];
     }
 
     const resolved = list.map(item => resolveAuthorAndTitle(item, activeLang)).filter(a => a && a.name);
     return resolved.length > 0 ? resolved : [{ name: '', title: '' }];
+}
+
+function applyReportAuthorMetadata(report, authors, lang) {
+    if (!report || !Array.isArray(authors) || authors.length !== 1 || !authors[0]?.name) return authors;
+    const rawAuthors = report.authors || report.author;
+    const rawAuthor = Array.isArray(rawAuthors) ? rawAuthors[0] : rawAuthors;
+    const explicitTitle = rawAuthor && typeof rawAuthor === 'object'
+        ? String(rawAuthor.title || '').trim()
+        : (typeof rawAuthor === 'string' && /[（(][^)）]+[)）]\s*$/.test(rawAuthor.trim()) ? 'present' : '');
+    if (explicitTitle) return authors;
+    if (typeof report.authorTitle === 'string' && report.authorTitle.trim()) {
+        authors[0].title = report.authorTitle.trim();
+        return authors;
+    }
+
+    if (lang === 'en' && String(report.idx || '').trim() === '132919'
+        && normalizeAuthorNameForLookup(authors[0].name) === normalizeAuthorNameForLookup('Hong Min')) {
+        authors[0].title = 'Senior Researcher, North Korean Research Division';
+    }
+    return authors;
 }
 
 if (typeof window !== 'undefined') {
@@ -8561,7 +8645,7 @@ function onAuthorNameInput(inputEl) {
         }
         // Auto-fill title if currently empty
         if (titleInput && (!titleInput.value || titleInput.value.trim() === '')) {
-            titleInput.value = res.title || ((currentLang === 'en') ? ((matched.position ? matched.position + ', KINU' : 'KINU')) : ('통일연구원 ' + (matched.position || '')));
+            titleInput.value = res.title || ((currentLang === 'en') ? '' : ('통일연구원 ' + (matched.position || '')));
             renderAll();
         }
     } else if (res.title) {
@@ -9019,7 +9103,8 @@ function setReportFormFromData(report, preferOfficialUrl = false) {
     }
     if (summaryInput) summaryInput.value = report.summary || '';
     if (urlInput) urlInput.value = preferOfficialUrl && report.url ? report.url : getReportUrl(report.idx || '');
-    authorList = resolveAuthorList(report.authors || report.author, isEn ? 'en' : 'ko');
+    const rawAuthors = report.authors || report.author;
+    authorList = applyReportAuthorMetadata(report, resolveAuthorList(rawAuthors, isEn ? 'en' : 'ko'), isEn ? 'en' : 'ko');
     renderAuthorRows(authorList);
     renderAll();
 }
@@ -9652,16 +9737,7 @@ function cleanKinuHtmlText(value) {
 }
 
 function parseKinuAuthorsFromHtml(raw) {
-    if (!raw) return [];
-    const cleaned = cleanKinuHtmlText(raw);
-    const parts = cleaned.split(/[,;·|]+|\s{2,}/).map(s => s.trim()).filter(Boolean);
-    if (parts.length === 1) {
-        const tokens = parts[0].split(/\s+/).filter(Boolean);
-        if (tokens.length > 1 && tokens.every(t => /^[가-힣]{2,5}$/.test(t))) {
-            return tokens;
-        }
-    }
-    return parts;
+    return splitKinuAuthorString(raw, (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries === 'online-en') ? 'en' : 'ko');
 }
 
 function cleanKinuAbstractText(rawHtml) {
