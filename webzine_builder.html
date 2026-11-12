@@ -1,6 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko" class="">
 <head>
+<script id="a0-pages-runtime">
+(function (global) {
+    'use strict';
+
+    global.A0_HOSTING = Object.freeze({ mode: 'github-pages', localServer: false });
+    const nativeFetch = global.fetch.bind(global);
+
+    // A public static page must not send workspace data to a visitor's local server.
+    global.fetch = function (input, options) {
+        let url;
+        try {
+            url = new URL(typeof input === 'string' || input instanceof URL ? input : input.url, global.location.href);
+        } catch (_) {
+            return nativeFetch(input, options);
+        }
+        const loopback = url.hostname === 'localhost' || url.hostname === '[::1]' || /^127\./.test(url.hostname);
+        const localApi = url.origin === global.location.origin && url.pathname.startsWith('/api/');
+        if ((loopback && url.origin !== global.location.origin) || localApi) {
+            return Promise.resolve(new Response(JSON.stringify({
+                ok: false,
+                code: 'LOCAL_SERVER_UNAVAILABLE',
+                error: '웹 버전에서는 PC 폴더와 로컬 서버 기능을 사용할 수 없습니다.'
+            }), { status: 501, headers: { 'Content-Type': 'application/json; charset=utf-8' } }));
+        }
+        return nativeFetch(input, options);
+    };
+
+    function openTool(module, event) {
+        if (event && event.stopPropagation) event.stopPropagation();
+        const url = new URL('index.html', global.location.href);
+        url.hash = module;
+        global.open(url.href, '_blank', 'noopener,noreferrer');
+    }
+
+    function ready() {
+        const label = document.getElementById('runtimeStorageLabel');
+        if (label) {
+            label.textContent = '웹 버전 · 브라우저 저장';
+            label.title = '현재 브라우저에 저장됩니다. 다른 기기와 자동으로 동기화되지 않습니다.';
+        }
+        global.openWebzineStandalone = event => {
+            if (event && event.stopPropagation) event.stopPropagation();
+            global.open(new URL('webzine_builder.html', global.location.href).href, '_blank', 'noopener,noreferrer');
+        };
+        global.openNameplateStandalone = event => openTool('nameplate', event);
+        global.openRulebookStandalone = event => openTool('rulebook', event);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
+    else ready();
+})(window);
+
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>통일연구원(KINU) 웹진 빌더 | KINU Webzine Builder</title>
@@ -28,26 +81,8 @@
         })();
     </script>
 
-    <!-- Tailwind styles are required for the current editing layout. -->
-    <script>
-        window.tailwind = window.tailwind || { config: {} };
-        window.addEventListener('error', event => {
-            if (event.target?.tagName === 'SCRIPT' && /cdn\.tailwindcss\.com/.test(event.target.src || '')) {
-                applyStandaloneOfflineEditingFallback();
-            }
-        }, true);
-        function applyStandaloneOfflineEditingFallback() {
-            if (document.getElementById('standaloneOfflineEditingFallback')) return;
-            const style = document.createElement('style');
-            style.id = 'standaloneOfflineEditingFallback';
-            style.textContent = 'html,body{min-height:100%;margin:0}body{font:14px/1.5 system-ui,sans-serif;color:#243447;background:#f5f7fa}input,textarea,select,button{box-sizing:border-box;max-width:100%;font:inherit;color:inherit}textarea{resize:vertical}button{cursor:pointer}#wzPanelEditor,#wzPanelPreview,#tabContent-html,#tabContent-homepage,#tabContent-md{overflow:auto}';
-            document.head.appendChild(style);
-            document.documentElement.dataset.utilityStyles = 'offline-fallback';
-            const status = document.getElementById('reportIntegrationStatus');
-            if (status && !status.textContent.includes('화면 스타일')) status.textContent += ' 화면 스타일 일부는 인터넷에서 불러오지 못했습니다. 기본 편집과 HTML/TXT 저장은 계속 사용할 수 있습니다.';
-        }
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -90,23 +125,15 @@
     </script>
 
     <!-- Prism.js Syntax Highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism-tomorrow.min.css" integrity="sha384-wFjoQjtV1y5jVHbt0p35Ui8aV8GVpEZkyF99OXWqP/eNJDU93D3Ugxkoyh6Y2I4A" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/plugins/line-numbers/prism-line-numbers.min.css" integrity="sha384-nUkTNLI8COlMCRJ0FHIdX76If83145OTCLUx4gQyfnO0gGeO/sD9czGEUBxtkcUv" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js" defer integrity="sha384-xAgN7OCsK5s0d3G18tqRYrxy8hWsPA14E26TMh7Mi9ZM09vaz4EA0DBTl+80F5yC" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-markdown.min.js" defer integrity="sha384-s888ApkYHxfPsp8n81g77Unl/0XYnYltLvWbwqKHcheRE8/dZPlT4IjW3mRGv/Hd" crossorigin="anonymous"></script>
 
     <!-- JSZip & FileSaver -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" defer integrity="sha384-PlRSzpewlarQuj5alIadXwjNUX+2eNMKwr0f07ShWYLy8B6TjEbm7ZlcN/ScSbwy" crossorigin="anonymous"></script>
 
-    <!-- PDF.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-    </script>
 
     <!-- Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -114,7 +141,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Hebrew:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&family=Noto+Sans+Thai:wght@400;700&family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/web/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha384-t1nt8BQoYMLFN5p42tRAtuAAFQaCQODekUVeKKZrEnEyp4H2R0RHFz0KWpmj7i8g" crossorigin="anonymous" />
 
     <style>
         .wz-lang-cjk { font-family: 'Noto Sans SC', 'Noto Sans TC', 'Microsoft YaHei', 'PingFang SC', sans-serif !important; }
@@ -770,11 +797,11 @@
                             <div class="flex items-center justify-between gap-1 flex-wrap">
                                 <div class="flex items-center gap-1.5 shrink-0">
                                     <span class="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-[#0062ab] text-white">1순위</span>
-                                    <span class="text-[11px] font-bold text-[#004f8a] dark:text-sky-300">공식 사이트 발행 자료 확인</span>
+                                    <span class="text-[11px] font-bold text-[#004f8a] dark:text-sky-300">공식 사이트 발행 자료 (실시간)</span>
                                 </div>
                                 <div class="flex items-center gap-1 shrink-0">
                                     <button type="button" id="btnFetchKinu" onclick="fetchLatestKinuReports()" data-report-action="fetch" title="공식 KINU 최신 보고서 목록을 수집합니다 (작성 중인 초안은 안전하게 보존됩니다)" class="px-2.5 py-1 bg-[#0062ab] hover:bg-[#004f8a] text-white text-[10.5px] font-bold rounded transition flex items-center gap-1 cursor-pointer shadow-2xs">
-                                        <i class="fa-solid fa-cloud-arrow-down text-[9.5px]"></i> <span>공식 목록 확인</span>
+                                        <i class="fa-solid fa-cloud-arrow-down text-[9.5px]"></i> <span>최신 보고서 목록 수집</span>
                                     </button>
                                 </div>
                             </div>
@@ -787,7 +814,7 @@
                                     <input id="onlineSeriesUrl" type="url" inputmode="url" autocomplete="url" class="min-w-0 flex-1 text-xs px-2.5 py-2 border border-sky-300/80 dark:border-sky-700 bg-white dark:bg-[#172232] outline-none focus:border-[#0062ab] rounded" placeholder="국문·영문 온라인시리즈 상세 링크" aria-label="온라인시리즈 공식 상세 링크">
                                     <button type="button" id="btnAnalyzeOnlineSeriesUrl" onclick="analyzeOnlineSeriesUrl()" class="shrink-0 px-3 py-2 bg-white dark:bg-[#172232] border border-sky-300/80 dark:border-sky-700 text-[#004f8a] dark:text-sky-300 text-[10.5px] font-bold rounded hover:bg-sky-100 dark:hover:bg-sky-900/40">링크 분석</button>
                                 </div>
-                                <p id="reportIntegrationStatus" class="text-[10.5px] text-[#64748b] dark:text-slate-400" aria-live="polite">[1순위 대기] 공식 사이트 최근 목록을 확인할 준비가 되었습니다.</p>
+                                <p id="reportIntegrationStatus" class="text-[10.5px] text-[#64748b] dark:text-slate-400" aria-live="polite">[1순위 대기] 공식 사이트 최신 목록을 수집할 준비가 되었습니다.</p>
                                 <p class="text-[9.5px] leading-relaxed text-slate-500 dark:text-slate-400">자동 수집은 공식 링크를 Jina Reader에 요청합니다. 작성 내용과 업로드 파일은 전송하지 않습니다. 캐시 갱신 요청이 매번 최신 자료를 보장하지는 않습니다.</p>
                             </div>
                         </div>
@@ -799,7 +826,7 @@
                                     <span id="tagManualIngestionPriority" class="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-slate-500 text-white">2순위</span>
                                     <span id="titleManualIngestionText" class="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate">수동 파일 업로드 (원고/초안)</span>
                                 </div>
-                                <span class="text-[9.5px] text-slate-400 dark:text-slate-500 shrink-0">TXT·MD·HTML · 선택 파일 파싱(PDF·HWPX·HWP)</span>
+                                <span class="text-[9.5px] text-slate-400 dark:text-slate-500 shrink-0">AI산출물(MD·HTML) · Kordoc(HWPX·HWP) · PDF</span>
                             </div>
 
                             <div id="fileDropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault(); event.stopPropagation(); this.classList.add('border-[#0062ab]', 'bg-sky-50/70', 'dark:bg-sky-950/40');" ondragleave="event.preventDefault(); event.stopPropagation(); this.classList.remove('border-[#0062ab]', 'bg-sky-50/70', 'dark:bg-sky-950/40');" ondrop="event.preventDefault(); event.stopPropagation(); this.classList.remove('border-[#0062ab]', 'bg-sky-50/70', 'dark:bg-sky-950/40'); handleFileUpload(event);" class="border-2 border-dashed border-[#cbd5e1] dark:border-slate-700 hover:border-[#0062ab] px-2.5 py-1.5 text-center cursor-pointer transition bg-white dark:bg-[#172232] group rounded flex items-center justify-center gap-2">
@@ -951,12 +978,12 @@
                                         메인 제목 끝에 콜론(:) 추가
                                     </label>
                                     <div class="flex items-center gap-1 text-[11px] text-[#64748b]">
-                                        <label for="subRatio" class="shrink-0 font-medium">부제 배율:</label>
-                                        <select id="subRatio" onchange="renderAll()" class="text-[11px] py-0.5 px-1 border border-[#cbd5e1] dark:border-[#26384d] bg-white dark:bg-[#111a26] text-slate-700 dark:text-slate-200 rounded outline-none cursor-pointer">
+                                        <label for="subRatio" class="shrink-0 font-medium">부제 크기:</label>
+                                        <select id="subRatio" onchange="this.dataset.userSelected='true'; renderAll()" class="text-[11px] py-0.5 px-1 border border-[#cbd5e1] dark:border-[#26384d] bg-white dark:bg-[#111a26] text-slate-700 dark:text-slate-200 rounded outline-none cursor-pointer">
                                             <option value="0.75">75%</option>
                                             <option value="0.80">80%</option>
                                             <option value="0.85" selected>85% (표준)</option>
-                                            <option value="0.90">90%</option>
+                                            <option value="0.90">90% (국문 권장)</option>
                                             <option value="0.95">95%</option>
                                             <option value="1.00">100%</option>
                                         </select>
@@ -1652,6 +1679,11 @@ var isWebzineDraftDirty = false;
 var reportDetailRequestVersion = (typeof window !== 'undefined' && typeof window.reportDetailRequestVersion !== 'undefined') ? window.reportDetailRequestVersion : 0;
 var reportListRequestVersion = 0;
 var fetchedReports = (typeof window !== 'undefined' && Array.isArray(window.fetchedReports)) ? window.fetchedReports : [];
+var kinuReaderInFlightRequests = new Map();
+var kinuReportListInFlightRequests = new Map();
+var kinuReportListCache = new Map();
+var KINU_READER_TIMEOUT_MS = 25000;
+var KINU_REPORT_LIST_CACHE_TTL_MS = 30000;
 
 function setWebzineDraftDirty(dirty = true) {
     isWebzineDraftDirty = !!dirty;
@@ -1743,7 +1775,6 @@ function showToast(msg) {
 }
 
 // === 🔒 WEEKLY AUTH CODE CORE ===
-// MASTER_OVERRIDE_KEY is centrally declared in core_engine.js
 function getWeeklyAccessInfo() {
     const now = new Date();
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -1754,7 +1785,7 @@ function getWeeklyAccessInfo() {
 
     const seed = (now.getFullYear() * 3) + (weekNum * 7) + 104;
     const code = `kinu${seed}!`;
-    return { code, weekStr, masterKey: MASTER_OVERRIDE_KEY };
+    return { code, weekStr };
 }
 
 function verifyWeeklyCode() {
@@ -1775,7 +1806,7 @@ function verifyWeeklyCode() {
         return false;
     }
 
-    const isValid = (val === info.code || val === MASTER_OVERRIDE_KEY || val === 'kinu2026!' || val === 'chaesumin2026!');
+    const isValid = val === info.code;
 
     if (isValid) {
         try {
@@ -3024,6 +3055,12 @@ function updatePreflightAudit() {
             const isoDate = getIsoPublishDate(date);
             const title = document.getElementById('mainTitle')?.value?.trim();
             const sub = document.getElementById('subTitle')?.value?.trim();
+            const subRatioEl = document.getElementById('subRatio');
+            const defaultSubRatio = getWebzineDefaultSubtitleRatio(currentWebzineSeries, currentLang, cat);
+            const subRatioValue = subRatioEl?.dataset.userSelected === 'true' && subRatioEl.value
+                ? subRatioEl.value
+                : defaultSubRatio;
+            const isKoreanOnlineSubtitle = isKoreanOnlineSubtitleTarget(currentWebzineSeries, currentLang, cat);
             const authors = (typeof getAuthors === 'function') ? getAuthors() : [];
             const summaryEl = document.getElementById('summaryText');
             const summaryRaw = (summaryEl?.value || summaryEl?.innerText || '').trim();
@@ -3033,7 +3070,13 @@ function updatePreflightAudit() {
             if (cat) passes.push(`발간구분: ${cat}`); else issues.push('발간구분 미입력');
             if (isoDate) passes.push(`발행일: ${date}`); else issues.push('발행일 형식 오류(YYYY.MM.DD)');
             if (title) passes.push('메인제목 확인'); else issues.push('메인제목 미입력');
-            if (sub) passes.push('부제 85% 규격 적용');
+            if (sub) {
+                const subRatioPercent = Math.round((parseFloat(subRatioValue) || 0.85) * 100);
+                const ratioLabel = isKoreanOnlineSubtitle && subRatioValue === getWebzineDefaultSubtitleRatio(currentWebzineSeries, currentLang, cat)
+                    ? '권장 규격 적용'
+                    : '배율 적용';
+                passes.push(`부제 ${subRatioPercent}% ${ratioLabel}`);
+            }
             if (authors && authors.length && authors[0].name) {
                 passes.push(`저자: ${authors.map(a => a.name).join(', ')}`);
             } else {
@@ -4358,6 +4401,20 @@ function updateIframePreviews(fullEmailHtml, cleanHomepageHtml, immediate = fals
     }
 }
 
+function isKoreanOnlineSubtitleTarget(seriesKey, lang, category) {
+    const normalizedSeries = String(seriesKey || '');
+    const normalizedLanguage = String(lang || '').toLowerCase();
+    if (normalizedLanguage === 'en') return false;
+    if (/^Online Series\s*\//i.test(String(category || ''))) {
+        return normalizedLanguage === 'ko' || (normalizedSeries !== 'online-en' && normalizedSeries !== 'journal-en');
+    }
+    return normalizedSeries === 'online-kr' || normalizedSeries === 'online-ko';
+}
+
+function getWebzineDefaultSubtitleRatio(seriesKey, lang, category) {
+    return isKoreanOnlineSubtitleTarget(seriesKey, lang, category) ? '0.90' : '0.85';
+}
+
 function saveWebzineDraftToStorage() {
     if (typeof localStorage === 'undefined') return;
     try {
@@ -4371,7 +4428,11 @@ function saveWebzineDraftToStorage() {
             mainTitle: document.getElementById('mainTitle')?.value || '',
             subTitle: document.getElementById('subTitle')?.value || '',
             hasColon: document.getElementById('chkHasColon')?.checked || false,
-            subRatio: document.getElementById('subRatio')?.value || '0.85',
+            subRatio: document.getElementById('subRatio')?.value || getWebzineDefaultSubtitleRatio(
+                currentWebzineSeries,
+                currentLang,
+                document.getElementById('issueCategory')?.value || ''
+            ),
             authors: (typeof getAuthors === 'function') ? getAuthors() : [],
             reportIdx: document.getElementById('reportIdx')?.value || '',
             reportFullUrl: document.getElementById('reportFullUrl')?.value || '',
@@ -4407,7 +4468,18 @@ function restoreWebzineDraftIfAvailable() {
         setValue('subTitle', draft.subTitle);
         const chkColon = document.getElementById('chkHasColon');
         if (chkColon && draft.hasColon !== undefined) chkColon.checked = draft.hasColon;
-        setValue('subRatio', draft.subRatio || '0.85');
+        const draftSubRatio = document.getElementById('subRatio');
+        if (draftSubRatio) {
+            const hasSavedSubRatio = draft.subRatio !== undefined && draft.subRatio !== null && String(draft.subRatio) !== '';
+            draftSubRatio.value = hasSavedSubRatio
+                ? draft.subRatio
+                : getWebzineDefaultSubtitleRatio(draft.series || currentWebzineSeries, draft.lang || currentLang, draft.issueCategory || '');
+            if (hasSavedSubRatio) {
+                draftSubRatio.dataset.userSelected = 'true';
+            } else {
+                delete draftSubRatio.dataset.userSelected;
+            }
+        }
         setValue('reportIdx', draft.reportIdx);
         setValue('reportFullUrl', draft.reportFullUrl);
         setValue('btnLabel', draft.btnLabel);
@@ -4482,7 +4554,6 @@ function renderAll(immediate = false) {
     const subTitle = document.getElementById('subTitle')?.value.trim() || '';
     const hasColon = document.getElementById('chkHasColon')?.checked || false;
     const subRatioEl = document.getElementById('subRatio');
-    const subRatio = subRatioEl ? subRatioEl.value : '0.85';
     const authors = getAuthors();
     const authorSummary = authors.map(a => `${stripHtmlTags(a.name)}${a.title ? ` ${stripHtmlTags(a.title)}` : ''}`).join(', ');
     const reportIdx = document.getElementById('reportIdx')?.value.trim() || '';
@@ -4497,6 +4568,12 @@ function renderAll(immediate = false) {
     }
     const activeSeriesKey = (typeof currentWebzineSeries !== 'undefined' ? currentWebzineSeries : '') || (typeof window !== 'undefined' ? window.currentWebzineSeries : '') || 'online-kr';
     const isEnglish = ((typeof currentLang !== 'undefined' ? currentLang : (typeof window !== 'undefined' ? window.currentLang : 'ko')) === 'en' || activeSeriesKey === 'online-en' || activeSeriesKey === 'journal-en');
+    const isKoreanOnlineSubtitle = isKoreanOnlineSubtitleTarget(activeSeriesKey, currentLang, category);
+    const defaultSubRatio = getWebzineDefaultSubtitleRatio(activeSeriesKey, currentLang, category);
+    if (subRatioEl && subRatioEl.dataset.userSelected !== 'true') {
+        subRatioEl.value = defaultSubRatio;
+    }
+    const subRatio = subRatioEl?.value || defaultSubRatio;
 
     const posterImgUrl = document.getElementById('noticePosterImgUrl')?.value?.trim() || '';
     const posterLinkUrl = document.getElementById('noticePosterLinkUrl')?.value?.trim() || '';
@@ -4546,10 +4623,12 @@ function renderAll(immediate = false) {
     const colonStr = (hasColon || (mainTitle && mainTitle.trim().endsWith(':'))) ? ':' : '';
     const subRatioNum = Math.min(1.0, Math.max(0.6, parseFloat(subRatio) || 0.85));
     const subFontSizeEm = `${subRatioNum}em`;
+    const subFontFamily = isKoreanOnlineSubtitle ? 'Paperlogy-7Bold' : 'Paperlogy-6SemiBold';
+    const subFontWeight = isKoreanOnlineSubtitle ? 700 : 600;
     const kinuGrad110 = `background: linear-gradient(110deg, #0a2942 0%, #0b5e9a 33%, #4e9b20 65%, #78b824 85%, #88c020 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;`;
     let formattedTitleHtml = `<strong class="title-gradient" style="font-family: 'Paperlogy-8ExtraBold', 'Paperlogy', 'Paperozi', 'Pretendard Variable', 'Pretendard', sans-serif; font-weight: 900; line-height: 1.18; letter-spacing: -0.035em; ${kinuGrad110} display: inline-block;">${preserveSafeHtmlFormatting(escapeHtml(cleanMainTitle)).replace(/\r?\n/g, '<br>')}${colonStr}</strong>`;
     if (subTitle) {
-        formattedTitleHtml += `\n                                        <br><span class="title-gradient" style="font-family: 'Paperlogy-6SemiBold', 'Paperlogy', 'Paperozi', 'Pretendard', sans-serif; font-size: ${subFontSizeEm}; font-weight: 600; line-height: 1.22; letter-spacing: -0.03em; display: inline-block; margin-top: 2px; vertical-align: top; ${kinuGrad110}">${preserveSafeHtmlFormatting(escapeHtml(subTitle))}</span>`;
+        formattedTitleHtml += `\n                                        <br><span class="title-gradient" style="font-family: '${subFontFamily}', 'Paperlogy', 'Paperozi', 'Pretendard', sans-serif; font-size: ${subFontSizeEm}; font-weight: ${subFontWeight}; line-height: 1.22; letter-spacing: -0.03em; display: inline-block; margin-top: 2px; vertical-align: top; ${kinuGrad110}">${preserveSafeHtmlFormatting(escapeHtml(subTitle))}</span>`;
     }
     formattedTitleHtml = convertSpecialSymbolsToUnicode(wrapMultilingualNotoSans(formattedTitleHtml));
 
@@ -5043,11 +5122,12 @@ function getGlobalSearchDataset() {
         // KINU Area
         { id: 'm-kinu-webz', category: 'menu', title: 'KINU · 웹진 빌더 (Webzine Builder) [독립]', desc: '온라인시리즈·발간물 템플릿 편집 및 배포', badge: 'KINU', icon: 'fa-envelope-open-text', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'webzine') : switchMasterSuite('webzine') },
         { id: 'm-kinu-np', category: 'menu', title: 'KINU · 명패 빌더 (Nameplate Maker) [독립]', desc: '17종 규격 명패 인터랙티브 대량 배치 편집 및 1:1 A4 인쇄', badge: 'KINU', icon: 'fa-id-badge', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'nameplate') : switchMasterSuite('nameplate') },
-        { id: 'm-kinu-rules', category: 'menu', title: 'KINU · 원내 규정집 (Rulebook) [독립]', desc: '2026 연구사업 운영지침 전문 및 제도 찾기, 서식 대장', badge: 'KINU', icon: 'fa-book-bookmark', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook') : switchMasterSuite('rulebook') },
+        { id: 'm-kinu-new-rules', category: 'menu', title: 'KINU · New Rulebook', desc: '규정 읽기와 양식 작성', badge: 'KINU', icon: 'fa-book-open', action: () => switchNavArea('kinu', 'new-rulebook') },
+        { id: 'm-kinu-rules', category: 'menu', title: 'KINU · Legacy 규정집', desc: '2026 연구사업 운영지침 전문 및 제도 찾기, 서식 대장', badge: 'KINU', icon: 'fa-book-bookmark', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook') : switchMasterSuite('rulebook') },
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.46 (v5.9.46) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.56 (v5.9.56) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -5810,6 +5890,7 @@ function initRichEditableFields() {
 
             if (id === 'publishDate' || id === 'subTitle') {
                 el.addEventListener('keydown', e => {
+                    if (e.isComposing || e.keyCode === 229) return;
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         el.blur();
@@ -7425,7 +7506,7 @@ if (typeof window !== 'undefined') {
                 }
 
                 // 3. Immediate Admin Alert Notification
-                alert(`🔑 [단순노동해방연구단 관리자 인증]\n\n이번 주 (${info.weekStr}) 인증 코드: ${info.code}\n마스터키: chaesumin2026!\n\n(입력창에 코드가 자동 입력되었으며 클립보드에 복사되었습니다!)`);
+                alert('웹 버전에서는 마스터 코드를 제공하지 않습니다.');
                 return;
             }
 
@@ -8400,7 +8481,7 @@ const KNOWN_AUTHORS_MAP = {
     '통일정책연구실': '통일연구원',
     '국제전략연구실': '통일연구원',
 
-    // KINU 공식 byline 확인(2026-11-02): /eng/module/report/view.do?idx={132922,132921,132919,132918,132917,132907,132908,132902,132901,132896}&nav_code=eng1674805982&category=72.
+    // KINU 공식 byline 확인(2026-11-02): /eng/module/report/view.do?idx={132922,132921,132919,132918,132917,132902,132901,132896}&nav_code=eng1674805982&category=72.
     // 현재 확인된 대표 직함의 fallback이며, 명시적 report.authorTitle이 있으면 이를 우선한다.
     'Lee Sang Sin': 'Director of Unification Policy Research Division',
     'Jeong EunIee': 'Director, North Korean Research Division',
@@ -8465,9 +8546,6 @@ function splitKinuAuthorString(rawAuthors, lang) {
     }
 
     if (!cleaned.includes(',')) return [cleaned];
-    const englishPairs = cleaned.match(/^([A-Z][A-Za-z.'’\-]+),\s*([A-Z][A-Za-z.'’\-]+)\s+([A-Z][A-Za-z.'’\-]+),\s*([A-Z][A-Za-z.'’\-]+(?:\s+[A-Z][A-Za-z.'’\-]+)*)$/);
-    if (englishPairs) return [`${englishPairs[1]}, ${englishPairs[2]}`, `${englishPairs[3]}, ${englishPairs[4]}`];
-
     const chunks = cleaned.split(/[,，]+/).map(part => part.trim()).filter(Boolean);
     const knownNames = Object.keys(KNOWN_AUTHORS_MAP).map(normalizeAuthorNameForLookup);
     const matchesKnownName = value => knownNames.includes(normalizeAuthorNameForLookup(value));
@@ -8774,13 +8852,6 @@ function getReportUrl(idx) {
     return `https://www.kinu.or.kr/main/module/report/view.do?nav_code=mai1674786581&category=53&idx=${encodeURIComponent(clean)}`;
 }
 
-function getKinuReportUrlFor(idx, navCode, category) {
-    const isEn = String(navCode || '').startsWith('eng');
-    const params = new URLSearchParams({ idx: String(idx), nav_code: String(navCode || (isEn ? 'eng1674805982' : 'mai1674786581')) });
-    params.set('category', isEn ? '72' : String(category || '53'));
-    return `https://www.kinu.or.kr/${isEn ? 'eng' : 'main'}/module/report/view.do?${params.toString()}`;
-}
-
 function getCurrentReportUrl() {
     const idx = document.getElementById('reportIdx')?.value?.trim() || '';
     const customUrl = document.getElementById('reportFullUrl')?.value?.trim() || '';
@@ -9044,6 +9115,81 @@ function parseReportTitleAndSubtitle(rawTitle = '') {
     return { mainTitle: main, subTitle: sub, hasColon };
 }
 
+function parseOfficialKinuOnlineSeriesIssue(value = '', isEnglish = false) {
+    const text = String(value || '');
+    const match = text.match(/(?:\bCO\s*(\d{2})\s*-\s*(\d{1,3})|(?:온라인\s*시리즈|Online\s*Series)\s*(?:[|/:·-]\s*)?(?:CO\s*)?(\d{2})\s*-\s*(\d{1,3}))(?:\s*([eE]))?(?=$|[^\w-])/i);
+    if (!match) return '';
+    const year = match[1] || match[3];
+    const number = match[2] || match[4];
+    return `CO${year}-${number}${isEnglish || match[5] ? 'e' : ''}`;
+}
+
+function decodeKinuMetadataValue(value = '') {
+    let decoded = String(value || '');
+    for (let i = 0; i < 8; i += 1) {
+        let next;
+        try { next = decodeURIComponent(decoded); } catch (_) { break; }
+        if (next === decoded) break;
+        decoded = next;
+    }
+    return decoded.replace(/\+/g, ' ');
+}
+
+function extractKinuIssueFromMediaMetadata(source = '') {
+    const decodedSource = decodeKinuMetadataValue(source);
+    const dispositionMatch = decodedSource.match(/response-content-disposition\s*[:=]\s*(?:"((?:\\.|[^"])*)"|'((?:\\.|[^'])*)'|([^\r\n&<>]+))/i);
+    if (!dispositionMatch) return '';
+    const disposition = decodeKinuMetadataValue(dispositionMatch[1] || dispositionMatch[2] || dispositionMatch[3] || '')
+        .replace(/\\(["'])/g, '$1');
+    const filenameMatch = disposition.match(/filename\*?\s*=\s*(?:UTF-8''\s*)?(?:"([^"]*)"|'([^']*)'|([^;\r\n&]+))/i);
+    if (!filenameMatch) return '';
+    const filename = decodeKinuMetadataValue(filenameMatch[1] || filenameMatch[2] || filenameMatch[3] || '');
+    const issueMatch = filename.match(/\[\s*온라인\s*시리즈\s+(\d{2})\s*-\s*(\d{1,3})\s*\]/i);
+    return issueMatch ? `CO${issueMatch[1]}-${issueMatch[2]}` : '';
+}
+
+function prepareOfficialKinuSeriesReportForPreview(report, selected = null) {
+    if (!report) return report;
+    const navCode = String(report.navCode || selected?.navCode || '');
+    const isEnglish = navCode.startsWith('eng');
+    const category = String(report.category || selected?.category || (isEnglish ? '72' : '53'));
+    const isOnlineSeries = isEnglish
+        ? category === '72'
+        : navCode.startsWith('mai') && category === '53';
+    if (!isOnlineSeries) return report;
+
+    const prepared = { ...report };
+    if (selected) {
+        if (!String(prepared.mainTitle || '').trim() && selected.mainTitle) prepared.mainTitle = selected.mainTitle;
+        if (!String(prepared.subTitle || '').trim() && String(selected.subTitle || '').trim()) prepared.subTitle = selected.subTitle;
+        if (prepared.hasColon === undefined && selected.hasColon !== undefined) prepared.hasColon = selected.hasColon;
+        if (!prepared.authorTitle && selected.authorTitle) prepared.authorTitle = selected.authorTitle;
+    }
+
+    const issueNo = parseOfficialKinuOnlineSeriesIssue(prepared.issueNo, isEnglish)
+        || parseOfficialKinuOnlineSeriesIssue(prepared.issueCategory, isEnglish)
+        || parseOfficialKinuOnlineSeriesIssue(selected?.issueNo, isEnglish)
+        || parseOfficialKinuOnlineSeriesIssue(selected?.issueCategory, isEnglish)
+        || parseOfficialKinuOnlineSeriesIssue(prepared.title, isEnglish)
+        || parseOfficialKinuOnlineSeriesIssue(selected?.title, isEnglish);
+    prepared.issueNo = issueNo;
+    prepared.issueCategory = issueNo ? `Online Series / ${issueNo}` : '';
+
+    const title = String(prepared.title || '');
+    if (isEnglish) {
+        prepared.mainTitle = title;
+        prepared.subTitle = '';
+        prepared.hasColon = false;
+    } else {
+        const parsedTitle = parseReportTitleAndSubtitle(title);
+        const structuredSubtitle = String(prepared.subTitle || '').trim();
+        prepared.mainTitle = String(prepared.mainTitle || '').trim() || parsedTitle.mainTitle || title;
+        prepared.subTitle = structuredSubtitle || parsedTitle.subTitle || '';
+        prepared.hasColon = structuredSubtitle ? Boolean(prepared.hasColon) : parsedTitle.hasColon;
+    }
+    return prepared;
+}
+
 function setReportFormFromData(report, preferOfficialUrl = false) {
     setWebzineDraftDirty(false);
     if (typeof initRichEditableFields === 'function') initRichEditableFields();
@@ -9076,12 +9222,18 @@ function setReportFormFromData(report, preferOfficialUrl = false) {
 
     if (dateInput) dateInput.value = report.date || '';
     if (idxInput) idxInput.value = report.idx || '';
-    let detectedIssue = report.issueNo || report.issueCategory || '';
+    const isEn = (report.navCode && report.navCode.startsWith('eng')) || (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries === 'online-en') || (typeof currentLang !== 'undefined' && currentLang === 'en');
+    const officialOnlineSeries = Boolean(report.navCode)
+        && (isEn ? String(report.category || '72') === '72' : report.navCode.startsWith('mai') && String(report.category || '53') === '53');
+    let detectedIssue = officialOnlineSeries
+        ? (parseOfficialKinuOnlineSeriesIssue(report.issueNo, isEn)
+            || parseOfficialKinuOnlineSeriesIssue(report.issueCategory, isEn)
+            || parseOfficialKinuOnlineSeriesIssue(report.title, isEn))
+        : (report.issueNo || report.issueCategory || '');
     if (detectedIssue === '53' || detectedIssue === '54' || detectedIssue === 'Online Series / 53' || detectedIssue === 'Online Series / 54') detectedIssue = '';
-    if (!detectedIssue && report.title) {
+    if (!officialOnlineSeries && !detectedIssue && report.title) {
         detectedIssue = extractIssueNumber(report.title);
     }
-    const isEn = (report.navCode && report.navCode.startsWith('eng')) || (typeof currentWebzineSeries !== 'undefined' && currentWebzineSeries === 'online-en') || (typeof currentLang !== 'undefined' && currentLang === 'en');
     if (detectedIssue) {
         let fullCat = detectedIssue;
         if (!fullCat.includes('/')) {
@@ -9101,8 +9253,17 @@ function setReportFormFromData(report, preferOfficialUrl = false) {
         if (issueInput) issueInput.value = '';
         syncIssueCategoryUI('');
     }
-    if (summaryInput) summaryInput.value = report.summary || '';
-    if (urlInput) urlInput.value = preferOfficialUrl && report.url ? report.url : getReportUrl(report.idx || '');
+    if (summaryInput && Object.prototype.hasOwnProperty.call(report, 'summary')) {
+        summaryInput.value = report.summary == null ? '' : report.summary;
+    }
+    if (urlInput) {
+        const validatedReportUrl = preferOfficialUrl && report.url && typeof validateOnlineSeriesDetailUrl === 'function'
+            ? validateOnlineSeriesDetailUrl(report.url)
+            : null;
+        urlInput.value = validatedReportUrl && !validatedReportUrl.error
+            ? validatedReportUrl.url
+            : (preferOfficialUrl && report.url ? report.url : getReportUrl(report.idx || ''));
+    }
     const rawAuthors = report.authors || report.author;
     authorList = applyReportAuthorMetadata(report, resolveAuthorList(rawAuthors, isEn ? 'en' : 'ko'), isEn ? 'en' : 'ko');
     renderAuthorRows(authorList);
@@ -9639,7 +9800,7 @@ var EMBEDDED_KINU_CATALOG = {
     ]
 };
 
-// === Official KINU Reader transport and in-memory HTML parser ===
+// === 🌐 SERVERLESS CORS PROXY & HTML PARSER HELPERS ===
 async function fetchWithTimeout(url, options = {}, timeoutMs = 4000) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -9653,43 +9814,206 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 4000) {
     }
 }
 
-async function fetchKinuHtmlViaReader(targetUrl, timeoutMs = 20000) {
-    const target = new URL(targetUrl);
-    if (target.protocol !== 'https:' || target.hostname !== 'www.kinu.or.kr'
-        || !/^\/(?:main|eng)\/module\/report\/(?:index|view)\.do$/.test(target.pathname)) {
-        throw new Error('허용된 공식 KINU 목록·상세 주소가 아닙니다.');
-    }
-    const isEnPath = target.pathname.startsWith('/eng/');
-    const navCode = target.searchParams.get('nav_code');
-    const expectedNav = isEnPath ? 'eng1674805982' : 'mai1674786581';
-    const allowedParams = target.pathname.endsWith('/view.do')
-        ? new Set(['idx', 'nav_code', 'category'])
-        : new Set(['nav_code', 'viewPage', 'category']);
-    if ([...target.searchParams.keys()].some(key => !allowedParams.has(key))
-        || navCode !== expectedNav || target.searchParams.getAll('nav_code').length !== 1) {
-        throw new Error('공식 게시판 언어와 주소를 확인하지 못했습니다.');
-    }
-    if (target.pathname.endsWith('/view.do')) {
-        const detail = validateOnlineSeriesDetailUrl(target.href);
-        if (detail.error || detail.isEn !== isEnPath) throw new Error('공식 상세 주소의 게시물 정보를 확인하지 못했습니다.');
-    } else {
-        const category = isEnPath ? '72' : '53';
-        if (target.searchParams.get('category') !== category) throw new Error('공식 목록의 언어·게시판을 확인하지 못했습니다.');
-    }
-    const readerUrl = `https://r.jina.ai/${target.href}`;
-    const response = await fetchWithTimeout(readerUrl, {
-        method: 'GET',
-        mode: 'cors',
-        credentials: 'omit',
-        cache: 'no-store',
-        headers: { 'X-Respond-With': 'html', 'X-No-Cache': 'true' }
-    }, timeoutMs);
-    if (!response.ok) throw new Error(`자료 중계 응답 ${response.status}`);
-    const html = await response.text();
-    if (!isValidKinuHtmlResponse(html, 80)) throw new Error('공식 페이지 HTML 응답을 확인하지 못했습니다.');
-    return html;
+function isValidKinuProxyPayload(text, minLen = 150) {
+    if (!text || typeof text !== 'string') return false;
+    const trimmed = text.trim();
+    if (trimmed.length < minLen) return false;
+    // Reject KINU Error 400 / Error 500 pages returned by /raw proxies
+    if (/<p\s+class=["']tit["']>\s*Error\s+[45]\d\d\s*<\/p>/i.test(trimmed)) return false;
+    if (/<h2>\s*[45]\d\d\s*오류/i.test(trimmed)) return false;
+    return true;
 }
 
+function fetchKinuViaAllOriginsJsonp(targetUrl, timeoutMs = 8000) {
+    return new Promise((resolve) => {
+        if (typeof document === 'undefined' || !document.head) {
+            resolve(null);
+            return;
+        }
+        const cbName = '__kinuAllOriginsCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+        const script = document.createElement('script');
+        let settled = false;
+        const cleanup = () => {
+            try { delete window[cbName]; } catch (_) { window[cbName] = undefined; }
+            if (script.parentNode) script.parentNode.removeChild(script);
+        };
+        const timer = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            resolve(null);
+        }, timeoutMs);
+
+        const minLen = targetUrl.includes('/library/api/media/url') ? 40 : 150;
+        window[cbName] = (data) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            const contents = data && typeof data.contents === 'string' ? data.contents : null;
+            resolve(isValidKinuProxyPayload(contents, minLen) ? contents : null);
+        };
+
+        script.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve(null);
+        };
+
+        script.src = `https://api.allorigins.win/get?callback=${cbName}&url=${encodeURIComponent(targetUrl)}`;
+        document.head.appendChild(script);
+    });
+}
+
+function fetchLocalServerJsonp(endpointUrl, timeoutMs = 6000) {
+    return new Promise((resolve) => {
+        if (typeof document === 'undefined' || !document.head || !endpointUrl) {
+            resolve(null);
+            return;
+        }
+        const cbName = '__kinuLocalCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+        const script = document.createElement('script');
+        let settled = false;
+        const cleanup = () => {
+            try { delete window[cbName]; } catch (_) { window[cbName] = undefined; }
+            if (script.parentNode) script.parentNode.removeChild(script);
+        };
+        const timer = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            resolve(null);
+        }, timeoutMs);
+
+        window[cbName] = (data) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve(data || null);
+        };
+
+        script.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve(null);
+        };
+
+        const delimiter = endpointUrl.includes('?') ? '&' : '?';
+        script.src = `${endpointUrl}${delimiter}callback=${cbName}`;
+        document.head.appendChild(script);
+    });
+}
+if (typeof window !== 'undefined') {
+    window.fetchLocalServerJsonp = fetchLocalServerJsonp;
+}
+
+async function fetchKinuHtmlViaCorsProxy(targetUrl) {
+    if (!targetUrl) return null;
+    const minLen = targetUrl.includes('/library/api/media/url') ? 40 : 150;
+
+    // 1차: api.allorigins.win JSON API (CORS 활성화, Error 400 회피)
+    try {
+        const getUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+        const resp = await fetchWithTimeout(getUrl, { cache: 'no-store' }, 7000);
+        if (resp.ok) {
+            const data = await resp.json();
+            const contents = data && typeof data.contents === 'string' ? data.contents : null;
+            if (isValidKinuProxyPayload(contents, minLen)) {
+                return contents;
+            }
+        }
+    } catch (_) {}
+
+    // 2차: file:// 프로토콜 전용 무결점 JSONP 폴백 (Origin: null 브라우저 CORS 차단 100% 우회)
+    try {
+        const jsonpResult = await fetchKinuViaAllOriginsJsonp(targetUrl, 8000);
+        if (isValidKinuProxyPayload(jsonpResult, minLen)) {
+            return jsonpResult;
+        }
+    } catch (_) {}
+
+    // 3차: api.codetabs.com 오픈 프록시 폴백
+    try {
+        const codeTabsUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
+        const resp = await fetchWithTimeout(codeTabsUrl, { cache: 'no-store' }, 6000);
+        if (resp.ok) {
+            const text = await resp.text();
+            if (isValidKinuProxyPayload(text, minLen)) {
+                return text;
+            }
+        }
+    } catch (_) {}
+
+    return null;
+}
+
+async function fetchKinuHtmlViaReader(targetUrl, timeoutMs = KINU_READER_TIMEOUT_MS) {
+    const input = new URL(targetUrl);
+    if (input.protocol !== 'https:' || input.hostname !== 'www.kinu.or.kr'
+        || !/^\/(?:main|eng)\/module\/report\/(?:index|view)\.do$/.test(input.pathname)) {
+        throw new Error('허용된 공식 KINU 목록·상세 주소가 아닙니다.');
+    }
+    const isEnglish = input.pathname.startsWith('/eng/');
+    const navCode = isEnglish ? 'eng1674805982' : 'mai1674786581';
+    let canonical;
+    if (input.pathname.endsWith('/view.do')) {
+        const detail = validateOnlineSeriesDetailUrl(input.href);
+        if (detail.error || detail.isEn !== isEnglish) throw new Error('공식 상세 주소의 게시물 정보를 확인하지 못했습니다.');
+        canonical = new URL(detail.url);
+        if (canonical.origin !== 'https://www.kinu.or.kr'
+            || [...canonical.searchParams.keys()].some(key => !['idx', 'nav_code', 'category'].includes(key))) {
+            throw new Error('상세 주소를 공식 허용 항목으로 재구성하지 못했습니다.');
+        }
+    } else {
+        if ([...input.searchParams.keys()].some(key => !['nav_code', 'viewPage', 'category'].includes(key))
+            || input.searchParams.getAll('nav_code').length !== 1
+            || input.searchParams.getAll('category').length !== 1
+            || input.searchParams.get('nav_code') !== navCode
+            || input.searchParams.get('category') !== (isEnglish ? '72' : '53')) {
+            throw new Error('공식 목록의 언어·게시판을 확인하지 못했습니다.');
+        }
+        canonical = new URL(input.pathname, 'https://www.kinu.or.kr');
+        canonical.searchParams.set('nav_code', navCode);
+        canonical.searchParams.set('category', isEnglish ? '72' : '53');
+    }
+    const requestKey = canonical.href;
+    const existingRequest = kinuReaderInFlightRequests.get(requestKey);
+    if (existingRequest) return existingRequest;
+
+    const readerUrl = `https://r.jina.ai/${canonical.href}`;
+    const requestTimeoutMs = Math.min(Math.max(Number(timeoutMs) || KINU_READER_TIMEOUT_MS, 1), KINU_READER_TIMEOUT_MS);
+    const request = (async () => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), requestTimeoutMs);
+        try {
+            const response = await fetch(readerUrl, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'omit',
+                cache: 'no-store',
+                headers: { 'X-Respond-With': 'html', 'X-No-Cache': 'true' },
+                signal: controller.signal
+            });
+            if (!response.ok) throw new Error(`자료 중계 응답 ${response.status}`);
+            const html = await response.text();
+            if (!isValidKinuHtmlResponse(html, 80)) throw new Error('공식 페이지 HTML 응답을 확인하지 못했습니다.');
+            return html;
+        } finally {
+            clearTimeout(timer);
+        }
+    })();
+    kinuReaderInFlightRequests.set(requestKey, request);
+    try {
+        return await request;
+    } finally {
+        if (kinuReaderInFlightRequests.get(requestKey) === request) kinuReaderInFlightRequests.delete(requestKey);
+    }
+}
 function isValidKinuHtmlResponse(text, minLen = 150) {
     if (!text || typeof text !== 'string') return false;
     const trimmed = text.trim();
@@ -9805,6 +10129,17 @@ function parseKinuReportListFromHtml(sourceHtml, navCode, category = '', limit =
     return cards;
 }
 
+function getKinuReportUrlFor(idx, navCode, category = '') {
+    const isEnglish = String(navCode || '').startsWith('eng');
+    const cleanIdx = String(idx || '').trim();
+    if (!/^\d+$/.test(cleanIdx)) return '';
+    const url = new URL(`https://www.kinu.or.kr/${isEnglish ? 'eng' : 'main'}/module/report/view.do`);
+    url.searchParams.set('idx', cleanIdx);
+    url.searchParams.set('nav_code', isEnglish ? 'eng1674805982' : 'mai1674786581');
+    url.searchParams.set('category', isEnglish ? '72' : (String(category || '53') === '54' ? '54' : '53'));
+    return url.href;
+}
+
 function getWebzineReportFormState() {
     const fields = document.querySelectorAll(
         '#issueCategory,#issueNoInput,#publishDate,#mainTitle,#subTitle,#chkHasColon,#summaryText,#subRatio,' +
@@ -9903,7 +10238,6 @@ function validateOnlineSeriesDetailUrl(rawUrl) {
     normalized.searchParams.set('category', category);
     return { idx: idxValues[0], navCode, category, isEn, url: normalized.href };
 }
-
 function applyOnlineSeriesLanguageDefaults(lang) {
     const previousLang = (currentWebzineSeries === 'online-en' || currentLang === 'en') ? 'en' : 'ko';
     if (previousLang === lang) return [];
@@ -9932,7 +10266,6 @@ function applyOnlineSeriesLanguageDefaults(lang) {
     }
     return preserved;
 }
-
 function syncOnlineSeriesLanguageUI(lang) {
     currentWebzineSeries = lang === 'en' ? 'online-en' : 'online-kr';
     currentLang = lang === 'en' ? 'en' : 'ko';
@@ -9960,7 +10293,6 @@ async function analyzeOnlineSeriesUrl() {
         const appliedIdx = document.getElementById('reportIdx')?.value?.trim() || '';
         if (select) select.value = fetchedReports.some(report => String(report.idx) === appliedIdx) ? appliedIdx : '';
     };
-    const oldButtonText = button?.textContent || '';
     if (button) { button.disabled = true; button.textContent = '분석 중…'; }
     if (status) status.textContent = `[상세 조회 중] 공식 ${target.isEn ? '영문' : '국문'} 온라인시리즈 페이지를 확인합니다…`;
     try {
@@ -10001,7 +10333,6 @@ async function analyzeOnlineSeriesUrl() {
         const preservedCopyNote = preservedLanguageFields.length ? ` 사용자 지정 ${preservedLanguageFields.join('·')}는 유지했습니다.` : '';
         if (!report.summary && status) status.textContent = `[상세 적용 완료] 메타정보를 적용했습니다. 공식 페이지에 초록이 없습니다.${preservedCopyNote}`;
         else if (status) status.textContent = `[상세 적용 완료] 공식 메타정보와 원문 초록을 적용했습니다.${report.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝나 전문이 아닙니다.' : ''} 번역·요약은 생성하지 않았습니다.${preservedCopyNote}`;
-        downloadWebzineTxt({ sourceOnly: true });
         return true;
     } catch (_) {
         if (requestVersion === reportDetailRequestVersion) {
@@ -10010,7 +10341,7 @@ async function analyzeOnlineSeriesUrl() {
         }
         return false;
     } finally {
-        if (button && requestVersion === reportDetailRequestVersion) { button.disabled = false; button.textContent = oldButtonText; }
+        if (button && requestVersion === reportDetailRequestVersion) { button.disabled = false; button.textContent = '링크 분석'; }
     }
 }
 
@@ -10019,18 +10350,18 @@ async function onSelectLiveReport(idx) {
     const requestVersion = ++reportDetailRequestVersion;
     const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
     if (analyzeButton) { analyzeButton.disabled = false; analyzeButton.textContent = '링크 분석'; }
+    const selected = fetchedReports.find(report => String(report.idx) === String(idx));
+    if (!selected) return;
     const formStateAtRequest = getWebzineReportFormState();
+    const status = document.getElementById('reportIntegrationStatus');
+    const reportTargetUrl = getKinuReportUrlFor(idx, selected.navCode, selected.category);
     const restoreSelectionToAppliedReport = () => {
         const select = document.getElementById('selLiveReport');
         const appliedIdx = document.getElementById('reportIdx')?.value?.trim() || '';
         if (select) select.value = fetchedReports.some(report => String(report.idx) === appliedIdx) ? appliedIdx : '';
     };
-    const selected = fetchedReports.find(report => String(report.idx) === String(idx));
-    if (!selected) return;
-    const status = document.getElementById('reportIntegrationStatus');
     if (status) status.textContent = `[1순위] 공식 보고서(idx ${idx})의 상세 정보를 불러오는 중입니다...`;
     try {
-        const reportTargetUrl = getKinuReportUrlFor(idx, selected.navCode, selected.category);
         const detailHtml = await fetchKinuHtmlViaReader(reportTargetUrl, 32000);
         const reportData = await parseKinuReportDetailFromHtml(detailHtml, idx, selected.navCode, selected.category || '');
 
@@ -10040,7 +10371,7 @@ async function onSelectLiveReport(idx) {
             || reportData.navCode !== selected.navCode || !returnedDetail || returnedDetail.error
             || returnedDetail.idx !== String(idx) || returnedDetail.isEn !== String(selected.navCode || '').startsWith('eng')) {
             restoreSelectionToAppliedReport();
-            if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 확인하지 못했습니다. 이전 글의 초록과 저자는 적용하지 않았습니다.`;
+            if (status) status.textContent = `[상세 조회 실패] 선택한 보고서(idx ${idx})의 상세 정보를 확인하지 못해 적용 중인 자료 선택으로 되돌렸습니다. 작성 내용은 유지했습니다.`;
             return;
         }
         const currentFormState = getWebzineReportFormState();
@@ -10095,7 +10426,51 @@ async function onSelectLiveReport(idx) {
     } catch (error) {
         if (requestVersion !== reportDetailRequestVersion) return;
         restoreSelectionToAppliedReport();
-        if (status) status.textContent = `[상세 조회 실패] 공식 보고서(idx ${idx}) 상세 정보를 불러오지 못했습니다. 기존 작성 중인 초안이 안전하게 보존되었습니다.`;
+        if (status) status.textContent = `[상세 조회 실패] 선택한 보고서(idx ${idx})의 상세 정보를 불러오지 못해 적용 중인 자료 선택으로 되돌렸습니다. 작성 내용은 유지했습니다.`;
+    }
+}
+
+async function fetchKinuReportList(targetUrl, navCode, category, forceRefresh = false) {
+    const cacheKey = new URL(targetUrl).href;
+    const now = Date.now();
+    const cached = kinuReportListCache.get(cacheKey);
+    if (forceRefresh) {
+        kinuReportListCache.delete(cacheKey);
+    } else if (cached && cached.expiresAt > now) {
+        return { reports: cached.reports.map(report => ({ ...report, authors: [...report.authors] })), fromCache: true };
+    } else if (cached) {
+        kinuReportListCache.delete(cacheKey);
+    }
+
+    const existingRequest = kinuReportListInFlightRequests.get(cacheKey);
+    if (existingRequest) return existingRequest;
+
+    const request = (async () => {
+        const html = await fetchKinuHtmlViaReader(targetUrl, KINU_READER_TIMEOUT_MS);
+        const parsed = parseKinuReportListFromHtml(html, navCode, category, 10);
+        const reports = parsed.filter(report => {
+            const detail = validateOnlineSeriesDetailUrl(report.url);
+            return detail && !detail.error && detail.isEn === navCode.startsWith('eng')
+                && detail.idx === String(report.idx) && detail.navCode === navCode
+                && detail.category === String(category) && Boolean(report.title);
+        }).map(report => ({
+            idx: String(report.idx),
+            title: String(report.title),
+            date: String(report.date || ''),
+            authors: Array.isArray(report.authors) ? [...report.authors] : [],
+            url: String(report.url),
+            navCode: String(report.navCode),
+            category: String(report.category)
+        }));
+        if (!reports.length) throw new Error('공식 목록에서 해당 언어의 자료를 찾지 못했습니다.');
+        kinuReportListCache.set(cacheKey, { reports, expiresAt: Date.now() + KINU_REPORT_LIST_CACHE_TTL_MS });
+        return { reports: reports.map(report => ({ ...report, authors: [...report.authors] })), fromCache: false };
+    })();
+    kinuReportListInFlightRequests.set(cacheKey, request);
+    try {
+        return await request;
+    } finally {
+        if (kinuReportListInFlightRequests.get(cacheKey) === request) kinuReportListInFlightRequests.delete(cacheKey);
     }
 }
 
@@ -10139,19 +10514,10 @@ async function fetchLatestKinuReports(silent = false) {
     if (status) status.textContent = `공식 ${isEn ? '영문' : '국문'} 목록을 확인하고 있습니다. 인터넷과 Jina Reader 연결이 필요합니다.`;
 
     try {
-        const html = await fetchKinuHtmlViaReader(listUrl.href, 32000);
-        const parsed = parseKinuReportListFromHtml(html, navCode, category, 10);
-        const reports = parsed.filter(report => {
-            const detail = validateOnlineSeriesDetailUrl(report.url);
-            return detail && !detail.error && detail.isEn === isEn
-                && detail.idx === String(report.idx) && detail.navCode === navCode
-                && detail.category === category && Boolean(report.title);
-        });
+        const { reports, fromCache } = await fetchKinuReportList(listUrl.href, navCode, category, !silent);
         if (listRequest !== reportListRequestVersion) return [];
-        if (!reports.length) throw new Error('공식 목록에서 해당 언어의 자료를 찾지 못했습니다.');
 
         const selectionAtListCompletion = select.value || '';
-        const selectedOptionAtListCompletion = select.selectedOptions?.[0]?.cloneNode(true) || null;
         const selectionChangedDuringRequest = detailRequestAtListStart !== reportDetailRequestVersion
             || selectionAtListCompletion !== selectionAtListStart;
         const preserveSelectionIntent = selectionChangedDuringRequest || Boolean(selectionAtListStart);
@@ -10166,17 +10532,18 @@ async function fetchLatestKinuReports(silent = false) {
         if (selectionToRestore) {
             if (reports.some(report => String(report.idx) === String(selectionToRestore))) {
                 select.value = String(selectionToRestore);
-            } else if (selectedOptionAtListCompletion && String(selectedOptionAtListCompletion.value) === String(selectionToRestore)) {
-                select.add(selectedOptionAtListCompletion);
-                select.value = String(selectionToRestore);
+            } else {
+                select.value = '';
             }
         }
         const formChanged = getWebzineReportFormState() !== formStateAtRequest;
-        if (status) status.textContent = `공식 사이트 최근 자료 ${reports.length}건을 확인했습니다. Jina Reader의 캐시 갱신 요청은 영구적인 최신성을 보장하지 않습니다.${isWebzineDraftDirty || formChanged ? ' 작성 중인 초안은 유지했습니다.' : ''}`;
+        const staleSelectionCleared = Boolean(selectionToRestore)
+            && !reports.some(report => String(report.idx) === String(selectionToRestore));
+        if (status) status.textContent = `${fromCache ? '최근 확인한 공식 목록' : '공식 사이트 최근 자료'} ${reports.length}건을 ${fromCache ? '불러왔습니다.' : '확인했습니다.'}${staleSelectionCleared ? ' 이전 언어의 선택 항목은 새 목록에 없어 해제했습니다. 새 항목을 선택해 주세요.' : ''}${isWebzineDraftDirty || formChanged ? ' 작성 중인 초안은 유지했습니다.' : ''}`;
 
         if (!preserveSelectionIntent && !isWebzineDraftDirty && !formChanged && !silent && reports.length) {
             select.value = reports[0].idx;
-            await onSelectLiveReport(reports[0].idx);
+            void onSelectLiveReport(reports[0].idx);
         } else if (!preserveSelectionIntent && !isWebzineDraftDirty && !formChanged && silent) {
             const currentIdx = document.getElementById('reportIdx')?.value?.trim();
             if (currentIdx && reports.some(report => String(report.idx) === currentIdx)) select.value = currentIdx;
@@ -10204,38 +10571,34 @@ async function searchIdxForCurrentTitle() {
     const mainEl = document.getElementById('mainTitle');
     const rawTitle = mainEl ? (mainEl.value || mainEl.innerText || '') : '';
     const query = typeof stripHtmlTags === 'function' ? stripHtmlTags(rawTitle).trim() : rawTitle.replace(/<[^>]+>/g, '').trim();
-    if (!query) {
-        if (typeof showToast === 'function') showToast('검색할 제목을 입력해 주세요.');
-        return;
-    }
     const status = document.getElementById('reportIntegrationStatus');
-    const results = fetchedReports.filter(item => (item.title || '').toLocaleLowerCase().includes(query.toLocaleLowerCase())
-        || String(item.idx || '') === query);
-    if (!results.length) {
-        if (status) status.textContent = '현재 불러온 공식 목록에서 일치하는 자료가 없습니다. 제목은 외부로 보내지 않았습니다. 목록 검색 범위는 최근 자료 10건입니다.';
-        if (typeof showToast === 'function') showToast('최근 공식 목록 10건에서 일치하는 자료를 찾지 못했습니다. 입력 제목은 외부로 보내지 않았습니다.');
-        return;
-    }
-    fetchedReports = results;
     const select = document.getElementById('selLiveReport');
+    const reports = Array.isArray(fetchedReports) ? fetchedReports : [];
+    if (!query) {
+        if (typeof showToast === 'function') showToast('⚠️ [입력 필요] 보고서 검색을 위해 본문 메인 제목을 먼저 입력해 주세요.');
+        return [];
+    }
+    if (!reports.length) {
+        if (status) status.textContent = '먼저 공식 최신 목록을 확인해야 제목 검색을 할 수 있습니다.';
+        return [];
+    }
+    const normalizedQuery = query.toLocaleLowerCase();
+    const results = reports.filter(report => String(report.title || '').toLocaleLowerCase().includes(normalizedQuery)
+        || String(report.idx || '') === query);
     if (select) {
-        select.replaceChildren(new Option(`-- 최근 목록 내 검색 결과 ${results.length}건 --`, ''));
+        select.replaceChildren(new Option(`-- 현재 공식 목록 ${results.length}건 일치 --`, ''));
         results.forEach(report => {
-            const option = new Option(`${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`, report.idx);
-            option.dataset.navCode = report.navCode;
+            const option = new Option(`${report.date || '발행일 미상'} · ${report.title} (idx ${report.idx})`, String(report.idx));
+            option.dataset.navCode = report.navCode || '';
             select.add(option);
         });
-        select.value = results[0].idx;
+        select.value = '';
     }
-    if (status) status.textContent = `현재 불러온 최근 목록 ${results.length}건에서 찾았습니다. 사용자 입력 제목은 외부로 전송하지 않았습니다.`;
-    await onSelectLiveReport(results[0].idx);
+    if (status) status.textContent = results.length
+        ? `현재 확인된 공식 목록 ${reports.length}건에서 ${results.length}건을 찾았습니다. 전체 게시물 검색이 아니라 현재 목록에 한정됩니다.`
+        : `현재 확인된 공식 목록 ${reports.length}건에서 일치 항목이 없습니다. 전체 게시물 검색은 수행하지 않았습니다.`;
+    return results;
 }
-
-if (typeof window !== 'undefined') {
-    window.searchIdxForCurrentTitle = searchIdxForCurrentTitle;
-}
-
-
 function normalizeHancomPuaText(text) {
     if (!text) return '';
     let out = '';
@@ -10307,34 +10670,51 @@ function cleanFilenameAuthor(filename = '') {
 }
 
 async function extractPdfText(arrayBuffer) {
-    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js가 로드되지 않았습니다. 인터넷 연결을 확인해 주세요.');
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const pages = [];
-    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
-        const page = await pdf.getPage(pageNumber);
-        const content = await page.getTextContent();
-        const rows = [];
-        content.items.forEach(item => {
-            const text = String(item.str || '').trim();
-            if (!text) return;
-            const y = Number(item.transform?.[5] || 0);
-            let row = rows.find(candidate => Math.abs(candidate.y - y) <= 2.5);
-            if (!row) {
-                row = { y, items: [] };
-                rows.push(row);
-            }
-            row.items.push({ x: Number(item.transform?.[4] || 0), text });
-        });
-        const pageLines = rows.sort((a, b) => b.y - a.y).map(row => row.items
-            .sort((a, b) => a.x - b.x)
-            .map(item => item.text)
-            .join(' ')
-            .replace(/\s+/g, ' ')
-            .trim())
-            .filter(Boolean);
-        pages.push(pageLines.join('\n'));
+    const assets = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/';
+    let parser;
+    try {
+        parser = await import(assets + 'legacy/build/pdf.min.mjs');
+    } catch {
+        throw new Error('PDF 읽기 도구를 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 새로고침하거나 원고 본문을 붙여 넣어 주세요.');
     }
-    return pages.join('\n\n').trim();
+    parser.GlobalWorkerOptions.workerSrc = assets + 'legacy/build/pdf.worker.min.mjs';
+    const task = parser.getDocument({
+        data: arrayBuffer,
+        cMapUrl: assets + 'cmaps/',
+        cMapPacked: true,
+        standardFontDataUrl: assets + 'standard_fonts/'
+    });
+    try {
+        const pdf = await task.promise;
+        const pages = [];
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+            const page = await pdf.getPage(pageNumber);
+            const content = await page.getTextContent();
+            const rows = [];
+            content.items.forEach(item => {
+                const text = String(item.str || '').trim();
+                if (!text) return;
+                const y = Number(item.transform?.[5] || 0);
+                let row = rows.find(candidate => Math.abs(candidate.y - y) <= 2.5);
+                if (!row) {
+                    row = { y, items: [] };
+                    rows.push(row);
+                }
+                row.items.push({ x: Number(item.transform?.[4] || 0), text });
+            });
+            const pageLines = rows.sort((a, b) => b.y - a.y).map(row => row.items
+                .sort((a, b) => a.x - b.x)
+                .map(item => item.text)
+                .join(' ')
+                .replace(/\s+/g, ' ')
+                .trim())
+                .filter(Boolean);
+            pages.push(pageLines.join('\n'));
+        }
+        return pages.join('\n\n').trim();
+    } finally {
+        await task.destroy();
+    }
 }
 
 async function extractHwpxText(arrayBuffer) {
@@ -10507,10 +10887,58 @@ async function extractHwpText(arrayBuffer, filename = '') {
     return normalizeHancomPuaText(`${prefix}${fnPrefix}${cleanBody}`.trim());
 }
 
+async function tryKordocParseDoc(file, extension) {
+    try {
+        const buffer = await file.arrayBuffer();
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        const chunkSize = 8192;
+        for (let i = 0; i < len; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
+        }
+        const dataBase64 = btoa(binary);
+
+        let timeoutId;
+        const fetchPromise = fetch('http://127.0.0.1:8000/api/parse-doc', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: file.name, dataBase64 })
+        });
+        const timeoutPromise = new Promise((_, reject) => {
+            timeoutId = setTimeout(() => reject(new Error('Kordoc timeout')), 6000);
+        });
+
+        const resp = await Promise.race([fetchPromise, timeoutPromise]);
+        clearTimeout(timeoutId);
+
+        if (resp && resp.ok) {
+            const data = await resp.json();
+            if (data && data.ok && data.text) {
+                if (typeof window !== 'undefined') {
+                    window.kordocStructuredCandidate = data.structured || null;
+                }
+                return { kind: 'KORDOC_' + extension.toUpperCase(), text: data.text };
+            }
+        }
+    } catch (_) {
+        // Fallback silently to client-side extractors on timeout or offline
+    }
+    return null;
+}
+
 async function readUploadedReportFile(file) {
     const extension = file.name.split('.').pop()?.toLowerCase() || '';
     if (extension === 'txt' || extension === 'md' || extension === 'html' || extension === 'json' || file.type === 'text/plain' || file.type === 'text/markdown' || file.type === 'text/html' || file.type === 'application/json') {
         return { kind: extension.toUpperCase(), text: await file.text() };
+    }
+
+    // AGENTS.md Rule 1 (Kordoc Priority): Attempt server-side Kordoc extraction first for HWP, HWPX, PDF
+    if (extension === 'hwp' || extension === 'hwpx' || extension === 'pdf') {
+        if (!(typeof window !== 'undefined' && window.A0_HOSTING?.mode === 'github-pages')) {
+            const kordocRes = await tryKordocParseDoc(file, extension);
+            if (kordocRes) return kordocRes;
+        }
     }
 
     const buffer = await file.arrayBuffer();
@@ -11099,16 +11527,10 @@ function downloadCurrentCode() {
     triggerWebzineToast(`${isMarkdown ? '마크다운' : 'HTML'} 다운로드를 요청했습니다. 저장된 파일을 확인하세요.`);
 }
 
-function downloadWebzineTxt(options = {}) {
-    if (typeof renderAll === 'function') renderAll(true);
+function downloadWebzineTxt() {
     try {
-        let output = document.getElementById('outputHtmlCode');
-        if (!output || !output.value) {
-            if (typeof renderAll === 'function') {
-                renderAll();
-                output = document.getElementById('outputHtmlCode');
-            }
-        }
+        if (typeof renderAll === 'function') renderAll(true);
+        const output = document.getElementById('outputHtmlCode');
         if (!output || !output.value) {
             const warnMsg = '⚠️ HTML 코드가 아직 생성되지 않았습니다.';
             triggerWebzineToast(warnMsg);
@@ -11133,12 +11555,12 @@ function downloadWebzineTxt(options = {}) {
         const dateVal = document.getElementById('publishDate')?.value?.replace(/[^\w-]/g, '') || '';
         const safeBase = (issueNo || (activeSeries ? `${activeSeries}_${dateVal || 'draft'}` : '웹진')).replace(/[\\/:*?"<>|]/g, '_');
 
-        const emailSubject = options.sourceOnly ? '' : (document.getElementById('emailSubject')?.value || '');
+        const emailSubject = document.getElementById('emailSubject')?.value || '';
         let fileContent = (emailSubject && !output.value.startsWith(emailSubject))
             ? `${emailSubject}\n\n${output.value}`
             : output.value;
 
-        if (!options.sourceOnly && typeof currentUnicodeRemarks !== 'undefined' && currentUnicodeRemarks && currentUnicodeRemarks.length > 0) {
+        if (typeof currentUnicodeRemarks !== 'undefined' && currentUnicodeRemarks && currentUnicodeRemarks.length > 0) {
             const totalU = currentUnicodeRemarks.reduce((s, r) => s + r.count, 0);
             const remarksText = [
                 '\n\n================================================================================',
