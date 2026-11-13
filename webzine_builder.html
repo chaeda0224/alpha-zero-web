@@ -5127,7 +5127,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.56 (v5.9.56) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.57 (v5.9.57) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -9190,7 +9190,7 @@ function prepareOfficialKinuSeriesReportForPreview(report, selected = null) {
     return prepared;
 }
 
-function setReportFormFromData(report, preferOfficialUrl = false) {
+function setReportFormFromData(report, preferOfficialUrl = false, immediate = false) {
     setWebzineDraftDirty(false);
     if (typeof initRichEditableFields === 'function') initRichEditableFields();
     if (!report) return;
@@ -9267,7 +9267,7 @@ function setReportFormFromData(report, preferOfficialUrl = false) {
     const rawAuthors = report.authors || report.author;
     authorList = applyReportAuthorMetadata(report, resolveAuthorList(rawAuthors, isEn ? 'en' : 'ko'), isEn ? 'en' : 'ko');
     renderAuthorRows(authorList);
-    renderAll();
+    renderAll(immediate);
 }
 
 var EMBEDDED_KINU_CATALOG = {
@@ -10346,87 +10346,65 @@ async function analyzeOnlineSeriesUrl() {
 }
 
 async function onSelectLiveReport(idx) {
-    if (!idx) return;
     const requestVersion = ++reportDetailRequestVersion;
     const analyzeButton = document.getElementById('btnAnalyzeOnlineSeriesUrl');
     if (analyzeButton) { analyzeButton.disabled = false; analyzeButton.textContent = '링크 분석'; }
-    const selected = fetchedReports.find(report => String(report.idx) === String(idx));
-    if (!selected) return;
-    const formStateAtRequest = getWebzineReportFormState();
     const status = document.getElementById('reportIntegrationStatus');
-    const reportTargetUrl = getKinuReportUrlFor(idx, selected.navCode, selected.category);
-    const restoreSelectionToAppliedReport = () => {
+    if (!idx) {
+        if (status) status.textContent = '자료를 선택하면 HTML에 반영합니다.';
+        return;
+    }
+    const selected = fetchedReports.find(report => String(report.idx) === String(idx));
+    if (!selected?.title) {
         const select = document.getElementById('selLiveReport');
-        const appliedIdx = document.getElementById('reportIdx')?.value?.trim() || '';
-        if (select) select.value = fetchedReports.some(report => String(report.idx) === appliedIdx) ? appliedIdx : '';
-    };
-    if (status) status.textContent = `[1순위] 공식 보고서(idx ${idx})의 상세 정보를 불러오는 중입니다...`;
+        const applied = document.getElementById('reportIdx')?.value || '';
+        if (select) select.value = fetchedReports.some(report => String(report.idx) === applied) ? applied : '';
+        if (status) status.textContent = '목록 정보를 확인하지 못해 적용 중인 자료 선택으로 되돌렸습니다. 작성 내용은 유지했습니다.';
+        return;
+    }
+    const reportTargetUrl = selected.url || getKinuReportUrlFor(idx, selected.navCode, selected.category);
+    const seriesAtSelection = typeof currentWebzineSeries === 'undefined' ? '' : currentWebzineSeries;
+    const isCurrentSelection = () => requestVersion === reportDetailRequestVersion
+        && (document.getElementById('selLiveReport')?.value === String(idx))
+        && (!seriesAtSelection || currentWebzineSeries === seriesAtSelection);
+
+    const listReport = { ...selected, url: reportTargetUrl, mainTitle: selected.mainTitle || selected.title,
+        subTitle: selected.subTitle || '', hasColon: Boolean(selected.hasColon), summary: selected.summary || '' };
+    setReportFormFromData(listReport, true, true);
+    updateIngestionSourceIndicator(1, `idx=${idx}`);
+    if (status) status.textContent = '목록 정보를 HTML에 반영했습니다. 상세 정보를 불러오는 중입니다.';
+    const formStateAtRequest = getWebzineReportFormState();
     try {
-        const detailHtml = await fetchKinuHtmlViaReader(reportTargetUrl, 32000);
-        const reportData = await parseKinuReportDetailFromHtml(detailHtml, idx, selected.navCode, selected.category || '');
-
-        if (requestVersion !== reportDetailRequestVersion) return;
-        const returnedDetail = validateOnlineSeriesDetailUrl(reportData?.url);
-        if (!reportData || String(reportData.idx) !== String(idx) || !reportData.title
-            || reportData.navCode !== selected.navCode || !returnedDetail || returnedDetail.error
-            || returnedDetail.idx !== String(idx) || returnedDetail.isEn !== String(selected.navCode || '').startsWith('eng')) {
-            restoreSelectionToAppliedReport();
-            if (status) status.textContent = `[상세 조회 실패] 선택한 보고서(idx ${idx})의 상세 정보를 확인하지 못해 적용 중인 자료 선택으로 되돌렸습니다. 작성 내용은 유지했습니다.`;
+        const html = await fetchKinuHtmlViaReader(reportTargetUrl, 32000);
+        if (!isCurrentSelection()) return;
+        const detail = await parseKinuReportDetailFromHtml(html, idx, selected.navCode, selected.category || '');
+        if (!isCurrentSelection()) return;
+        const returned = detail?.url && validateOnlineSeriesDetailUrl(detail.url);
+        if (!detail?.title || String(detail.idx) !== String(idx) || detail.navCode !== selected.navCode
+            || !returned || returned.error || returned.idx !== String(idx) || returned.navCode !== selected.navCode
+            || returned.category !== String(selected.category) || returned.isEn !== selected.navCode.startsWith('eng')) {
+            if (status) status.textContent = '선택한 자료의 상세 정보를 확인하지 못했습니다. 현재 HTML을 유지합니다.';
             return;
         }
-        const currentFormState = getWebzineReportFormState();
-        if (currentFormState !== formStateAtRequest) {
-            restoreSelectionToAppliedReport();
-            if (status) status.textContent = '조회 중 입력 내용이 바뀌어 공식 상세 적용을 건너뛰었습니다. 현재 내용을 유지했습니다.';
+        if (getWebzineReportFormState() !== formStateAtRequest) {
+            if (status) status.textContent = '조회 중 수정한 내용이 있어 상세 정보를 덮어쓰지 않았습니다.';
             return;
         }
-        const report = reportData;
-        if (report) {
-            // Guard against the old CO17-32e S3 UUID bug
-            if (report.issueNo === 'CO17-32e' && Number(idx) > 130000) {
-                report.issueNo = (selected?.issueNo && selected.issueNo !== 'CO17-32e') ? selected.issueNo : '';
-                report.issueCategory = report.issueNo ? `Online Series / ${report.issueNo}` : '';
-            }
-
-            // Merge existing fields if reportData lacked some
-            if (selected) {
-                report.issueNo = report.issueNo || selected.issueNo;
-                report.issueCategory = report.issueCategory || selected.issueCategory;
-                report.summary = report.summary || '';
-                report.mainTitle = report.mainTitle || selected.mainTitle;
-                if (report.subTitle === undefined) report.subTitle = selected.subTitle;
-                if (report.hasColon === undefined) report.hasColon = selected.hasColon;
-                report.authorTitle = report.authorTitle || selected.authorTitle;
-            }
-            setReportFormFromData({ ...report, mainTitle: report.title, subTitle: '', hasColon: false }, true);
-            const summary = document.getElementById('summaryText');
-            if (summary) summary.value = report.summary || '';
-            if (report.issueNo || report.issueCategory) {
-                let fullCat = report.issueCategory || `Online Series / ${report.issueNo}`;
-                if (fullCat === 'Online Series / 53' || fullCat === 'Online Series / 54') {
-                    fullCat = report.issueNo ? `Online Series / ${report.issueNo}` : '';
-                }
-                if (/CO\d{2}-\d{1,3}/i.test(fullCat) && fullCat.startsWith('KINU Insight')) {
-                    fullCat = fullCat.replace(/^KINU Insight\s*\/\s*/, 'Online Series / ');
-                }
-                const issueInput = document.getElementById('issueCategory');
-                if (issueInput) issueInput.value = fullCat;
-                if (fullCat) syncIssueCategoryUI(fullCat, '공식 보고서');
-                else syncIssueCategoryUI('');
-            }
-            renderAll(true);
+        if (detail.issueNo === 'CO17-32e' && Number(idx) > 130000) {
+            detail.issueNo = selected.issueNo === 'CO17-32e' ? '' : selected.issueNo || '';
+            detail.issueCategory = detail.issueNo ? `Online Series / ${detail.issueNo}` : '';
         }
-        updateIngestionSourceIndicator(1, `idx=${idx}`);
-        if (status) status.textContent = report.summary
-            ? `[상세 적용 완료] 공식 보고서(idx ${idx})의 메타정보와 공식 초록을 적용했습니다.${report.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝나 전문이 아닙니다.' : ''}`
-            : `[상세 적용 완료] 공식 보고서(idx ${idx}) 메타정보를 적용했습니다. 공식 페이지에 초록이 없습니다.`;
-        if (typeof showToast === 'function') {
-            showToast(`🎉 [1순위] 공식 보고서(idx ${idx}) 메타정보가 반영되었습니다.`);
-        }
+        setReportFormFromData({
+            ...listReport, ...detail, mainTitle: detail.title, subTitle: '', hasColon: false,
+            date: detail.date || listReport.date, authors: detail.authors?.length ? detail.authors : listReport.authors,
+            issueNo: detail.issueNo || listReport.issueNo, issueCategory: detail.issueCategory || listReport.issueCategory,
+            summary: detail.summary || ''
+        }, true, true);
+        if (status) status.textContent = detail.summary
+            ? `상세 정보와 공식 초록을 반영했습니다.${detail.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝납니다.' : ''}`
+            : '상세 정보를 반영했습니다. 공식 페이지에 초록이 없습니다.';
     } catch (error) {
-        if (requestVersion !== reportDetailRequestVersion) return;
-        restoreSelectionToAppliedReport();
-        if (status) status.textContent = `[상세 조회 실패] 선택한 보고서(idx ${idx})의 상세 정보를 불러오지 못해 적용 중인 자료 선택으로 되돌렸습니다. 작성 내용은 유지했습니다.`;
+        if (isCurrentSelection() && status) status.textContent = '상세 정보를 불러오지 못했습니다. 현재 HTML을 유지합니다.';
     }
 }
 
