@@ -5127,7 +5127,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.57 (v5.9.57) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.58 (v5.9.58) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -9954,14 +9954,27 @@ async function fetchKinuHtmlViaCorsProxy(targetUrl) {
 
 async function fetchKinuHtmlViaReader(targetUrl, timeoutMs = KINU_READER_TIMEOUT_MS) {
     const input = new URL(targetUrl);
+    const isMediaUrl = input.pathname === '/library/api/media/url';
     if (input.protocol !== 'https:' || input.hostname !== 'www.kinu.or.kr'
-        || !/^\/(?:main|eng)\/module\/report\/(?:index|view)\.do$/.test(input.pathname)) {
+        || (!isMediaUrl && !/^\/(?:main|eng)\/module\/report\/(?:index|view)\.do$/.test(input.pathname))) {
         throw new Error('허용된 공식 KINU 목록·상세 주소가 아닙니다.');
+    }
+    if (isMediaUrl) {
+        const keys = [...input.searchParams.keys()];
+        if (keys.length < 1 || keys.some(key => !['lmediaId', 'pmediaId', 'pmediaUuid'].includes(key))
+            || new Set(keys).size !== keys.length || keys.some(key => input.searchParams.getAll(key).length !== 1)) {
+            throw new Error('공식 첨부 자료 주소를 확인하지 못했습니다.');
+        }
     }
     const isEnglish = input.pathname.startsWith('/eng/');
     const navCode = isEnglish ? 'eng1674805982' : 'mai1674786581';
     let canonical;
-    if (input.pathname.endsWith('/view.do')) {
+    if (isMediaUrl) {
+        canonical = new URL(input.pathname, 'https://www.kinu.or.kr');
+        for (const key of ['lmediaId', 'pmediaId', 'pmediaUuid']) {
+            for (const value of input.searchParams.getAll(key)) canonical.searchParams.append(key, value);
+        }
+    } else if (input.pathname.endsWith('/view.do')) {
         const detail = validateOnlineSeriesDetailUrl(input.href);
         if (detail.error || detail.isEn !== isEnglish) throw new Error('공식 상세 주소의 게시물 정보를 확인하지 못했습니다.');
         canonical = new URL(detail.url);
@@ -10208,7 +10221,30 @@ async function parseKinuReportDetailFromHtml(sourceHtml, idx, navCode, category 
     }
     const fileDownCode = [...reportForm.querySelectorAll('script')].map(node => node.textContent || '').join('\n');
     const fileDownMatch = fileDownCode.match(/fileDown2\s*\(\s*["']([^"']+)["']/i);
-    if (fileDownMatch && fileDownMatch[1].startsWith('/')) result.pdfUrl = `https://www.kinu.or.kr${fileDownMatch[1]}`;
+    let mediaUrl = '';
+    if (fileDownMatch && fileDownMatch[1].startsWith('/')) {
+        try {
+            const attachmentUrl = new URL(fileDownMatch[1], 'https://www.kinu.or.kr');
+            if (attachmentUrl.origin === 'https://www.kinu.or.kr' && attachmentUrl.pathname === '/library/api/media/url'
+                && [...attachmentUrl.searchParams.keys()].every(key => ['lmediaId', 'pmediaId', 'pmediaUuid'].includes(key))) {
+                mediaUrl = attachmentUrl.href;
+                result.pdfUrl = mediaUrl;
+            }
+        } catch (_) {}
+    }
+    if (!result.issueNo && !isInsight) {
+        let mediaMetadata = extractKinuIssueFromMediaMetadata(fileDownCode);
+        if (!mediaMetadata && mediaUrl) {
+            try {
+                const mediaResponse = await fetchKinuHtmlViaReader(mediaUrl, 12000);
+                mediaMetadata = extractKinuIssueFromMediaMetadata(mediaResponse);
+            } catch (_) {}
+        }
+        result.issueNo = parseOfficialKinuOnlineSeriesIssue(mediaMetadata, isEn);
+    }
+    if (result.issueNo) {
+        result.issueCategory = isInsight ? `KINU Insight / ${result.issueNo}` : `Online Series / ${result.issueNo}`;
+    }
     return result;
 }
 function validateOnlineSeriesDetailUrl(rawUrl) {
@@ -10407,7 +10443,6 @@ async function onSelectLiveReport(idx) {
         if (isCurrentSelection() && status) status.textContent = '상세 정보를 불러오지 못했습니다. 현재 HTML을 유지합니다.';
     }
 }
-
 async function fetchKinuReportList(targetUrl, navCode, category, forceRefresh = false) {
     const cacheKey = new URL(targetUrl).href;
     const now = Date.now();
