@@ -5127,7 +5127,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.58 (v5.9.58) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.59 (v5.9.59) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -9099,20 +9099,42 @@ function parseReportTitleAndSubtitle(rawTitle = '') {
     let sub = '';
     let hasColon = false;
 
-    if (/[:：;；]/.test(raw)) {
-        const match = raw.match(/^(.*?)\s*[:：;；]\s*(.*)$/);
-        if (match) {
-            main = match[1].trim();
-            sub = match[2].trim();
-            hasColon = true;
-        }
+    const separatorMatch = raw.match(/^(.*?)\s*([:：;；])\s*(.+)$/);
+    if (separatorMatch && separatorMatch[1].trim() && separatorMatch[3].trim()) {
+        main = separatorMatch[1].trim(); sub = separatorMatch[3].trim(); hasColon = true;
     } else if (raw.includes(' - ')) {
-        const parts = raw.split(' - ');
-        main = parts[0].trim();
-        sub = parts.slice(1).join(' - ').trim();
-        hasColon = false;
+        const separatorIndex = raw.indexOf(' - ');
+        const candidateMain = raw.slice(0, separatorIndex).trim();
+        const candidateSub = raw.slice(separatorIndex + 3).trim();
+        if (candidateMain && candidateSub) { main = candidateMain; sub = candidateSub; }
     }
     return { mainTitle: main, subTitle: sub, hasColon };
+}
+
+function normalizeOnlineSeriesTitleParts(report, selected = null) {
+    if (!report) return report;
+    const navCode = String(report.navCode || selected?.navCode || '');
+    const category = String(report.category || selected?.category || (navCode.startsWith('eng') ? '72' : '53'));
+    if (navCode.startsWith('eng') && category === '72') {
+        return { ...report, mainTitle: report.title || '', subTitle: '', hasColon: false };
+    }
+    if (!navCode.startsWith('mai') || category !== '53') return report;
+    const prepared = { ...report };
+    if (selected && String(prepared.title || '') === String(selected.title || '')) {
+        if (!String(prepared.mainTitle || '').trim() && selected.mainTitle) prepared.mainTitle = selected.mainTitle;
+        if (!String(prepared.subTitle || '').trim() && selected.subTitle) prepared.subTitle = selected.subTitle;
+        if (prepared.hasColon === undefined && selected.hasColon !== undefined) prepared.hasColon = selected.hasColon;
+    }
+    const existingSubTitle = String(prepared.subTitle || '').trim();
+    const existingMainTitle = String(prepared.mainTitle || '').trim();
+    if (existingSubTitle && existingMainTitle) return prepared;
+    const parsed = parseReportTitleAndSubtitle(prepared.title || '');
+    return {
+        ...prepared,
+        mainTitle: parsed.hasColon || !existingMainTitle || existingMainTitle === prepared.title ? parsed.mainTitle : existingMainTitle,
+        subTitle: existingSubTitle || parsed.subTitle,
+        hasColon: existingSubTitle && prepared.hasColon !== undefined ? Boolean(prepared.hasColon) : parsed.hasColon
+    };
 }
 
 function parseOfficialKinuOnlineSeriesIssue(value = '', isEnglish = false) {
@@ -10361,7 +10383,7 @@ async function analyzeOnlineSeriesUrl() {
             select.appendChild(option);
             select.value = report.idx;
         }
-            setReportFormFromData({ ...report, mainTitle: report.title, subTitle: '', hasColon: false }, true);
+        setReportFormFromData(normalizeOnlineSeriesTitleParts(report), true);
         const reportUrlInput = document.getElementById('reportFullUrl');
         if (reportUrlInput) reportUrlInput.value = target.url;
         updateIngestionSourceIndicator(1, '공식 상세 링크');
@@ -10404,8 +10426,8 @@ async function onSelectLiveReport(idx) {
         && (document.getElementById('selLiveReport')?.value === String(idx))
         && (!seriesAtSelection || currentWebzineSeries === seriesAtSelection);
 
-    const listReport = { ...selected, url: reportTargetUrl, mainTitle: selected.mainTitle || selected.title,
-        subTitle: selected.subTitle || '', hasColon: Boolean(selected.hasColon), summary: selected.summary || '' };
+    const listReport = normalizeOnlineSeriesTitleParts({ ...selected, url: reportTargetUrl, mainTitle: selected.mainTitle || selected.title,
+        subTitle: selected.subTitle || '', hasColon: Boolean(selected.hasColon), summary: selected.summary || '' });
     setReportFormFromData(listReport, true, true);
     updateIngestionSourceIndicator(1, `idx=${idx}`);
     if (status) status.textContent = '목록 정보를 HTML에 반영했습니다. 상세 정보를 불러오는 중입니다.';
@@ -10430,12 +10452,14 @@ async function onSelectLiveReport(idx) {
             detail.issueNo = selected.issueNo === 'CO17-32e' ? '' : selected.issueNo || '';
             detail.issueCategory = detail.issueNo ? `Online Series / ${detail.issueNo}` : '';
         }
-        setReportFormFromData({
-            ...listReport, ...detail, mainTitle: detail.title, subTitle: '', hasColon: false,
+        setReportFormFromData(normalizeOnlineSeriesTitleParts({
+            ...listReport, ...detail,
+            mainTitle: detail.mainTitle || '', subTitle: detail.subTitle || '',
+            hasColon: detail.hasColon,
             date: detail.date || listReport.date, authors: detail.authors?.length ? detail.authors : listReport.authors,
             issueNo: detail.issueNo || listReport.issueNo, issueCategory: detail.issueCategory || listReport.issueCategory,
             summary: detail.summary || ''
-        }, true, true);
+        }, listReport), true, true);
         if (status) status.textContent = detail.summary
             ? `상세 정보와 공식 초록을 반영했습니다.${detail.summaryIncomplete ? ' 원문 초록이 생략 표기로 끝납니다.' : ''}`
             : '상세 정보를 반영했습니다. 공식 페이지에 초록이 없습니다.';
