@@ -56,7 +56,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpha-Zero (A0) - A0 Core v1.9.59 (v5.9.59)</title>
+     <title>Alpha-Zero (A0) - A0 Core v1.9.64 (v5.9.64)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230062ab'/%3E%3Cstop offset='100%25' stop-color='%23003366'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Proto Mono, monospace' font-weight='700' font-size='30' letter-spacing='-0.02em' fill='%23ffffff' text-anchor='middle'%3EA0%3C/text%3E%3C/svg%3E" />
     <!-- 런타임 저장소와 동일한 우선순위로 첫 화면의 모드를 결정한다. -->
@@ -8627,7 +8627,7 @@ html.dark .ui-alc__card {
             <!-- 1. EXPANDED VIEW (Default Normal Width) -->
             <div id="sidebarExpandedView" class="flex flex-col h-full min-h-0 space-y-2">
 
-                        <span class="app-version-badge sr-only" title="A0 Core v1.9.59 (v5.9.59)">v1.9.59 (v5.9.59)</span>
+                         <span class="app-version-badge sr-only" title="A0 Core v1.9.64 (v5.9.64)">v1.9.64 (v5.9.64)</span>
 
                 <!-- 📂 Contextual Left Rail Body (Only features belonging to the active area) -->
                 <div id="contextExplorerContainer" class="flex-1 min-h-0 overflow-y-auto space-y-2 pr-0.5 text-xs pb-10">
@@ -8938,7 +8938,7 @@ html.dark .ui-alc__card {
                             <i class="fa-solid fa-circle-info text-xs"></i>
                             <span>Help · Update Log</span>
                         </span>
-                        <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.59 (v5.9.59)</span>
+                         <span class="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-white dark:bg-slate-900 text-[#0062ab] dark:text-sky-300 border border-kinu-blue-200 dark:border-sky-800/60">v1.9.64 (v5.9.64)</span>
                     </button>
 
                     <!-- Hidden compatibility anchor -->
@@ -9371,7 +9371,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <span id="workspaceSectionLabel" class="text-slate-600 dark:text-slate-400">대시보드</span>
             </div>
             <output id="workspaceCoreVersion" aria-label="현재 A0 버전" class="flex items-center gap-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 shrink-0">
-                <span>Core v1.9.59 (v5.9.59)</span>
+                 <span>Core v1.9.64 (v5.9.64)</span>
             </output>
         </div>
 
@@ -11319,6 +11319,14 @@ body[data-nav-area="today"] #floatingStudioPanel {
             
             <style>
                 /* Scoped responsive rules for Nameplate workbench */
+                #suiteViewNameplate .np-history-controls {
+                    display: flex;
+                }
+                @media (max-width: 639px) {
+                    #suiteViewNameplate .np-history-controls {
+                        display: none;
+                    }
+                }
                 @media (max-width: 1023px) {
                     #suiteViewNameplate[data-np-mobile-tab="config"] #npPanelPreview {
                         display: none !important;
@@ -11366,7 +11374,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                         <div class="flex items-center gap-2">
                             <h1 id="npDocTitle" class="text-sm font-bold text-slate-800 dark:text-white truncate">통일연구원 명패 문서</h1>
                             <span id="npOutputStandardBadge" class="hidden sm:inline-flex text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 border border-emerald-200 dark:border-emerald-800 rounded">
-                                소형 데스크 (110×70mm)
+                                황금비 명패 (110×68mm)
                             </span>
                         </div>
                         <div class="flex items-center gap-2">
@@ -11380,7 +11388,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <!-- Center/Right Action Group -->
                 <div class="flex items-center gap-2">
                     <!-- Undo / Redo -->
-                    <div class="hidden sm:flex items-center border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-800 p-0.5">
+                    <div class="np-history-controls flex items-center border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-800 p-0.5">
                         <button type="button" id="npBtnUndo" onclick="undoNameplateAction()" title="실행 취소 (Undo)" aria-label="실행 취소" class="w-7 h-7 flex items-center justify-center text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-700 rounded transition disabled:opacity-30 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-rotate-left"></i>
                         </button>
@@ -11434,12 +11442,13 @@ body[data-nav-area="today"] #floatingStudioPanel {
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label for="npPaperSize" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                                    명패 규격 (16개 호환 치수)
+                                    명패 규격 (기본 규격 및 16개 호환 치수)
                                 </label>
                                 <select id="npPaperSize" onchange="onPaperSizeSelectChange()" class="w-full h-9 text-xs px-2.5 border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-200 font-semibold outline-none focus:border-[#0062ab]">
+                                    <option value="golden-110-68" selected>황금비 명패 (110 × 68 mm · 기본)</option>
                                     <optgroup label="국내 판매형 반복 규격 · 속지/아크릴/파티션">
                                         <option value="desk-90-55">🪪 미니 자리표·쇼케이스 (90 × 55 mm)</option>
-                                        <option value="desk-1100-700" selected>🖥️ 소형 데스크 명패 (110 × 70 mm · 기본)</option>
+                                          <option value="desk-1100-700">🖥️ 소형 데스크 명패 (110 × 70 mm)</option>
                                         <option value="desk-120-60">🏷️ 슬림 파티션 명패 (120 × 60 mm)</option>
                                         <option value="desk-150-70">🏷️ 파티션·소형 명패 (150 × 70 mm)</option>
                                         <option value="desk-180-100">🏷️ 소형 실명·아크릴 사인 (180 × 100 mm)</option>
@@ -11474,6 +11483,16 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                     <option value="global-symposium">🌐 글로벌 영문 심포지엄</option>
                                     <option value="academic-serif">📜 학술회의 부크크명조</option>
                                     <option value="bold-slate">💼 모던 SUIT 슬레이트</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="npLayoutVariant" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                    내부 배치
+                                </label>
+                                <select id="npLayoutVariant" onchange="onLayoutVariantChange()" class="w-full h-9 text-xs px-2.5 border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-200 font-semibold outline-none focus:border-[#0062ab]">
+                                    <option value="standard">표준</option>
+                                    <option value="golden" selected>황금비</option>
                                 </select>
                             </div>
                         </div>
@@ -11513,7 +11532,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                         <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-700 dark:text-slate-300">수동 치수 및 도련 (mm 단위)</span>
-                                <span id="npDimensionRatioLabel" class="text-[10px] font-mono text-[#0062ab] dark:text-sky-400">1.571 : 1</span>
+                                <span id="npDimensionRatioLabel" class="text-[10px] font-mono text-[#0062ab] dark:text-sky-400">1.618 : 1</span>
                             </div>
                             <div class="grid grid-cols-3 gap-2">
                                 <div>
@@ -11524,9 +11543,9 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                 </div>
                                 <div>
                                     <div class="flex items-center justify-between text-[10.5px] text-slate-500 mb-0.5">
-                                        <span>세로(H)</span><span id="npHeightCmLabel">7.0 cm</span>
+                                        <span>세로(H)</span><span id="npHeightCmLabel">6.8 cm</span>
                                     </div>
-                                    <input type="number" id="npCustomHeight" value="70" min="10" max="2000" step="1" oninput="onCustomDimensionChange()" class="w-full h-8 px-2 text-xs font-mono font-bold border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-[#1e293b] outline-none focus:border-[#0062ab]">
+                                    <input type="number" id="npCustomHeight" value="68" min="10" max="2000" step="1" oninput="onCustomDimensionChange()" class="w-full h-8 px-2 text-xs font-mono font-bold border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-[#1e293b] outline-none focus:border-[#0062ab]">
                                 </div>
                                 <div>
                                     <div class="flex items-center justify-between text-[10.5px] text-slate-500 mb-0.5">
@@ -11727,9 +11746,9 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                     <i class="fa-solid fa-users text-[#0062ab] dark:text-sky-400"></i>
                                     <span>참석자 명단</span>
                                 </h2>
-                                <div class="inline-flex text-[11px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
-                                    전체 출력
-                                </div>
+                                <span id="npPrintScopeLabel" class="inline-flex text-[11px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">전체 출력</span>
+                                <button type="button" onclick="setPrintScope('all')" aria-label="명단 전체 선택하여 출력" class="h-7 px-2 text-[11px] font-bold text-[#0062ab] border border-sky-200 dark:border-sky-800 rounded hover:bg-sky-50 dark:hover:bg-sky-950/40 cursor-pointer">전체 선택</button>
+                                <button type="button" onclick="setPrintScope('selected')" aria-label="출력 선택 모두 해제" class="h-7 px-2 text-[11px] font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">모두 해제</button>
                             </div>
 
                             <div class="flex items-center gap-1.5">
@@ -11754,10 +11773,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                 <table class="w-full text-xs text-left border-collapse min-w-[500px]">
                                     <thead class="sticky top-0 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[11px] text-slate-600 dark:text-slate-300 font-bold z-10">
                                         <tr>
-                                            <th class="py-2 px-2 text-center w-8" scope="col">
-                                                <span class="sr-only">선택</span>
-                                                <i class="fa-solid fa-check text-[10px] text-slate-400"></i>
-                                            </th>
+                                            <th class="py-2 px-2 text-center w-8" scope="col"><span class="sr-only">선택</span><i class="fa-solid fa-check text-[10px] text-slate-400" aria-hidden="true"></i></th>
                                             <th class="py-2 px-2 text-center w-8" scope="col">#</th>
                                             <th class="py-2 px-2" scope="col">성명 (한글)</th>
                                             <th class="py-2 px-2" scope="col">소속기관</th>
@@ -11766,7 +11782,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                             <th class="py-2 px-2 text-center w-24" scope="col">관리</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="npBatchTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <tbody id="npRosterTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
                                         <!-- Dynamically Populated by renderRosterTable() -->
                                     </tbody>
                                 </table>
@@ -11775,7 +11791,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
 
                         <!-- Instruction Note -->
                         <p id="npPrintInstructionText" class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded border border-slate-100 dark:border-slate-800">
-                            브라우저 인쇄 창에서 <strong>[배경 그래픽 포함]</strong>을 체크하시고 인쇄하시면 <strong>110×70mm 단면 명패 속지</strong>가 A4 1:1 대지 중앙에 인쇄됩니다. 외곽 가이드라인을 따라 잘라 아크릴 스탠드/케이스에 삽입해 사용하십시오. (실물 인쇄 여부는 별도 표시)
+                            브라우저 인쇄 창에서 <strong>[배경 그래픽 포함]</strong>을 체크하시고 인쇄하시면 <strong>110×68mm 단면 명패 속지</strong>가 A4 1:1 대지 중앙에 인쇄됩니다. 외곽 가이드라인을 따라 잘라 아크릴 스탠드/케이스에 삽입해 사용하십시오. (실물 인쇄 여부는 별도 표시)
                         </p>
                     </div>
 
@@ -19681,7 +19697,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <div class="pt-4 border-t border-slate-200/60 dark:border-white/5 space-y-2">
                     <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[11px]">
                         <span class="text-slate-500 dark:text-neutral-400 font-medium">A0 Core Engine</span>
-                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.59 (v5.9.59)</span>
+                        <span class="font-mono font-bold text-[#0062ab] dark:text-[#2997ff]">v1.9.64 (v5.9.64)</span>
                     </div>
                 </div>
             </aside>
@@ -21089,7 +21105,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 <span class="text-[11px] text-slate-500 dark:text-neutral-400 block mt-0.5">통일연구원 KINU 오프라인 자립형 연구·행정 워크스페이스</span>
             </div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.59 (v5.9.59)</span>
+                <span class="px-2.5 py-1 rounded-full bg-[#0071e3]/15 text-[#0062ab] dark:text-[#2997ff] text-xs font-mono font-bold border border-[#0071e3]/30">v1.9.64 (v5.9.64)</span>
                 <button type="button" onclick="openA0UpdateLogModal()" class="px-3 py-1 rounded-lg border border-slate-200/80 dark:border-white/10 hover:bg-slate-100 text-xs font-semibold text-slate-700 dark:text-slate-300 transition cursor-pointer">
                     릴리즈 노트
                 </button>
@@ -21144,7 +21160,6 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 </div>
             </main>
         </div>
-
         <!-- 🧭 Minimal Standard Status Bar (26px, B안 미니멀 표준형) -->
         <footer id="appStatusBar" class="h-[28px] min-h-[28px] max-h-[28px] shrink-0 border-t border-slate-200/90 dark:border-white/10 bg-slate-50/95 dark:bg-[#0c121a]/95 backdrop-blur-md px-3 flex items-center justify-between text-[11px] font-['Pretendard',sans-serif] select-none text-slate-500 dark:text-slate-400 z-30 transition-colors whitespace-nowrap overflow-hidden">
             <!-- Left: Brand Symbol + System Status + Version -->
@@ -21159,7 +21174,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                 </span>
                 <span class="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
                 <span class="hidden sm:inline text-slate-400 dark:text-slate-500 font-mono">
-                    <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.59 (v5.9.59)</strong>
+                     <strong class="app-version-badge text-[#0062ab] dark:text-sky-400 font-bold">A0 Core v1.9.64 (v5.9.64)</strong>
                 </span>
             </div>
 
@@ -21174,7 +21189,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
 
             <!-- Right: Release Date + System Info Popover Trigger -->
             <div class="flex items-center gap-2">
-                <span class="text-slate-400 dark:text-slate-500 hidden sm:inline">배포: 2026.11.18</span>
+                 <span class="text-slate-400 dark:text-slate-500 hidden sm:inline">배포: 2026.11.20</span>
                 <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
                 <!-- System Info Popover Button -->
                 <div class="relative inline-block text-left" id="footerInfoMenuWrap">
@@ -21189,7 +21204,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                                 <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1">
                                     <span>Alpha-Zero (<span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>)</span>
                                 </div>
-                                <div class="text-[10px] text-slate-400 font-mono">Core v1.9.59 (v5.9.59) · 2026.11.18</div>
+                                 <div class="text-[10px] text-slate-400 font-mono">Core v1.9.64 (v5.9.64) · 2026.11.20</div>
                             </div>
                             <span class="px-1.5 py-0.5 text-[9px] font-bold rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">Stable</span>
                         </div>
@@ -21646,7 +21661,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                     <div>
                         <h3 id="updateLogModalTitle" class="font-bold text-base text-slate-900 dark:text-white leading-tight flex items-center gap-2">
                         <span>Alpha-Zero 업데이트 로그</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.59 (v5.9.59)</span></span>
+                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-sky-100 dark:bg-sky-950/80 text-[#0062ab] dark:text-sky-300 font-mono"><strong class="font-bold">A0 Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.64 (v5.9.64)</span></span>
                     </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">전체 버전 릴리즈 이력 및 변경 사항</p>
                     </div>
@@ -21666,7 +21681,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                     <i class="fa-solid fa-cube text-[10px]"></i> 엔진별 버전:
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-blue-700 dark:text-blue-300 font-medium shrink-0">
-                    <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.59 (v5.9.59)</span>
+                     <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span> Core</strong> <span class="font-mono text-[11px] opacity-80">v1.9.64 (v5.9.64)</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 font-medium shrink-0">
                     <strong class="font-bold"><span class="font-a0-logo font-bold" data-a0-logo="true">A0</span>UI</strong> <span class="font-mono text-[11px] opacity-80">v1.0.0</span>
@@ -21684,7 +21699,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
                     <strong class="font-bold">웹진</strong> <span class="font-mono text-[11px] opacity-80">v1.3.0</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 font-medium shrink-0">
-                    <strong class="font-bold">명패</strong> <span class="font-mono text-[11px] opacity-80">v1.1.0</span>
+                    <strong class="font-bold">명패</strong> <span class="font-mono text-[11px] opacity-80">v1.2.2</span>
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/80 text-rose-700 dark:text-rose-300 font-medium shrink-0">
                     <strong class="font-bold">규정·서식</strong> <span class="font-mono text-[11px] opacity-80">v1.0.9</span>
@@ -21696,7 +21711,7 @@ body[data-nav-area="today"] #floatingStudioPanel {
             <!-- Version & Engine Filter Pills -->
             <div class="flex items-center gap-1.5 px-5 py-2.5 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50 dark:bg-[#0f1722] overflow-x-auto custom-scrollbar shrink-0">
                 <button id="btnLogFilterAll" type="button" onclick="filterUpdateLogs('all')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">전체 이력</button>
-                <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.59 (v5.9.59)</button>
+                 <button id="btnLogFilterV19" type="button" onclick="filterUpdateLogs('v1.9')" class="px-3 py-1 rounded-lg font-bold text-xs bg-[#0062ab] text-white shadow-xs shrink-0 cursor-pointer">A0 Core v1.9.64 (v5.9.64)</button>
                 <button id="btnLogFilterV18" type="button" onclick="filterUpdateLogs('v1.8')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.8</button>
                 <button id="btnLogFilterV17" type="button" onclick="filterUpdateLogs('v1.7')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.7</button>
                 <button id="btnLogFilterV16" type="button" onclick="filterUpdateLogs('v1.6')" class="px-3 py-1 rounded-lg font-medium text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 shrink-0 cursor-pointer">v1.6</button>
@@ -25580,8 +25595,8 @@ window.A0_ENGINE_REGISTRY = {
     nameplate: {
         id: 'nameplate',
         name: 'Nameplate Engine',
-        version: 'v1.1.0',
-        updated: '2026.10.13',
+        version: 'v1.2.2',
+        updated: '2026.11.19',
         badge: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
         desc: '17종 규격 명패 인터랙티브 대량 배치, 동적 순서 빌더, A4 1:1 정밀 인쇄'
     },
@@ -25602,11 +25617,11 @@ window.A0_ENGINE_REGISTRY = {
         desc: '4대 인텔리전스 콕핏, 과제 생애주기 G0~G5 마일스톤, 골든 포커스 Top 3 & 연구노트 허브'
     }
 };
-window.A0_CORE_VERSION = 'v1.9.59 (v5.9.59)';
+ window.A0_CORE_VERSION = 'v1.9.64 (v5.9.64)';
 
 // === 🔒 GLOBAL CORE APPLICATION & SECURITY STATE ===
-const APP_VERSION = 'A0 Core v1.9.59 (v5.9.59)';
-const APP_RELEASE_DATE = '2026.11.18';
+ const APP_VERSION = 'A0 Core v1.9.64 (v5.9.64)';
+ const APP_RELEASE_DATE = '2026.11.20';
 
 let authCountdownSeconds = 180;
 let authTimerInterval = null;
@@ -50145,7 +50160,7 @@ function getGlobalSearchDataset() {
         { id: 'm-kinu-flow', category: 'menu', title: 'KINU · Flow Map (업무절차도)', desc: '운영지침에 근거한 사업별 단계, 담당 주체, 문서 인계 흐름', badge: 'KINU', icon: 'fa-network-wired', action: () => typeof switchNavArea === 'function' ? switchNavArea('kinu', 'rulebook', 'flowmap') : switchMasterSuite('regulations') },
 
         // Utilities
-        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.59 (v5.9.59) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
+        { id: 'm-updatelog', category: 'menu', title: '변경 이력 (Update Log)', desc: 'v1.9.64 (v5.9.64) 릴리즈 변경 내역 및 역대 버전별 수정 일자 목록 열람', badge: 'Update', icon: 'fa-clock-rotate-left', action: () => openUpdateLogModal() },
         { id: 'm-settings', category: 'menu', title: '시스템 설정 (Settings)', desc: '테마, 배색, 글꼴 및 시스템 종합 설정 센터', badge: 'Settings', icon: 'fa-gear', action: () => switchMasterSuite('settings') }
     ];
     dataset.push(...menus);
@@ -57801,8 +57816,17 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         enName: { label: '영문명', defaultSizePt: 14, defaultTrackingEm: 0.12, defaultLineHeight: 1.2, bold: false }
     });
 
-    // 16 Standard Presets (Verified Market & Conference Specifications)
+    // 17 presets: 16 compatible standards plus the app's non-market default.
     const NAMEPLATE_SIZE_PRESETS = Object.freeze({
+        'golden-110-68': {
+            id: 'golden-110-68',
+            w: 110, h: 68, bleed: 3.5,
+            kind: '황금비 명패',
+            layoutKind: 'insert',
+            note: '황금비 기본 명패 (110×68mm, 비율 1.617647:1)',
+            market: false,
+            paperSize: 'A4', orientation: 'landscape'
+        },
         'desk-90-55': {
             id: 'desk-90-55',
             w: 90, h: 55, bleed: 2.5,
@@ -58048,15 +58072,16 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         };
     }
 
-    function createDefaultFieldStyle(key) {
+    function createDefaultFieldStyle(key, variant = 'standard') {
         const meta = NAMEPLATE_FIELD_META[key] || { defaultSizePt: 14, defaultTrackingEm: 0.1, defaultLineHeight: 1.2, bold: false };
         const defaultWeight = meta.bold ? 700 : (key === 'role' ? 600 : 400);
+        const goldenSizes = { name: 42, role: 16, org: 16, enName: 26 };
         return {
             key,
             enabled: true,
             fontId: 'inherit',
             weight: defaultWeight,
-            fontSizePt: meta.defaultSizePt,
+            fontSizePt: variant === 'golden' ? (goldenSizes[key] || meta.defaultSizePt) : meta.defaultSizePt,
             minFontSizePt: key === 'name' ? 14 : 8,
             trackingEm: meta.defaultTrackingEm,
             lineHeight: meta.defaultLineHeight,
@@ -58066,9 +58091,10 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         };
     }
 
-    function createDefaultProject(title = '새 명패 프로젝트') {
+    function createDefaultProject(title = '새 명패 프로젝트', variant = 'golden') {
         const now = new Date().toISOString();
-        const defaultPreset = NAMEPLATE_SIZE_PRESETS['desk-1100-700'];
+        const defaultPreset = NAMEPLATE_SIZE_PRESETS['golden-110-68'];
+        const layoutVariant = variant === 'standard' ? 'standard' : 'golden';
 
         return {
             format: A0_NAMEPLATE_FORMAT,
@@ -58080,7 +58106,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             template: {
                 id: 'kinu-gradient-bar',
                 version: '1.0.0',
-                variant: 'standard'
+                variant: layoutVariant
             },
             typography: {
                 baseFontId: 'pretendard',
@@ -58112,7 +58138,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
                 title: '',
                 meta: ''
             },
-            fields: NAMEPLATE_FIELDS.map(createDefaultFieldStyle),
+            fields: NAMEPLATE_FIELDS.map(key => createDefaultFieldStyle(key, layoutVariant)),
             participants: [], // Strict rule: 0 participants by default (no unwanted sample data)
             print: {
                 scope: 'all', // 'all' | 'selected'
@@ -58162,15 +58188,16 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         p.title = typeof p.title === 'string' && p.title.trim() ? p.title.trim() : '명패 프로젝트';
 
         // Template validation
-        p.template = p.template || {};
+        p.template = p.template && typeof p.template === 'object' ? p.template : {};
         const designFound = NAMEPLATE_DESIGNS.find(d => d.id === p.template.id);
         p.template.id = designFound ? designFound.id : 'kinu-gradient-bar';
+        p.template.variant = p.template.variant === 'golden' ? 'golden' : 'standard';
 
         // Stock validation
         p.stock = p.stock || {};
-        p.stock.trimWidthMm = sanitizeNumeric(p.stock.trimWidthMm, 110, 10, 2000);
-        p.stock.trimHeightMm = sanitizeNumeric(p.stock.trimHeightMm, 70, 10, 2000);
         const presetFound = NAMEPLATE_SIZE_PRESETS[p.stock.presetId];
+        p.stock.trimWidthMm = sanitizeNumeric(p.stock.trimWidthMm, presetFound?.w ?? 110, 10, 2000);
+        p.stock.trimHeightMm = sanitizeNumeric(p.stock.trimHeightMm, presetFound?.h ?? 70, 10, 2000);
         p.stock.presetId = presetFound ? presetFound.id : 'custom-size';
         p.stock.layoutKind = presetFound ? presetFound.layoutKind : (p.stock.layoutKind || 'insert');
 
@@ -58208,11 +58235,11 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         // Fields validation
         if (!Array.isArray(p.fields) || p.fields.length === 0) {
-            p.fields = NAMEPLATE_FIELDS.map(createDefaultFieldStyle);
+            p.fields = NAMEPLATE_FIELDS.map(key => createDefaultFieldStyle(key, p.template.variant));
         } else {
             const validKeys = new Set(NAMEPLATE_FIELDS);
             p.fields = p.fields.filter(f => f && validKeys.has(f.key)).map(f => {
-                const def = createDefaultFieldStyle(f.key);
+                const def = createDefaultFieldStyle(f.key, p.template.variant);
                 let weight = typeof f.weight === 'number' ? f.weight : (f.bold ? 700 : def.weight);
                 weight = Math.max(100, Math.min(900, parseInt(weight, 10) || 400));
 
@@ -58237,7 +58264,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             // Ensure all 4 fields exist
             for (const key of NAMEPLATE_FIELDS) {
                 if (!p.fields.some(f => f.key === key)) {
-                    p.fields.push(createDefaultFieldStyle(key));
+                    p.fields.push(createDefaultFieldStyle(key, p.template.variant));
                 }
             }
         }
@@ -58562,6 +58589,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
     const PT_TO_MM = 25.4 / 72.0;
     const MM_TO_PT = 72.0 / 25.4;
+    const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
     let measurementCanvasContext = null;
 
@@ -58835,12 +58863,53 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         };
     }
 
+    function getFaceComposition(project, widthMm, heightMm, design) {
+        const golden = project.template && project.template.variant === 'golden';
+        const configuredSafeInsetMm = golden
+            ? (project.guides.safeInsetMm ?? 4.0)
+            : (project.guides.safeInsetMm || 4.0);
+        const safeInsetMm = golden
+            ? Math.min(Math.max(0, configuredSafeInsetMm), Math.max(0, Math.min(widthMm, heightMm) * 0.08))
+            : configuredSafeInsetMm;
+        const bannerHeightMm = design.band === 'gradient'
+            ? (golden ? heightMm / (GOLDEN_RATIO ** 4) : heightMm * design.fraction)
+            : 0;
+        const banner = bannerHeightMm > 0
+            ? { xMm: 0, yMm: heightMm - bannerHeightMm, widthMm, heightMm: bannerHeightMm }
+            : null;
+
+        let logo = null;
+        if (design.band === 'gradient' && design.showLogo) {
+            if (golden) {
+                const logoWidthMm = Math.min(widthMm / (GOLDEN_RATIO ** 3), Math.max(0, widthMm - safeInsetMm));
+                const logoHeightMm = bannerHeightMm / GOLDEN_RATIO;
+                const rightInsetMm = Math.min(safeInsetMm, Math.max(0, widthMm - logoWidthMm));
+                logo = {
+                    xMm: widthMm - logoWidthMm - rightInsetMm,
+                    yMm: banner.yMm + (bannerHeightMm - logoHeightMm) / 2,
+                    widthMm: logoWidthMm,
+                    heightMm: logoHeightMm
+                };
+            } else {
+                const logoWidthMm = Math.min(widthMm * 0.23, 48);
+                const logoHeightMm = bannerHeightMm * 0.68;
+                logo = {
+                    xMm: widthMm - logoWidthMm - (widthMm * 0.035),
+                    yMm: banner.yMm + (bannerHeightMm - logoHeightMm) / 2,
+                    widthMm: logoWidthMm,
+                    heightMm: logoHeightMm
+                };
+            }
+        }
+
+        return { golden, safeInsetMm, banner, logo };
+    }
+
     /**
      * Compute face layout for a single display facet.
      */
     function layoutFace(project, participant, xMm, yMm, wMm, hMm, rotation, diagnostics) {
         const texts = [];
-        const safe = project.guides.safeInsetMm || 4.0;
         const designId = project.template.id || 'kinu-gradient-bar';
         const design = (global.NameplateModel && global.NameplateModel.DESIGNS.find(d => d.id === designId)) || {
             band: 'gradient',
@@ -58848,38 +58917,48 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             fontFamily: 'Pretendard'
         };
 
-        let topMm = safe;
-        const bannerHeightMm = design.band === 'gradient' ? (hMm * design.fraction) : 0;
-        const bottomSafeMm = hMm - safe - bannerHeightMm;
+        const composition = getFaceComposition(project, wMm, hMm, design);
+        const isGolden = composition.golden;
+        const faceSafe = composition.safeInsetMm;
+        let topMm = faceSafe;
+        const bannerHeightMm = composition.banner ? composition.banner.heightMm : 0;
+        const bottomSafeMm = hMm - faceSafe - bannerHeightMm;
 
         // 1. Event title / session meta banner
         if (project.event && project.event.enabled && (project.event.title || project.event.meta)) {
-            const headerHeightMm = Math.min(12, hMm * 0.18);
+            const headerAvailableMm = Math.max(0, bottomSafeMm - topMm);
+            const headerHeightMm = isGolden
+                ? Math.min(12, hMm * 0.18, headerAvailableMm * 0.25)
+                : Math.min(12, hMm * 0.18);
             const headerText = [project.event.title, project.event.meta].filter(Boolean).join(' | ');
             const headerStyle = { fontSizePt: 10, minFontSizePt: 7, trackingEm: 0, lineHeight: 1.15, bold: true };
-            texts.push(fitTextRun('event', headerText, headerStyle, safe, topMm, wMm - safe * 2, headerHeightMm, design.fontFamily, participant.id, diagnostics, project.typography));
-            topMm += headerHeightMm + 2;
+            texts.push(fitTextRun('event', headerText, headerStyle, faceSafe, topMm, Math.max(0, wMm - faceSafe * 2), headerHeightMm, design.fontFamily, participant.id, diagnostics, project.typography));
+            topMm += headerHeightMm + (isGolden ? Math.min(2, Math.max(0, bottomSafeMm - topMm - headerHeightMm)) : 2);
         }
 
         // 2. Active participant fields
         const enabledFieldConfigs = (project.fields || []).filter(f => f.enabled);
-        const availableHeightMm = Math.max(10, bottomSafeMm - topMm);
-        const totalFields = enabledFieldConfigs.length || 1;
-
-        // Allocate proportional height: 'name' gets 2x weight
-        const weights = enabledFieldConfigs.map(f => (f.key === 'name' ? 2.2 : 1.0));
+        const availableHeightMm = isGolden
+            ? Math.max(0, bottomSafeMm - topMm)
+            : Math.max(10, bottomSafeMm - topMm);
+        const activeFields = isGolden
+            ? enabledFieldConfigs.filter(f => String(participant[f.key] || '').trim() !== '')
+            : enabledFieldConfigs;
+        const secondaryCount = isGolden ? activeFields.filter(f => f.key !== 'name').length : 0;
+        const nameWeight = isGolden ? Math.max(1, secondaryCount) * GOLDEN_RATIO : 2.2;
+        const weights = activeFields.map(f => (f.key === 'name' ? nameWeight : 1));
         const totalWeight = weights.reduce((sum, w) => sum + w, 0) || 1;
 
-        enabledFieldConfigs.forEach((fConfig, idx) => {
+        activeFields.forEach((fConfig, idx) => {
             const rawVal = participant[fConfig.key] || '';
             const fieldHeightMm = availableHeightMm * (weights[idx] / totalWeight);
             const run = fitTextRun(
                 fConfig.key,
                 rawVal,
                 fConfig,
-                safe,
+                faceSafe,
                 topMm,
-                wMm - safe * 2,
+                Math.max(0, wMm - faceSafe * 2),
                 fieldHeightMm,
                 design.fontFamily,
                 participant.id,
@@ -58897,6 +58976,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             widthMm: wMm,
             heightMm: hMm,
             rotation: rotation || 0,
+            composition,
             texts
         };
     }
@@ -58910,14 +58990,29 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         const pages = [];
 
         // Determine targets based on print scope
-        let targetParticipants = [...(project.participants || [])];
+        const participantFieldKeys = (project.fields || []).map(field => field.key).filter(Boolean);
+        let targetParticipants = [...(project.participants || [])].filter(participant => {
+            if (!participant || typeof participant !== 'object') return false;
+            const keys = participantFieldKeys.length
+                ? participantFieldKeys
+                : ['name', 'org', 'role', 'enName'];
+            return keys.some(key =>
+                typeof participant[key] === 'string' && participant[key].trim()
+            );
+        });
         if (project.print && project.print.scope === 'selected' && Array.isArray(project.print.selectedParticipantIds)) {
             const selectedSet = new Set(project.print.selectedParticipantIds);
             targetParticipants = targetParticipants.filter(p => selectedSet.has(p.id));
         }
 
-        const pageWidthMm = project.page.widthMm || 297;
-        const pageHeightMm = project.page.heightMm || 210;
+        const pageOrientation = project.page.orientation === 'portrait' ? 'portrait' : 'landscape';
+        const isA4 = !project.page.sizeId || project.page.sizeId === 'A4';
+        const pageWidthMm = isA4
+            ? (pageOrientation === 'portrait' ? 210 : 297)
+            : (project.page.widthMm || 297);
+        const pageHeightMm = isA4
+            ? (pageOrientation === 'portrait' ? 297 : 210)
+            : (project.page.heightMm || 210);
         const layoutKind = project.stock.layoutKind || 'insert';
         const trimW = project.stock.trimWidthMm || 110;
         const trimH = project.stock.trimHeightMm || 70;
@@ -59161,7 +59256,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     /**
      * Renders a single Face SVG group.
      */
-    function renderFaceSvg(face, project, pageIndex, slotIdx, faceIdx) {
+    function renderFaceSvg(face, project, pageIndex, slotIdx, faceIdx, options = {}) {
         const designId = project.template.id || 'kinu-gradient-bar';
         const design = (global.NameplateModel && global.NameplateModel.DESIGNS.find(d => d.id === designId)) || {
             band: 'gradient',
@@ -59188,9 +59283,17 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         // 2. Banner / Band Styling
         if (design.band === 'gradient') {
-            const bandHeightMm = h * design.fraction;
-            const bandTopMm = h - bandHeightMm;
-            const gradId = `np-grad-${pageIndex}-${slotIdx}-${faceIdx}`;
+            const composition = face.composition;
+            const bandHeightMm = composition && composition.banner
+                ? composition.banner.heightMm
+                : h * design.fraction;
+            const bandTopMm = composition && composition.banner
+                ? composition.banner.yMm
+                : h - bandHeightMm;
+            const idPrefix = options.idPrefix
+                ? `${String(options.idPrefix).replace(/[^A-Za-z0-9_.-]/g, '-')}-`
+                : '';
+            const gradId = `${idPrefix}np-grad-${pageIndex}-${slotIdx}-${faceIdx}`;
 
             parts.push(`<defs>
                 <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -59205,11 +59308,11 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             parts.push(`<rect x="${numStr(-bleed)}" y="${numStr(bandTopMm)}" width="${numStr(w + bleed * 2)}" height="${numStr(bandHeightMm + bleed)}" fill="url(#${gradId})"/>`);
 
             if (design.showLogo) {
-                // Official safe logo placement inside gradient band (right aligned with breathing room)
-                const logoWMm = Math.min(w * 0.23, 48);
-                const logoHMm = bandHeightMm * 0.68;
-                const logoXMm = w - logoWMm - (w * 0.035);
-                const logoYMm = bandTopMm + (bandHeightMm - logoHMm) / 2;
+                const logo = composition && composition.logo;
+                const logoWMm = logo ? logo.widthMm : Math.min(w * 0.23, 48);
+                const logoHMm = logo ? logo.heightMm : bandHeightMm * 0.68;
+                const logoXMm = logo ? logo.xMm : w - logoWMm - (w * 0.035);
+                const logoYMm = logo ? logo.yMm : bandTopMm + (bandHeightMm - logoHMm) / 2;
                 parts.push(renderLogoSvg(logoXMm, logoYMm, logoWMm, logoHMm, design.whiteLogo ? '#ffffff' : '#003366'));
             }
         }
@@ -59309,7 +59412,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
             // 1. Render all faces in slot
             (slot.faces || []).forEach((face, faceIdx) => {
-                svgParts.push(renderFaceSvg(face, project, page.index, slotIdx, faceIdx));
+                svgParts.push(renderFaceSvg(face, project, page.index, slotIdx, faceIdx, options));
             });
 
             // 2. Render fold lines
@@ -59409,36 +59512,43 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         const firstPage = layoutResult.pages[0];
         const pageWMm = firstPage.widthMm || 297;
         const pageHMm = firstPage.heightMm || 210;
-        const isPortrait = printProject.page.orientation === 'portrait';
-
-        // Synchronize dynamic @page CSS rule for exact 1:1 paper output
+        // A named page rule isolates nameplate dimensions from the global A0
+        // print rule (which otherwise forces landscape and nonzero margins).
         styleEl.textContent = `
             @media print {
-                @page {
+                @page npNameplatePage {
                     size: ${pageWMm}mm ${pageHMm}mm;
-                    margin: 0 !important;
+                    margin: 0;
                 }
                 body {
                     margin: 0 !important;
                     padding: 0 !important;
                     background: #ffffff !important;
                 }
-                /* Hide everything except #npPrintRoot when nameplate print is active */
-                body.np-printing-active > *:not(#${PRINT_ROOT_ID}) {
+                body.np-printing-active > *:not(#${PRINT_ROOT_ID}),
+                body.np-printing-active #mmPrintContainer {
                     display: none !important;
                 }
                 #${PRINT_ROOT_ID} {
                     display: block !important;
-                    position: static !important;
-                    width: 100% !important;
+                    position: relative !important;
+                    width: ${pageWMm}mm !important;
                     margin: 0 !important;
                     padding: 0 !important;
                     background: #ffffff !important;
+                    visibility: visible !important;
+                    z-index: 2147483647 !important;
+                    overflow: visible !important;
+                }
+                #${PRINT_ROOT_ID} * {
+                    visibility: visible !important;
                 }
                 .np-print-sheet-wrapper {
+                    page: npNameplatePage;
                     page-break-inside: avoid !important;
-                    page-break-after: always !important;
-                    break-after: page !important;
+                    break-inside: avoid !important;
+                    page-break-after: always;
+                    break-after: page;
                     width: ${pageWMm}mm !important;
                     height: ${pageHMm}mm !important;
                     margin: 0 !important;
@@ -59446,11 +59556,39 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
                     box-sizing: border-box !important;
                     display: block !important;
                     background: #ffffff !important;
+                    visibility: visible !important;
+                }
+                .np-print-sheet-wrapper:last-child {
+                    page-break-after: auto !important;
+                    break-after: auto !important;
                 }
                 .np-print-sheet-wrapper svg {
                     width: ${pageWMm}mm !important;
                     height: ${pageHMm}mm !important;
                     display: block !important;
+                    visibility: visible !important;
+                }
+
+                html.np-printing-active,
+                body.np-printing-active {
+                    display: block !important;
+                    position: static !important;
+                    width: auto !important;
+                    height: auto !important;
+                    min-height: 0 !important;
+                    max-height: none !important;
+                    overflow: visible !important;
+                    transform: none !important;
+                }
+                body.np-printing-active { page: npNameplatePage; }
+                html.np-printing-active > body { page: npNameplatePage; }
+                @page {
+                    size: ${pageWMm}mm ${pageHMm}mm !important;
+                    margin: 0 !important;
+                }
+                @page npNameplatePage {
+                    size: ${pageWMm}mm ${pageHMm}mm !important;
+                    margin: 0 !important;
                 }
             }
         `;
@@ -59458,11 +59596,13 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         // Assemble clean SVG pages into print root
         let printHtml = '';
         layoutResult.pages.forEach(page => {
-            const pageSvg = global.NameplateRender.renderNameplatePageSvg(page, printProject);
+            const pageSvg = global.NameplateRender.renderNameplatePageSvg(page, printProject, { idPrefix: 'print' });
             printHtml += `<div class="np-print-sheet-wrapper" data-page-index="${page.index}">${pageSvg}</div>`;
         });
 
         printRoot.innerHTML = printHtml;
+        printRoot.dataset.pageWidthMm = String(pageWMm);
+        printRoot.dataset.pageHeightMm = String(pageHMm);
         return { success: true, pageCount: layoutResult.pages.length, layoutResult };
     }
 
@@ -59486,18 +59626,23 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         }
 
         const activeElement = document.activeElement;
+        const styleEl = document.getElementById(PRINT_PAGE_STYLE_ID);
+        if (!styleEl) return;
+        document.documentElement.classList.add('np-printing-active');
         document.body.classList.add('np-printing-active');
 
         const cleanup = () => {
+            window.removeEventListener('afterprint', cleanup);
+            document.documentElement.classList.remove('np-printing-active');
             document.body.classList.remove('np-printing-active');
             cleanupPrintPipeline();
+            styleEl.textContent = '';
             if (activeElement && typeof activeElement.focus === 'function') {
                 try { activeElement.focus(); } catch (e) {}
             }
-            window.removeEventListener('afterprint', cleanup);
         };
 
-        window.addEventListener('afterprint', cleanup);
+        window.addEventListener('afterprint', cleanup, { once: true });
 
         if (typeof global.showToast === 'function') {
             global.showToast(`🖨️ 인쇄 대화상자를 열었습니다 (총 ${prep.pageCount}페이지).`);
@@ -59634,7 +59779,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
      */
     function migrateLegacyControls(input) {
         const diagnostics = [];
-        const project = global.NameplateModel.createDefaultProject('복원된 명패 프로젝트');
+        const project = global.NameplateModel.createDefaultProject('복원된 명패 프로젝트', 'standard');
 
         if (!input || typeof input !== 'object') {
             return { project, diagnostics };
@@ -59642,6 +59787,10 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         // Support root or root.controls
         const c = input.controls && typeof input.controls === 'object' ? input.controls : input;
+        const savedVariant = input.template?.variant || c.template?.variant;
+        if (savedVariant === 'golden' || savedVariant === 'standard') {
+            project.template.variant = savedVariant;
+        }
 
         // 1. Recover Participants from npBatchText or npSingle...
         const batchText = typeof c.npBatchText === 'string' ? c.npBatchText.trim() : '';
@@ -59673,7 +59822,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         }
 
         // 2. Recover Paper Size & Preset
-        const paperSize = typeof c.npPaperSize === 'string' ? c.npPaperSize : 'desk-1100-700';
+        const paperSize = typeof c.npPaperSize === 'string' ? c.npPaperSize : 'golden-110-68';
         const preset = global.NameplateModel.SIZE_PRESETS[paperSize];
         if (preset) {
             project.stock.presetId = preset.id;
@@ -59773,8 +59922,17 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         debounceSave(project, delay = 400) {
             if (this.debounceTimer) clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
+                this.debounceTimer = null;
                 this.saveToLocalStorage(project);
             }, delay);
+        }
+
+        flushSave(project) {
+            if (this.debounceTimer) {
+                clearTimeout(this.debounceTimer);
+                this.debounceTimer = null;
+            }
+            return this.saveToLocalStorage(project);
         }
 
         loadFromLocalStorage() {
@@ -59844,9 +60002,9 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     'use strict';
 
     if (typeof window !== "undefined") {
-        window.A0_NAMEPLATE_VERSION = "v1.2.0";
+        window.A0_NAMEPLATE_VERSION = "v1.2.2";
     } else if (typeof globalThis !== "undefined") {
-        globalThis.A0_NAMEPLATE_VERSION = "v1.2.0";
+        globalThis.A0_NAMEPLATE_VERSION = "v1.2.2";
     }
 
     // Engine Core State
@@ -59854,6 +60012,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     let npUndoManager = null;
     let npStorageAdapter = null;
     let isInitialized = false;
+    let currentNpLayoutResult = null;
 
     // Mobile view state: 'config' | 'preview'
     let currentNpMobileTab = 'config';
@@ -59922,6 +60081,15 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     // Webfonts are fetched lazily; SVG text measured/painted before arrival falls back silently.
     // Load the selectable families up front and re-render once they arrive.
     let fontsPreloadStarted = false;
+    let npHasPendingUserEdit = false;
+    if (typeof global.addEventListener === 'function') {
+        global.addEventListener('pagehide', () => {
+            if (npStorageAdapter && currentNpProject && (npHasPendingUserEdit || npStorageAdapter.debounceTimer != null)) {
+                npStorageAdapter.flushSave(currentNpProject);
+                npHasPendingUserEdit = false;
+            }
+        });
+    }
     function preloadSelectableFonts() {
         if (fontsPreloadStarted || typeof document === 'undefined' || !document.fonts || typeof document.fonts.load !== 'function') return;
         fontsPreloadStarted = true;
@@ -59972,11 +60140,13 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         // Paper / Stock Preset
         const paperSelect = document.getElementById('npPaperSize');
-        if (paperSelect) paperSelect.value = p.stock.presetId || 'desk-1100-700';
+        if (paperSelect) paperSelect.value = p.stock.presetId || 'golden-110-68';
 
         // Design Style
         const designSelect = document.getElementById('npDesignStyle');
         if (designSelect) designSelect.value = p.template.id || 'kinu-gradient-bar';
+        const variantSelect = document.getElementById('npLayoutVariant');
+        if (variantSelect) variantSelect.value = p.template.variant === 'golden' ? 'golden' : 'standard';
 
         // Guides
         const cutGuidesChk = document.getElementById('npShowCutGuides');
@@ -60036,25 +60206,13 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
      * Renders participants into the Roster Table.
      */
     function renderRosterTable() {
-        const tbody = document.getElementById('npBatchTableBody');
+        const tbody = document.getElementById('npRosterTableBody');
         if (!tbody || !currentNpProject) return;
 
         const participants = currentNpProject.participants || [];
-        const countLabel = document.getElementById('npBatchCountLabel');
-        const printBtn = document.getElementById('npBtnPrintPrimary');
-
-        if (countLabel) {
-            countLabel.textContent = `총 ${participants.length}명`;
-        }
-
-        if (printBtn) {
-            printBtn.disabled = participants.length === 0;
-            if (participants.length === 0) {
-                printBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            } else {
-                printBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
+        const isAllScope = currentNpProject.print.scope !== 'selected';
+        const scopeLabel = document.getElementById('npPrintScopeLabel');
+        if (scopeLabel) scopeLabel.textContent = isAllScope ? '전체 출력' : '선택 출력';
 
         if (participants.length === 0) {
             tbody.innerHTML = `
@@ -60082,7 +60240,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         let html = '';
         participants.forEach((p, idx) => {
-            const isChecked = currentNpProject.print.scope === 'all' || selectedSet.has(p.id);
+            const isChecked = isAllScope || selectedSet.has(p.id);
             html += `
                 <tr class="hover:bg-slate-50 dark:hover:bg-[#1a2736] transition-colors border-b border-slate-100 dark:border-slate-800/60" data-participant-id="${p.id}">
                     <td class="py-1.5 px-2 text-center w-8">
@@ -60090,16 +60248,16 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
                     </td>
                     <td class="py-1.5 px-2 text-center text-[11px] font-mono text-slate-400 w-8">${idx + 1}</td>
                     <td class="py-1.5 px-1.5">
-                        <input type="text" value="${escapeXml(p.name)}" oninput="onParticipantFieldChange('${p.id}', 'name', this.value)" aria-label="${idx + 1}번째 인물 성명" class="w-full h-8 px-2 text-xs font-bold border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-[#0f172a] dark:text-white" placeholder="성명(필수)">
+                        <input type="text" value="${escapeXml(p.name)}" oninput="onParticipantFieldChange('${p.id}', 'name', this.value)" onchange="onParticipantFieldChange('${p.id}', 'name', this.value, true)" aria-label="${idx + 1}번째 인물 성명" class="w-full h-8 px-2 text-xs font-bold border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-[#0f172a] dark:text-white" placeholder="성명(필수)">
                     </td>
                     <td class="py-1.5 px-1.5">
-                        <input type="text" value="${escapeXml(p.org)}" oninput="onParticipantFieldChange('${p.id}', 'org', this.value)" aria-label="${idx + 1}번째 인물 소속" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-slate-700 dark:text-slate-200" placeholder="소속기관">
+                        <input type="text" value="${escapeXml(p.org)}" oninput="onParticipantFieldChange('${p.id}', 'org', this.value)" onchange="onParticipantFieldChange('${p.id}', 'org', this.value, true)" aria-label="${idx + 1}번째 인물 소속" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-slate-700 dark:text-slate-200" placeholder="소속기관">
                     </td>
                     <td class="py-1.5 px-1.5">
-                        <input type="text" value="${escapeXml(p.role)}" oninput="onParticipantFieldChange('${p.id}', 'role', this.value)" aria-label="${idx + 1}번째 인물 직책" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-emerald-700 dark:text-emerald-400 font-semibold" placeholder="직책/직함">
+                        <input type="text" value="${escapeXml(p.role)}" oninput="onParticipantFieldChange('${p.id}', 'role', this.value)" onchange="onParticipantFieldChange('${p.id}', 'role', this.value, true)" aria-label="${idx + 1}번째 인물 직책" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-emerald-700 dark:text-emerald-400 font-semibold" placeholder="직책/직함">
                     </td>
                     <td class="py-1.5 px-1.5">
-                        <input type="text" value="${escapeXml(p.enName || '')}" oninput="onParticipantFieldChange('${p.id}', 'enName', this.value)" aria-label="${idx + 1}번째 인물 영문명" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-sky-700 dark:text-sky-300 font-mono" placeholder="영문명">
+                        <input type="text" value="${escapeXml(p.enName || '')}" oninput="onParticipantFieldChange('${p.id}', 'enName', this.value)" onchange="onParticipantFieldChange('${p.id}', 'enName', this.value, true)" aria-label="${idx + 1}번째 인물 영문명" class="w-full h-8 px-2 text-xs border border-transparent focus:border-[#0062ab] bg-transparent focus:bg-white dark:focus:bg-[#121c28] rounded outline-none text-sky-700 dark:text-sky-300 font-mono" placeholder="영문명">
                     </td>
                     <td class="py-1.5 px-1.5 text-center w-24">
                         <div class="flex items-center justify-center gap-1">
@@ -60117,13 +60275,29 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     /**
      * Master Preview Renderer: Computes layout and injects SVG pages into #npPreviewCanvas.
      */
-    function renderNameplates() {
+    function renderNameplates(layoutOverride = null) {
         initNameplateEngine();
         const canvas = document.getElementById('npPreviewCanvas');
-        if (!canvas || !currentNpProject) return;
+        if (!currentNpProject) return;
+        if (npStorageAdapter) {
+            npStorageAdapter.debounceSave(currentNpProject);
+            npHasPendingUserEdit = false;
+        }
+        if (!canvas) return;
 
-        const layoutResult = global.NameplateLayout.layoutNameplateDocument(currentNpProject);
+        const renderProject = currentNpProject;
+        const layoutResult = layoutOverride || global.NameplateLayout.layoutNameplateDocument(renderProject);
+        currentNpLayoutResult = layoutResult;
         const pages = layoutResult.pages || [];
+        const countLabel = document.getElementById('npBatchCountLabel');
+        const printBtn = document.getElementById('npBtnPrintPrimary');
+        if (countLabel) countLabel.textContent = `${layoutResult.totalParticipants || 0}명 인쇄 / 명단 ${(currentNpProject.participants || []).length}명`;
+        if (printBtn) {
+            const hasPrintableParticipants = (layoutResult.totalParticipants || 0) > 0 && pages.length > 0;
+            printBtn.disabled = !hasPrintableParticipants;
+            printBtn.classList.toggle('opacity-50', !hasPrintableParticipants);
+            printBtn.classList.toggle('cursor-not-allowed', !hasPrintableParticipants);
+        }
         const isPaged = currentNpProject.editor.previewMode === 'paged';
         const pageIdx = Math.max(0, Math.min(pages.length - 1, currentNpProject.editor.pageIndex || 0));
 
@@ -60148,7 +60322,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
                 <div class="py-20 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-sheet-plastic text-4xl text-slate-300 dark:text-slate-700"></i>
                     <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">인쇄할 명패가 없습니다.</p>
-                    <p class="text-xs text-slate-400 dark:text-slate-500">명단을 입력하거나 예시를 불러오면 여기에 실제 인쇄 대지가 미리보기됩니다.</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500">${(renderProject.participants || []).length > 0 && renderProject.print.scope === 'selected' ? '인쇄할 참석자를 선택하세요.' : '명단을 입력하거나 예시를 불러오면 여기에 실제 인쇄 대지가 미리보기됩니다.'}</p>
                 </div>
             `;
             return;
@@ -60159,7 +60333,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         let canvasHtml = '';
         pagesToRender.forEach(page => {
-            const svgContent = global.NameplateRender.renderNameplatePageSvg(page, currentNpProject);
+                    const svgContent = global.NameplateRender.renderNameplatePageSvg(page, renderProject);
             canvasHtml += `
                 <div class="np-preview-sheet-card bg-white dark:bg-[#121c28] border border-slate-200 dark:border-slate-700 rounded-sm shadow-sm p-3 mx-auto transition-all" style="max-width: 100%; width: 100%;">
                     <div class="flex items-center justify-between pb-1.5 mb-2 border-b border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 font-mono">
@@ -60175,8 +60349,6 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         canvas.innerHTML = canvasHtml;
 
-        // Auto-save project changes debounced
-        npStorageAdapter.debounceSave(currentNpProject);
     }
 
     /**
@@ -60279,6 +60451,8 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
             currentNpProject.stock.trimHeightMm = preset.h;
             currentNpProject.stock.layoutKind = preset.layoutKind;
             currentNpProject.page.orientation = preset.orientation;
+            currentNpProject.page.widthMm = preset.orientation === 'portrait' ? 210 : 297;
+            currentNpProject.page.heightMm = preset.orientation === 'portrait' ? 297 : 210;
             currentNpProject.guides.bleedMm = preset.bleed;
 
             const wInput = document.getElementById('npCustomWidth');
@@ -60334,6 +60508,22 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         currentNpProject.template.id = sel.value;
         renderNameplates();
         if (snapshot) snapshot.commit();
+    }
+
+    function onLayoutVariantChange() {
+        initNameplateEngine();
+        const sel = document.getElementById('npLayoutVariant');
+        if (!sel || !currentNpProject) return;
+
+        const variant = sel.value === 'golden' ? 'golden' : 'standard';
+        currentNpProject.template = currentNpProject.template || {};
+        if (currentNpProject.template.variant === variant) return;
+
+        const snapshot = recordProjectSnapshot('내부 배치 비율 변경');
+        currentNpProject.template.variant = variant;
+        renderNameplates();
+        if (snapshot) snapshot.commit();
+        if (npStorageAdapter) npStorageAdapter.flushSave(currentNpProject);
     }
 
     function onCutGuidesChange() {
@@ -60772,7 +60962,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         const snapshot = recordProjectSnapshot('현재 필드 서식 초기화');
         const idx = currentNpProject.fields.findIndex(item => item.key === currentNpTypoField);
         if (idx >= 0 && global.NameplateModel && global.NameplateModel.createDefaultFieldStyle) {
-            currentNpProject.fields[idx] = global.NameplateModel.createDefaultFieldStyle(currentNpTypoField);
+            currentNpProject.fields[idx] = global.NameplateModel.createDefaultFieldStyle(currentNpTypoField, currentNpProject.template?.variant);
         }
         renderNameplates();
         if (snapshot) snapshot.commit();
@@ -60804,7 +60994,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         // Focus new name input
         setTimeout(() => {
-            const tr = document.querySelector(`tr[data-participant-id="${newP.id}"] input`);
+            const tr = document.querySelector(`tr[data-participant-id="${newP.id}"] input[type="text"]`);
             if (tr) tr.focus();
         }, 50);
     }
@@ -60815,6 +61005,8 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
 
         const snapshot = recordProjectSnapshot('참석자 삭제');
         currentNpProject.participants = currentNpProject.participants.filter(p => p.id !== id);
+        currentNpProject.print.selectedParticipantIds = (currentNpProject.print.selectedParticipantIds || []).filter(selectedId => currentNpProject.participants.some(p => p.id === selectedId));
+        npHasPendingUserEdit = true;
         renderRosterTable();
         renderNameplates();
         if (snapshot) snapshot.commit();
@@ -60842,7 +61034,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         if (snapshot) snapshot.commit();
     }
 
-    function onParticipantFieldChange(id, fieldKey, val) {
+    function onParticipantFieldChange(id, fieldKey, val, commit = false) {
         initNameplateEngine();
         if (!currentNpProject) return;
 
@@ -60850,7 +61042,12 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         if (!p) return;
 
         p[fieldKey] = val;
+        npHasPendingUserEdit = true;
         renderNameplates();
+        if (commit && npStorageAdapter) {
+            npStorageAdapter.flushSave(currentNpProject);
+            npHasPendingUserEdit = false;
+        }
     }
 
     function clearParticipants() {
@@ -60860,6 +61057,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         const snapshot = recordProjectSnapshot('명단 비우기');
         currentNpProject.participants = [];
         currentNpProject.print.selectedParticipantIds = [];
+        npHasPendingUserEdit = true;
 
         renderRosterTable();
         renderNameplates();
@@ -60871,21 +61069,36 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         initNameplateEngine();
         if (!currentNpProject) return;
 
-        let selected = currentNpProject.print.selectedParticipantIds || [];
+        let selected = currentNpProject.print.scope === 'all'
+            ? (currentNpProject.participants || []).map(p => p.id)
+            : [...(currentNpProject.print.selectedParticipantIds || [])];
         if (checked) {
             if (!selected.includes(id)) selected.push(id);
         } else {
             selected = selected.filter(item => item !== id);
         }
         currentNpProject.print.selectedParticipantIds = selected;
+        npHasPendingUserEdit = true;
+        currentNpProject.print.scope = 'selected';
+        if (selected.length === (currentNpProject.participants || []).length && selected.length > 0) {
+            currentNpProject.print.scope = 'all';
+            currentNpProject.print.selectedParticipantIds = [];
+        }
+        renderRosterTable();
+        renderNameplates();
+        if (npStorageAdapter) npStorageAdapter.debounceSave(currentNpProject);
     }
 
     function setPrintScope(scope) {
         initNameplateEngine();
         if (!currentNpProject) return;
 
-        currentNpProject.print.scope = scope === 'selected' ? 'selected' : 'all';
+        currentNpProject.print.scope = scope === 'all' ? 'all' : 'selected';
+        currentNpProject.print.selectedParticipantIds = [];
+        npHasPendingUserEdit = true;
+        renderRosterTable();
         renderNameplates();
+        if (npStorageAdapter) npStorageAdapter.debounceSave(currentNpProject);
     }
 
     // --- Undo / Redo Handlers ---
@@ -60968,10 +61181,10 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         initNameplateEngine();
         if (!currentNpProject) return;
 
-        const layoutResult = global.NameplateLayout.layoutNameplateDocument(currentNpProject);
+        const layoutResult = currentNpLayoutResult || global.NameplateLayout.layoutNameplateDocument(currentNpProject);
         const maxPages = layoutResult.pages.length || 1;
         currentNpProject.editor.pageIndex = Math.max(0, Math.min(maxPages - 1, (currentNpProject.editor.pageIndex || 0) + delta));
-        renderNameplates();
+        renderNameplates(layoutResult);
     }
 
     // --- Import Modal Controller ---
@@ -61071,6 +61284,12 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         );
 
         currentNpProject.participants = converted;
+        if (mode === 'replace') {
+            currentNpProject.print.scope = 'all';
+            currentNpProject.print.selectedParticipantIds = [];
+        }
+        currentNpProject.print.selectedParticipantIds = (currentNpProject.print.selectedParticipantIds || []).filter(id => converted.some(p => p.id === id));
+        npHasPendingUserEdit = true;
         renderRosterTable();
         renderNameplates();
         if (snapshot) snapshot.commit();
@@ -61212,7 +61431,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
         if (!currentNpProject) return;
 
         const snapshot = recordProjectSnapshot('타이포그래피 초기화');
-        currentNpProject.fields = global.NameplateModel.FIELDS.map(global.NameplateModel.createDefaultFieldStyle);
+        currentNpProject.fields = global.NameplateModel.FIELDS.map(key => global.NameplateModel.createDefaultFieldStyle(key, currentNpProject.template?.variant));
         if (currentNpProject.typography) {
             currentNpProject.typography.baseFontId = 'pretendard';
             currentNpProject.typography.autoNotoRouting = true;
@@ -61270,6 +61489,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     global.onPaperSizeSelectChange = onPaperSizeSelectChange;
     global.onCustomDimensionChange = onCustomDimensionChange;
     global.onDesignStyleChange = onDesignStyleChange;
+    global.onLayoutVariantChange = onLayoutVariantChange;
     global.onCutGuidesChange = onCutGuidesChange;
     global.onEventHeaderChange = onEventHeaderChange;
     global.onFieldTypographyChange = onFieldTypographyChange;
@@ -61299,6 +61519,7 @@ if (typeof window !== 'undefined') window.focusWebzineField = focusWebzineField;
     global.syncNpTypoNumber = syncNpTypoNumber;
     global.syncNameplatePresetMeta = syncNameplatePresetMeta;
         const FALLBACK_PRESETS = {
+        'golden-110-68': { id: 'golden-110-68', w: 110, h: 68, bleed: 3.5, kind: '황금비 명패', layoutKind: 'insert', note: '황금비 기본 명패 (110×68mm, 비율 1.617647:1)', market: false, paperSize: 'A4', orientation: 'landscape' },
         'desk-90-55': { id: 'desk-90-55', w: 90, h: 55, bleed: 2.5, kind: '판매형 미니 자리표', layoutKind: 'insert', note: '소형 자리표·쇼케이스 속지 (90×55mm)', market: true, paperSize: 'A4', orientation: 'landscape' },
         'desk-1100-700': { id: 'desk-1100-700', w: 110, h: 70, bleed: 3.5, kind: '소형 데스크 명패', layoutKind: 'insert', note: '소형 데스크 명패 템플릿 (110×70mm)', market: true, paperSize: 'A4', orientation: 'landscape' },
         'desk-120-60': { id: 'desk-120-60', w: 120, h: 60, bleed: 2.5, kind: '판매형 슬림 파티션', layoutKind: 'insert', note: '슬림 파티션·부서 표찰 (120×60mm)', market: true, paperSize: 'A4', orientation: 'landscape' },
@@ -139637,6 +139858,44 @@ function renderDocumentBody(doc) {
     window.A0_REGULATIONS_VERSION = 'v1.1.0';
 
     window.STUDIO_UPDATE_LOGS = [
+{
+    "version": "v1.9.64 (v5.9.64)",
+    "coreVersion": "A0 Core v1.9.64 (v5.9.64)",
+    "date": "2026-11-20",
+    "tag": "황금비 내부 배치·브랜드 연동",
+    "title": "KINU 명패 내부 배치와 색상 미리보기 개선",
+    "summary": "이름과 보조 문구의 내부 배분을 61.8:38.2로 조정하고 KINU 띠와 로고를 연동합니다. 새 명패는 황금비 내부 배치를 기본으로 사용합니다. 기존 프로젝트는 ‘내부 배치’에서 선택해 전환할 수 있으며, 미리보기와 인쇄 색상 표시도 수정했습니다.",
+    "items": [
+        {"category":"비율","engine":"Nameplate","text":"이름과 보조 문구의 내부 배분을 61.8:38.2로 설정합니다."},
+        {"category":"브랜드","engine":"Nameplate","text":"KINU 띠와 로고를 연동합니다."},
+        {"category":"내부 배치","engine":"Nameplate","text":"새 명패는 황금비 내부 배치를 기본으로 사용합니다. 기존 프로젝트는 ‘내부 배치’에서 선택해 전환할 수 있습니다."},
+        {"category":"미리보기·인쇄","engine":"Nameplate","text":"미리보기와 인쇄의 색상 표시를 수정했습니다."}
+    ]
+},
+{
+    "version": "v1.9.63 (v5.9.63)",
+    "coreVersion": "A0 Core v1.9.63 (v5.9.63)",
+    "date": "2026-11-19",
+    "tag": "명패 기본 규격",
+    "title": "황금비 기본 명패",
+    "summary": "새 기본 명패 규격을 110×68mm로 설정하고 1.618:1 비율을 표시합니다.",
+    "items": [
+        {"category":"기본 규격","engine":"Nameplate v1.2.2","text":"새 명패 문서는 110×68mm와 1.618:1 비율을 기본값으로 사용합니다. 기존 110×70mm 프리셋은 유지합니다."},
+        {"category":"호환성","engine":"Nameplate v1.2.2","text":"기존에 저장한 명패 설정과 프로젝트 데이터는 그대로 유지합니다."}
+    ]
+},
+{
+    "version": "v1.9.61 (v5.9.61)",
+    "coreVersion": "A0 Core v1.9.61 (v5.9.61)",
+    "date": "2026-11-19",
+    "tag": "명패 인쇄 개선",
+    "title": "명패 선택 재인쇄와 A4 출력",
+    "summary": "선택 항목을 재인쇄하고 저장된 명단을 복원하며, 현재 프로젝트를 기준으로 A4 미리보기와 인쇄를 제공합니다.",
+    "items": [
+        {"category":"명단","engine":"Nameplate v1.2.1","text":"저장된 명단을 다시 불러와 현재 프로젝트에 복원합니다."},
+        {"category":"인쇄","engine":"Nameplate v1.2.1","text":"선택 항목 재인쇄와 전체 선택·선택 해제를 지원하며, 현재 프로젝트의 미리보기와 A4 인쇄·PDF 출력을 제공합니다."}
+    ]
+},
 {
     "version": "v1.9.59 (v5.9.59)",
     "coreVersion": "A0 Core v1.9.59 (v5.9.59)",

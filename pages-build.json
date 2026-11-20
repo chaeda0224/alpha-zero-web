@@ -5,7 +5,7 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "9ffe1fb23b82f90c0d102193941bbbd48906ce2c1928f70d616dd5fdb0edff6c"
+      "sha256": "f350f6fc4473b0d55798ef7a1dfcca2b7f943527bf711980219257f6518fe958"
     },
     {
       "path": ".nojekyll",
@@ -13,7 +13,7 @@
     },
     {
       "path": "webzine_builder.html",
-      "sha256": "feddd34b3193ce30022a60d18c23bad144901c31f9695c543d0bfefdc427e6f0"
+      "sha256": "c78ba8efed93f7b5559c16307fcda2f1baac8b6bc1ddd1f4e4ddafd1a3922623"
     },
     {
       "path": "favicon.svg",
@@ -41,6 +41,6 @@
     }
   ],
   "privacy_check": "Heuristic text scan, not PCFilter verification.",
-  "version": "v1.9.59",
-  "core_version": "A0 Core v1.9.59 (v5.9.59)"
+  "version": "v1.9.64",
+  "core_version": "A0 Core v1.9.64 (v5.9.64)"
 }
